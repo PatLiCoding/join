@@ -1,5 +1,6 @@
 import { Component } from '@angular/core';
 import { Location } from '@angular/common';
+import { environment } from '../../environments/environment';
 
 @Component({
   selector: 'app-legal-notice-section',
@@ -8,15 +9,22 @@ import { Location } from '@angular/common';
   styleUrls: ['./legal-notice-section.scss'],
 })
 export class LegalNoticeSection {
+  
+   /**
+   * Contains the contact information displayed in the legal notice.
+   * The values are loaded from the environment configuration.
+   */
+  imprint = environment.imprint;
+
   constructor(
     private location: Location,
   ) {}
 
-/**
- * Navigates back to the previous page.
- * Typically used to close the help section.
- */
-closeHelp(): void {
-  this.location.back();
-}
+  /**
+   * Navigates back to the previous page.
+   * Typically used to close the help section.
+   */
+  closeHelp(): void {
+    this.location.back();
+  }
 }

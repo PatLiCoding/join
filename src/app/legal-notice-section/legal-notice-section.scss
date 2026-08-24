@@ -56,6 +56,10 @@
   .highlight-blue {
     color: #29ABE2;
     font-weight: 700;
+    text-decoration: none;
+    &:hover {
+        text-decoration: underline;
+      }
   }
 
   @media (max-width: 768px) {

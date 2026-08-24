@@ -13,11 +13,10 @@
     <h2>Imprint</h2>
     <h3>Contact</h3>
     <p>
-      Frank Meckel<br />
-      Husarenstraße 1<br /> 
-      10115 Berlin<br />
-      Email: frankm@gmail.com<br /> 
-      Telefon: +49 155 456789<br />
+      {{ imprint.name }}<br />
+      {{ imprint.street }}<br /> 
+      {{ imprint.zip }} {{ imprint.city }}<br />
+      {{ imprint.email }}<br />
     </p>
 
     <h2>Acceptance of Terms</h2>
@@ -84,10 +83,9 @@
 
     <p>
       For any questions or notices, please contact us at:
-      <span class="highlight-blue"><a href="mailto:frankm@gmail.com">frankm@gmail.com</a></span
-      >.
+      <a href="mailto:{{ imprint.email }}" class="highlight-blue">{{ imprint.email }}</a>.
     </p>
 
-    <p>Last updated: January, 2026</p>
+    <p>Last updated: June, 2026</p>
   </div>
 </section>
