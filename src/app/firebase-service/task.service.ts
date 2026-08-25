@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { Injectable, Injector, runInInjectionContext } from '@angular/core';
 import {
   Firestore,
   collection,
@@ -9,6 +9,7 @@ import {
   collectionData,
   Timestamp,
   DocumentData,
+  CollectionReference,
 } from '@angular/fire/firestore';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
@@ -21,16 +22,32 @@ export type GroupedTasks = {
   done: (Task & { id: string })[];
 };
 
+/**
+ * Service for managing tasks in Firestore.
+ * Provides CRUD operations, filtering, and grouping of tasks by status.
+ */
 @Injectable({
   providedIn: 'root',
 })
 export class TaskService {
-  constructor(private firestore: Firestore) {}
+  /** Firestore collection reference for tasks, created once in the constructor. */
+  private tasksCollection: CollectionReference<DocumentData>;
 
-  private get tasksCollection() {
-    return collection(this.firestore, 'tasks');
+  /**
+   * Creates an instance of TaskService.
+   * @param firestore The Firestore instance used for database operations.
+   * @param injector The Angular Injector, used to safely run Firebase calls within an injection context.
+   */
+  constructor(
+    private firestore: Firestore,
+    private injector: Injector,
+  ) {
+    this.tasksCollection = runInInjectionContext(this.injector, () =>
+      collection(this.firestore, 'tasks'),
+    );
   }
 
+  /** The currently active status filter for tasks. */
   private currentStatusFilter: Task['status'] | 'all' = 'all';
 
   /**
@@ -54,9 +71,9 @@ export class TaskService {
    * @returns Observable of all tasks with their IDs.
    */
   getTasks(): Observable<(Task & { id: string })[]> {
-    return collectionData(this.tasksCollection, { idField: 'id' }) as Observable<
-      (Task & { id: string })[]
-    >;
+    return runInInjectionContext(this.injector, () =>
+      collectionData(this.tasksCollection, { idField: 'id' }),
+    ) as Observable<(Task & { id: string })[]>;
   }
 
   /**
@@ -68,7 +85,7 @@ export class TaskService {
       map((tasks) => {
         if (this.currentStatusFilter === 'all') return tasks;
         return tasks.filter((t) => t.status === this.currentStatusFilter);
-      })
+      }),
     );
   }
 
@@ -93,20 +110,12 @@ export class TaskService {
    * @returns Promise resolving to the created document reference.
    */
   async createTask(task: Omit<Task, 'createdAt'> & { position: number }) {
-    return addDoc(this.tasksCollection, {
-      ...task,
-      createdAt: Timestamp.now(),
-    });
-  }
-
-  /**
-   * Updates the status of a task (for drag & drop).
-   * @param taskId The ID of the task to update.
-   * @param status The new status for the task.
-   */
-  async updateTaskStatus(taskId: string, status: Task['status']) {
-    const docRef = doc(this.firestore, `tasks/${taskId}`);
-    await updateDoc(docRef, { status });
+    return runInInjectionContext(this.injector, () =>
+      addDoc(this.tasksCollection, {
+        ...task,
+        createdAt: Timestamp.now(),
+      }),
+    );
   }
 
   /**
@@ -114,18 +123,32 @@ export class TaskService {
    * @param taskId The ID of the task to update.
    * @param taskData The partial task data to update.
    */
-  async updateTask(taskId: string, taskData: Partial<Omit<Task, 'id' | 'createdAt'>>) {
-    const docRef = doc(this.firestore, `tasks/${taskId}`);
-    await updateDoc(docRef, taskData as DocumentData);
+  async updateTaskStatus(taskId: string, status: Task['status']) {
+    await runInInjectionContext(this.injector, async () => {
+      const docRef = doc(this.firestore, `tasks/${taskId}`);
+      await updateDoc(docRef, { status });
+    });
   }
 
   /**
    * Deletes a task from Firestore.
    * @param taskId The ID of the task to delete.
    */
+  async updateTask(taskId: string, taskData: Partial<Omit<Task, 'id' | 'createdAt'>>) {
+    await runInInjectionContext(this.injector, async () => {
+      const docRef = doc(this.firestore, `tasks/${taskId}`);
+      await updateDoc(docRef, taskData as DocumentData);
+    });
+  }
+  /**
+   * Deletes a task from Firestore.
+   * @param taskId The ID of the task to delete.
+   */
   async deleteTask(taskId: string) {
-    const docRef = doc(this.firestore, `tasks/${taskId}`);
-    await deleteDoc(docRef);
+    await runInInjectionContext(this.injector, async () => {
+      const docRef = doc(this.firestore, `tasks/${taskId}`);
+      await deleteDoc(docRef);
+    });
   }
 
   /**
@@ -145,7 +168,6 @@ export class TaskService {
    */
   getSubtaskProgress(task: Task): number {
     if (!task.subtasks || task.subtasks.length === 0) return 0;
-
     const completed = task.subtasks.filter((st) => st.completed).length;
     return Math.round((completed / task.subtasks.length) * 100);
   }

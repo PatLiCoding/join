@@ -1,4 +1,4 @@
-import { inject, Injectable, OnDestroy } from '@angular/core';
+import { inject, Injectable, Injector, OnDestroy, runInInjectionContext } from '@angular/core';
 import { Subject } from 'rxjs';
 import {
   Firestore,
@@ -7,17 +7,22 @@ import {
   doc,
   addDoc,
   deleteDoc,
-  onSnapshot
+  onSnapshot,
 } from '@angular/fire/firestore';
 import { Contacts } from '../interfaces/contacts';
 
+/**
+ * Service for managing contacts in Firestore.
+ * Keeps a realtime-synced local list of contacts and provides CRUD operations,
+ * color assignment, and the currently selected/logged-in contact state.
+ */
 @Injectable({
   providedIn: 'root',
 })
 export class ContactService implements OnDestroy {
-
   unsubscribe;
   firebaseDB: Firestore = inject(Firestore);
+  private injector = inject(Injector);
 
   contactList: Contacts[] = [];
   selectedContact: Contacts | null = null;
@@ -27,26 +32,41 @@ export class ContactService implements OnDestroy {
 
   editRequest$ = new Subject<void>();
 
+  /** Fixed palette of colors used to assign a consistent color per contact. */
   private readonly colorPalette = [
-    '#FF7A00', '#FF5EB3', '#6E52FF', '#9327FF', '#00BEE8',
-    '#1FD7C1', '#FF745E', '#FFA35E', '#FC71FF', '#FFC701',
-    '#0038FF', '#C3FF2B', '#FFE62B', '#FF4646', '#FFBB2B',
+    '#FF7A00',
+    '#FF5EB3',
+    '#6E52FF',
+    '#9327FF',
+    '#00BEE8',
+    '#1FD7C1',
+    '#FF745E',
+    '#FFA35E',
+    '#FC71FF',
+    '#FFC701',
+    '#0038FF',
+    '#C3FF2B',
+    '#FFE62B',
+    '#FF4646',
+    '#FFBB2B',
   ];
 
+  /** Maps each contact's unique key to its assigned color. */
   private contactColorMap = new Map<string, string>();
 
+  /**
+   * Creates an instance of ContactService and subscribes to realtime
+   * updates of the 'contacts' collection in Firestore.
+   */
   constructor() {
-    this.unsubscribe = onSnapshot(
-      collection(this.firebaseDB, 'contacts'),
-      (contactsListObject) => {
+    this.unsubscribe = runInInjectionContext(this.injector, () =>
+      onSnapshot(collection(this.firebaseDB, 'contacts'), (contactsListObject) => {
         this.contactList = [];
         contactsListObject.forEach((docObject) => {
-          this.contactList.push(
-            this.getContactsObject(docObject.id, docObject.data() as Contacts)
-          );
+          this.contactList.push(this.getContactsObject(docObject.id, docObject.data() as Contacts));
         });
         this.rebuildColorMap();
-      }
+      }),
     );
   }
 
@@ -75,7 +95,9 @@ export class ContactService implements OnDestroy {
    */
   async addContactToDataBase(contact: Contacts): Promise<Contacts | null> {
     try {
-      const docRef = await addDoc(collection(this.firebaseDB, 'contacts'), contact);
+      const docRef = await runInInjectionContext(this.injector, () =>
+        addDoc(collection(this.firebaseDB, 'contacts'), contact),
+      );
       const createdContact = {
         id: docRef.id,
         name: contact.name,
@@ -96,8 +118,8 @@ export class ContactService implements OnDestroy {
    */
   async deleteContactOnDatabase(contact: Contacts) {
     if (contact.id) {
-      await deleteDoc(
-        doc(this.firebaseDB, 'contacts', contact.id)
+      await runInInjectionContext(this.injector, () =>
+        deleteDoc(doc(this.firebaseDB, 'contacts', contact.id!)),
       );
     }
   }
@@ -110,22 +132,54 @@ export class ContactService implements OnDestroy {
     if (!contact.id) return;
 
     try {
-      const docRef = this.getSingleDoc('contacts', contact.id);
-      await updateDoc(docRef, this.getCleanJson(contact));
-
-      if (this.selectedContact?.id === contact.id) {
-        this.selectedContact = {
-          ...this.selectedContact,
-          name: contact.name,
-          email: contact.email,
-          phone: contact.phone,
-        };
-      }
-      if (this.currentUserEmail && contact.email === this.currentUserEmail) {
-        this.currentUserName = contact.name;
-      }
+      await this.persistContactUpdate(contact);
+      this.syncLocalStateAfterUpdate(contact);
     } catch (error) {
-      console.error('Fehler beim Update Contact:', error);
+      console.error('Error updating contact:', error);
+    }
+  }
+
+  /**
+   * Persists the updated contact data to Firestore.
+   * @param contact The contact with updated data (must have an id).
+   */
+  private async persistContactUpdate(contact: Contacts) {
+    await runInInjectionContext(this.injector, async () => {
+      const docRef = this.getSingleDoc('contacts', contact.id!);
+      await updateDoc(docRef, this.getCleanJson(contact));
+    });
+  }
+
+  /**
+   * Syncs local state (selected contact and current user name) after a successful update.
+   * @param contact The contact that was updated.
+   */
+  private syncLocalStateAfterUpdate(contact: Contacts) {
+    this.updateSelectedContactIfMatching(contact);
+    this.updateCurrentUserNameIfMatching(contact);
+  }
+
+  /**
+   * Updates the locally cached selected contact if it matches the given contact.
+   * @param contact The contact that was updated.
+   */
+  private updateSelectedContactIfMatching(contact: Contacts) {
+    if (this.selectedContact?.id !== contact.id) return;
+    this.selectedContact = {
+      ...this.selectedContact,
+      name: contact.name,
+      email: contact.email,
+      phone: contact.phone,
+    };
+  }
+
+  /**
+   * Updates the current user's display name if the given contact matches the current user's email.
+   * @param contact The contact that was updated.
+   */
+  private updateCurrentUserNameIfMatching(contact: Contacts) {
+    if (this.currentUserEmail && contact.email === this.currentUserEmail) {
+      this.currentUserName = contact.name;
     }
   }
 
@@ -204,7 +258,7 @@ export class ContactService implements OnDestroy {
   }
 
   /**
-   * Cleans up the subscription when the service is destroyed.
+   * Cleans up the Firestore realtime subscription when the service is destroyed.
    */
   ngOnDestroy() {
     this.unsubscribe();
@@ -212,9 +266,10 @@ export class ContactService implements OnDestroy {
 
   /**
    * Returns the Firestore collection reference for contacts.
+   * @returns The Firestore collection reference for the 'contacts' collection.
    */
   getContactsRef() {
-    return collection(this.firebaseDB, 'contacts');
+    return runInInjectionContext(this.injector, () => collection(this.firebaseDB, 'contacts'));
   }
 
   /**
@@ -239,16 +294,17 @@ export class ContactService implements OnDestroy {
    * @returns The document reference.
    */
   getSingleDoc(colId: string, docId: string) {
-    return doc(collection(this.firebaseDB, colId), docId);
+    return runInInjectionContext(this.injector, () =>
+      doc(collection(this.firebaseDB, colId), docId),
+    );
   }
 
   /**
    * Rebuilds the color map for all contacts based on their sorted order.
-   * @private
    */
   private rebuildColorMap(): void {
     const sorted = [...this.contactList].sort((a, b) =>
-      a.name.localeCompare(b.name, 'de', { sensitivity: 'base' })
+      a.name.localeCompare(b.name, 'de', { sensitivity: 'base' }),
     );
 
     this.contactColorMap.clear();
@@ -264,7 +320,6 @@ export class ContactService implements OnDestroy {
    * Returns a unique key for a contact based on id or name/email.
    * @param contact The contact to get the key for.
    * @returns The unique key as a string.
-   * @private
    */
   private getContactKey(contact: Contacts): string {
     return contact.id ?? `${contact.name}|${contact.email}`;

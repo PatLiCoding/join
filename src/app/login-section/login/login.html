@@ -1,4 +1,4 @@
-<div class="login-form">
+<form (ngSubmit)="login()" class="login-form">
   <div class="login-header">
     <h1>Log in</h1>
     <div class="underline-container">
@@ -13,6 +13,8 @@
         type="email"
         placeholder="Email"
         [(ngModel)]="email"
+        name="email"
+        autocomplete="email"
         (input)="clearLoginError()"
       />
       <img src="assets/icon/login/mail.png" alt="Mail Icon" />
@@ -26,6 +28,8 @@
         [type]="passwordVisible ? 'text' : 'password'"
         placeholder="Password"
         [(ngModel)]="password"
+        name="password"
+        autocomplete="current-password"
         (input)="clearLoginError()"
       />
       <img
@@ -46,7 +50,7 @@
   </div>
 
   <div class="login-section-buttons">
-    <button type="button" class="login-btn" (click)="login()">Log in</button>
+    <button type="submit" class="login-btn">Log in</button>
     <button type="button" class="guest-btn" (click)="guestLogin()">Guest Log in</button>
   </div>
-</div>
+</form>

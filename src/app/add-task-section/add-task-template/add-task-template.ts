@@ -1,4 +1,14 @@
-import { Component, HostListener, Input, Output, EventEmitter, OnInit } from '@angular/core';
+import {
+  Component,
+  HostListener,
+  Input,
+  Output,
+  EventEmitter,
+  OnInit,
+  Injector,
+  inject,
+  runInInjectionContext,
+} from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { TaskService } from '../../firebase-service/task.service';
@@ -10,6 +20,11 @@ import { AssignedToSelectComponent } from '../../shared/assigned-to-select/assig
 import { collectionData } from '@angular/fire/firestore';
 import { map } from 'rxjs/operators';
 
+/**
+ * Component for creating a new task, including title, description, due date,
+ * priority, category, assigned contacts, and subtasks.
+ * Can be used inline or as a dialog (see isDialogMode).
+ */
 @Component({
   selector: 'app-add-task-template',
   standalone: true,
@@ -21,6 +36,8 @@ export class AddTaskTemplate implements OnInit {
   @Input() column: Task['status'] = 'todo';
   @Input() isDialogMode = false;
   @Output() closeDialog = new EventEmitter<void>();
+
+  private injector = inject(Injector);
 
   title = '';
   description = '';
@@ -41,9 +58,14 @@ export class AddTaskTemplate implements OnInit {
   today: string;
   isCategoryDropdownOpen = false;
 
+  /**
+   * Creates an instance of AddTaskTemplate.
+   * @param taskService Service used to create tasks in Firestore.
+   * @param contactService Service used to access the list of contacts.
+   */
   constructor(
     private taskService: TaskService,
-    public contactService: ContactService
+    public contactService: ContactService,
   ) {
     this.today = new Date().toISOString().split('T')[0];
   }
@@ -52,28 +74,35 @@ export class AddTaskTemplate implements OnInit {
    * Initializes the component and loads all contacts from the service.
    */
   ngOnInit(): void {
-    collectionData(this.contactService.getContactsRef(), { idField: 'id' })
-      .pipe(
-        map((contacts: any[]) =>
-          contacts.map(c => ({
-            id: c.id?.toString(),
-            name: c.name || '',
-            email: c.email || '',
-            phone: c.phone || '',
-            selected: false
-          } as Contacts))
+    runInInjectionContext(this.injector, () => {
+      collectionData(this.contactService.getContactsRef(), { idField: 'id' })
+        .pipe(
+          map((contacts: any[]) =>
+            contacts.map(
+              (c) =>
+                ({
+                  id: c.id?.toString(),
+                  name: c.name || '',
+                  email: c.email || '',
+                  phone: c.phone || '',
+                  selected: false,
+                }) as Contacts,
+            ),
+          ),
         )
-      )
-      .subscribe((contacts: Contacts[]) => {
-        this.allContacts = contacts;
-      });
+        .subscribe((contacts: Contacts[]) => {
+          this.allContacts = contacts;
+        });
+    });
   }
 
   /**
    * Sets the priority of the task.
    * @param value The priority value ('urgent', 'medium', or 'low').
    */
-  setPriority(value: 'urgent' | 'medium' | 'low') { this.priority = value; }
+  setPriority(value: 'urgent' | 'medium' | 'low') {
+    this.priority = value;
+  }
 
   /**
    * Toggles the category dropdown open or closed.
@@ -140,17 +169,20 @@ export class AddTaskTemplate implements OnInit {
   saveSubtaskEdit(index: number) {
     if (this.editingSubtaskIndex !== index) return;
     const trimmedTitle = this.editingSubtaskTitle.trim();
-    if (!trimmedTitle) { this.removeSubtask(index); return; }
+    if (!trimmedTitle) {
+      this.removeSubtask(index);
+      return;
+    }
     this.subtasks[index] = { ...this.subtasks[index], title: trimmedTitle };
     this.editingSubtaskIndex = null;
     this.editingSubtaskTitle = '';
   }
 
-  @HostListener('document:click', ['$event'])
   /**
    * Handles clicks outside certain elements to close dropdowns or stop editing.
    * @param event The mouse event.
    */
+  @HostListener('document:click', ['$event'])
   handleClickOutside(event: MouseEvent) {
     const target = event.target as HTMLElement;
 
@@ -161,7 +193,6 @@ export class AddTaskTemplate implements OnInit {
       }
     }
 
-   
     if (!target.closest('.subtask-item')) {
       this.editingSubtaskIndex = null;
       this.editingSubtaskTitle = '';
@@ -180,7 +211,7 @@ export class AddTaskTemplate implements OnInit {
     this.subtasks = [];
     this.newSubtask = '';
     this.assignedToContacts = [];
-    this.allContacts.forEach(c => (c as any).selected = false);
+    this.allContacts.forEach((c) => ((c as any).selected = false));
     this.titleInvalid = false;
     this.dueDateInvalid = false;
     this.categoryInvalid = false;
@@ -209,10 +240,13 @@ export class AddTaskTemplate implements OnInit {
   /**
    * Validates the category field and sets the invalid state.
    */
-  validateCategory() { this.categoryInvalid = !this.category || !this.category.trim(); }
+  validateCategory() {
+    this.categoryInvalid = !this.category || !this.category.trim();
+  }
 
   /**
    * Returns whether the form is valid based on required fields.
+   * @returns True if the form is valid, otherwise false.
    */
   get isFormValid(): boolean {
     const todayIso = new Date().toISOString().split('T')[0];
@@ -232,11 +266,11 @@ export class AddTaskTemplate implements OnInit {
       description: this.description,
       dueDate: this.dueDate,
       priority: this.priority,
-      assignedTo: this.assignedToContacts.map(c => c.name),
+      assignedTo: this.assignedToContacts.map((c) => c.name),
       category: this.category,
       subtasks: this.subtasks,
       status: this.column,
-      position: 0
+      position: 0,
     };
 
     try {
@@ -249,13 +283,19 @@ export class AddTaskTemplate implements OnInit {
 
   /**
    * Handles UI updates after a task is created.
-   * @private
    */
   private handleTaskCreated() {
     this.clearForm();
     this.taskSavedMessage = true;
-    const hideMessage = () => this.taskSavedMessage = false;
-    if (this.isDialogMode) setTimeout(() => { hideMessage(); this.closeDialog.emit(); }, 1000);
-    else setTimeout(() => { hideMessage(); }, 1000);
+    const hideMessage = () => (this.taskSavedMessage = false);
+    if (this.isDialogMode)
+      setTimeout(() => {
+        hideMessage();
+        this.closeDialog.emit();
+      }, 1000);
+    else
+      setTimeout(() => {
+        hideMessage();
+      }, 1000);
   }
 }

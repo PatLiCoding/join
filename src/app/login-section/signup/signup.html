@@ -1,5 +1,4 @@
-<div class="signup-wrapper">
-
+<form class="signup-wrapper" (ngSubmit)="signup()">
   <div class="signup-form">
     <button class="back-btn" routerLink="/login" aria-label="Back to login" type="button">
       <img src="assets/icon/login/arrow_left.png" alt="Back" />
@@ -11,140 +10,214 @@
     </div>
 
     <div class="signup-scroll-area">
-    <div class="input-group-wrapper">
-      <div class="input-group"
-        [class.error]="nameModel.invalid && nameModel.touched && !nameFocused && nameModel.value?.length > 0">
-        <input
-          type="text"
-          placeholder="Name"
-          name="name"
-          [(ngModel)]="name"
-          #nameModel="ngModel"
-          required
-          minlength="5"
-          pattern="[A-Za-zÄÖÜäöüß ]+"
-          (input)="onNameInput($event)"
-          (focus)="nameFocused = true"
-          (blur)="nameFocused = false"
-        />
-        <img src="assets/icon/login/person.png" alt="User" />
+      <div class="input-group-wrapper">
+        <div
+          class="input-group"
+          [class.error]="
+            nameModel.invalid && nameModel.touched && !nameFocused && nameModel.value?.length > 0
+          "
+        >
+          <input
+            type="text"
+            placeholder="Name"
+            name="name"
+            autocomplete="name"
+            [(ngModel)]="name"
+            #nameModel="ngModel"
+            required
+            minlength="5"
+            pattern="[A-Za-zÄÖÜäöüß ]+"
+            (input)="onNameInput($event)"
+            (focus)="nameFocused = true"
+            (blur)="nameFocused = false"
+          />
+          <img src="assets/icon/login/person.png" alt="User" />
+        </div>
+        <div
+          class="error-message"
+          [class.show]="
+            nameModel.invalid && nameModel.touched && !nameFocused && nameModel.value?.length > 0
+          "
+        >
+          @if (
+            nameModel.invalid && nameModel.touched && !nameFocused && nameModel.value?.length > 0
+          ) {
+            Name must be at least 5 characters.
+          }
+        </div>
       </div>
-      <div class="error-message" [class.show]="nameModel.invalid && nameModel.touched && !nameFocused && nameModel.value?.length > 0">
-        @if (nameModel.invalid && nameModel.touched && !nameFocused && nameModel.value?.length > 0) {
-          Name must be at least 5 characters.
-        }
-      </div>
-    </div>
 
-    <div class="input-group-wrapper">
-      <div class="input-group"
-        [class.error]="emailModel.invalid && emailModel.touched && !emailFocused && emailModel.value?.length > 0">
-        <input
-          type="email"
-          placeholder="Email"
-          name="email"
-          [(ngModel)]="email"
-          #emailModel="ngModel"
-          required
-          pattern="[a-zA-Z0-9._%+\-]+@[a-zA-Z0-9.\-]+\.[a-zA-Z]{2,}"
-          (focus)="emailFocused = true"
-          (blur)="emailFocused = false"
-        />
-        <img src="assets/icon/login/mail.png" alt="Email" />
+      <div class="input-group-wrapper">
+        <div
+          class="input-group"
+          [class.error]="
+            emailModel.invalid &&
+            emailModel.touched &&
+            !emailFocused &&
+            emailModel.value?.length > 0
+          "
+        >
+          <input
+            type="email"
+            placeholder="Email"
+            name="email"
+            autocomplete="email"
+            [(ngModel)]="email"
+            #emailModel="ngModel"
+            required
+            pattern="[a-zA-Z0-9._%+\-]+@[a-zA-Z0-9.\-]+\.[a-zA-Z]{2,}"
+            (focus)="emailFocused = true"
+            (blur)="emailFocused = false"
+          />
+          <img src="assets/icon/login/mail.png" alt="Email" />
+        </div>
+        <div
+          class="error-message"
+          [class.show]="
+            (emailModel.invalid &&
+              emailModel.touched &&
+              !emailFocused &&
+              emailModel.value?.length > 0) ||
+            emailAlreadyInUse
+          "
+        >
+          @if (emailAlreadyInUse) {
+            Email already in use.
+          } @else if (
+            emailModel.invalid &&
+            emailModel.touched &&
+            !emailFocused &&
+            emailModel.value?.length > 0
+          ) {
+            Enter a valid email.
+          }
+        </div>
       </div>
-      <div class="error-message" [class.show]="(emailModel.invalid && emailModel.touched && !emailFocused && emailModel.value?.length > 0) || emailAlreadyInUse">
-        @if (emailAlreadyInUse) {
-          Email already in use.
-        } @else if (emailModel.invalid && emailModel.touched && !emailFocused && emailModel.value?.length > 0) {
-          Enter a valid email.
-        }
-      </div>
-    </div>
 
-    <div class="input-group-wrapper">
-      <div class="input-group"
-        [class.error]="!isPasswordSecure && passwordModel.touched && !passwordFocused && passwordModel.value?.length > 0">
-        <input
-          [type]="passwordVisible ? 'text' : 'password'"
-          placeholder="Password"
-          name="password"
-          [(ngModel)]="password"
-          #passwordModel="ngModel"
-          required
-          (focus)="passwordFocused = true"
-          (blur)="passwordFocused = false"
-        />
-        <img
-          [src]="!password
-            ? 'assets/icon/login/lock.png'
-            : 'assets/icon/login/' + (passwordVisible ? 'visibility.png' : 'visibility_off.png')"
-          alt="Toggle Password Visibility"
-          (click)="togglePasswordVisibility()"
-          style="cursor: pointer;"
-        />
+      <div class="input-group-wrapper">
+        <div
+          class="input-group"
+          [class.error]="
+            !isPasswordSecure &&
+            passwordModel.touched &&
+            !passwordFocused &&
+            passwordModel.value?.length > 0
+          "
+        >
+          <input
+            [type]="passwordVisible ? 'text' : 'password'"
+            placeholder="Password"
+            name="password"
+            autocomplete="new-password"
+            [(ngModel)]="password"
+            #passwordModel="ngModel"
+            required
+            (focus)="passwordFocused = true"
+            (blur)="passwordFocused = false"
+          />
+          <img
+            [src]="
+              !password
+                ? 'assets/icon/login/lock.png'
+                : 'assets/icon/login/' + (passwordVisible ? 'visibility.png' : 'visibility_off.png')
+            "
+            alt="Toggle Password Visibility"
+            (click)="togglePasswordVisibility()"
+            style="cursor: pointer"
+          />
+        </div>
+        <div
+          class="error-message"
+          [class.show]="
+            !isPasswordSecure &&
+            passwordModel.touched &&
+            !passwordFocused &&
+            passwordModel.value?.length > 0
+          "
+        >
+          @if (
+            !isPasswordSecure &&
+            passwordModel.touched &&
+            !passwordFocused &&
+            passwordModel.value?.length > 0
+          ) {
+            Min. 6 chars, incl. upper, lower & number.
+          }
+        </div>
       </div>
-      <div class="error-message" [class.show]="!isPasswordSecure && passwordModel.touched && !passwordFocused && passwordModel.value?.length > 0">
-        @if (!isPasswordSecure && passwordModel.touched && !passwordFocused && passwordModel.value?.length > 0) {
-          Min. 6 chars, incl. upper, lower & number.
-        }
-      </div>
-    </div>
 
-    <div class="input-group-wrapper">
-      <div class="input-group"
-        [class.error]="confirmModel.touched && !confirmFocused && passwordMismatch && confirmModel.value?.length > 0">
-        <input
-          [type]="confirmPasswordVisible ? 'text' : 'password'"
-          placeholder="Confirm Password"
-          name="confirmPassword"
-          [(ngModel)]="confirmPassword"
-          #confirmModel="ngModel"
-          required
-          (focus)="confirmFocused = true"
-          (blur)="confirmFocused = false"
-        />
-        <img
-          [src]="!confirmPassword
-            ? 'assets/icon/login/lock.png'
-            : 'assets/icon/login/' + (confirmPasswordVisible ? 'visibility.png' : 'visibility_off.png')"
-          alt="Toggle Confirm Password Visibility"
-          (click)="toggleConfirmPasswordVisibility()"
-          style="cursor: pointer;"
-        />
+      <div class="input-group-wrapper">
+        <div
+          class="input-group"
+          [class.error]="
+            confirmModel.touched &&
+            !confirmFocused &&
+            passwordMismatch &&
+            confirmModel.value?.length > 0
+          "
+        >
+          <input
+            [type]="confirmPasswordVisible ? 'text' : 'password'"
+            placeholder="Confirm Password"
+            name="confirmPassword"
+            autocomplete="new-password"
+            [(ngModel)]="confirmPassword"
+            #confirmModel="ngModel"
+            required
+            (focus)="confirmFocused = true"
+            (blur)="confirmFocused = false"
+          />
+          <img
+            [src]="
+              !confirmPassword
+                ? 'assets/icon/login/lock.png'
+                : 'assets/icon/login/' +
+                  (confirmPasswordVisible ? 'visibility.png' : 'visibility_off.png')
+            "
+            alt="Toggle Confirm Password Visibility"
+            (click)="toggleConfirmPasswordVisibility()"
+            style="cursor: pointer"
+          />
+        </div>
+        <div
+          class="error-message"
+          [class.show]="
+            confirmModel.touched &&
+            !confirmFocused &&
+            passwordMismatch &&
+            confirmModel.value?.length > 0
+          "
+        >
+          @if (
+            confirmModel.touched &&
+            !confirmFocused &&
+            passwordMismatch &&
+            confirmModel.value?.length > 0
+          ) {
+            Your passwords don't match. Please try again.
+          }
+        </div>
       </div>
-      <div class="error-message" [class.show]="confirmModel.touched && !confirmFocused && passwordMismatch && confirmModel.value?.length > 0">
-        @if (confirmModel.touched && !confirmFocused && passwordMismatch && confirmModel.value?.length > 0) {
-          Your passwords don't match. Please try again.
-        }
-      </div>
-    </div>
-
     </div>
 
     <label class="privacy">
       <input type="checkbox" [(ngModel)]="acceptedPrivacy" name="privacy" />
       <img
         class="privacy-checkbox-icon"
-        [src]="acceptedPrivacy
-          ? 'assets/icon/login/checkbox_checked.png'
-          : 'assets/icon/login/checkbox_default.png'"
+        [src]="
+          acceptedPrivacy
+            ? 'assets/icon/login/checkbox_checked.png'
+            : 'assets/icon/login/checkbox_default.png'
+        "
         alt="Accept privacy policy"
       />
-      <span>
-        I accept the <a routerLink="/privacy">Privacy Policy</a>
-      </span>
+      <span> I accept the <a routerLink="/privacy">Privacy Policy</a> </span>
     </label>
 
-    <button
-      type="button"
-      [disabled]="!isFormValid() || isLoading"
-      (click)="signup()">
+    <button type="submit" [disabled]="!isFormValid() || isLoading">
       {{ isLoading ? 'Signing up...' : 'Sign up' }}
     </button>
 
-    <div class="success-overlay" [class.show]="signupSuccess">
-      You Signed Up successfully
-    </div>
+    <div class="success-overlay" [class.show]="signupSuccess">You Signed Up successfully</div>
   </div>
-
-</div>
+</form>
