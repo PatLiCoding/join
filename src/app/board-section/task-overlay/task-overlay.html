@@ -1,20 +1,17 @@
 <div class="overlay-backdrop">
   <div class="task-overlay">
-
     <div *ngIf="!isEditMode && task" class="task-container--view">
-
       <div class="overlay-header">
         <button class="close-btn" (click)="onClose()">✕</button>
       </div>
 
       <div class="scrollable-middle">
-
         <div class="category-badge" [style.background-color]="categoryColor">
           {{ safeTask.category }}
         </div>
 
         <h1 class="task-title" [title]="safeTask.title">
-          {{ safeTask.title.length > 20 ? (safeTask.title | slice:0:20) + '…' : safeTask.title }}
+          {{ safeTask.title.length > 20 ? (safeTask.title | slice: 0 : 20) + '…' : safeTask.title }}
         </h1>
 
         <p class="task-description">
@@ -22,12 +19,11 @@
         </p>
 
         <div class="overlay-body">
-
           <div class="info-grid">
             <div class="info-row">
               <span class="label">Due date:</span>
               <span class="value">
-                {{ safeTask.dueDate | date:'dd/MM/yyyy' }}
+                {{ safeTask.dueDate | date: 'dd/MM/yyyy' }}
               </span>
             </div>
 
@@ -46,7 +42,6 @@
             <div class="contacts-list">
               <div *ngIf="assignedContacts.length; else noContacts" class="assigned-list scrollable">
                 <div *ngFor="let contact of assignedContacts; trackBy: trackByContactId" class="assigned-item">
-
                   <div class="avatar" [style.background-color]="getContactColor(contact)">
                     {{ getInitials(contact.name) }}
                   </div>
@@ -58,9 +53,7 @@
               </div>
 
               <ng-template #noContacts>
-                <div class="empty-state">
-                  No contacts assigned
-                </div>
+                <div class="empty-state">No contacts assigned</div>
               </ng-template>
             </div>
           </div>
@@ -71,11 +64,10 @@
             <div class="subtasks-list-view">
               <div *ngFor="let subtask of task.subtasks; let i = index" class="subtask-item clickable"
                 (click)="toggleSubtask(subtask)">
-
-                <img class="subtask-checkbox-img" [src]="'assets/imgs/add-task/' +
-                     (subtask.completed
-                       ? 'checkbox-checked.png'
-                       : 'check_unchecked.png')" />
+                <img class="subtask-checkbox-img" [src]="
+                    'assets/imgs/add-task/' +
+                    (subtask.completed ? 'checkbox-checked.png' : 'check_unchecked.png')
+                  " />
 
                 <span class="subtask-title-text">
                   {{ subtask.title }}
@@ -84,6 +76,14 @@
             </div>
           </div>
 
+          <div class="form-group" *ngIf="safeTask.attachments.length">
+            <span class="label">Attachments:</span>
+            <div class="attachment-preview-list" #editGallery *ngIf="editedTask.attachments?.length">
+                <div class="attachment-thumb" *ngFor="let att of editedTask.attachments; let i = index">
+                  <img [src]="att.base64" [alt]="att.filename" />
+                </div>
+            </div>
+          </div>
         </div>
       </div>
 
@@ -100,26 +100,20 @@
           Edit
         </button>
       </div>
-
     </div>
 
     <div *ngIf="isEditMode && task" class="task-container--edit">
-
       <div class="overlay-header">
         <button class="close-btn" (click)="onClose()">✕</button>
       </div>
 
       <div class="scrollable-middle">
         <div class="overlay-body">
-
           <form #taskForm="ngForm" novalidate>
-
             <div class="form-group">
               <label>Title</label>
               <input type="text" [(ngModel)]="editedTask.title" name="title" required #title="ngModel" />
-              <div class="error" *ngIf="title.invalid && title.touched">
-                This field is required
-              </div>
+              <div class="error" *ngIf="title.invalid && title.touched">This field is required</div>
             </div>
 
             <div class="form-group">
@@ -131,9 +125,7 @@
               <label>Due date</label>
               <input type="date" [(ngModel)]="editedTask.dueDate" name="dueDate" required #dueDate="ngModel" />
               <div class="error" *ngIf="(dueDate.touched && dueDate.invalid) || isDateInPast()">
-                <span *ngIf="dueDate.errors?.['required']">
-                  This field is required
-                </span>
+                <span *ngIf="dueDate.errors?.['required']"> This field is required </span>
                 <span *ngIf="!dueDate.errors?.['required'] && isDateInPast()">
                   The due date cannot be in the past
                 </span>
@@ -143,23 +135,32 @@
             <div class="form-group">
               <label>Priority</label>
               <div class="priority-buttons">
-                <button type="button" class="priority urgent" [class.active]="editedTask.priority==='urgent'"
-                  (click)="editedTask.priority='urgent'">
+                <button type="button" class="priority urgent" [class.active]="editedTask.priority === 'urgent'"
+                  (click)="editedTask.priority = 'urgent'">
                   <span>Urgent</span>
-                  <img
-                    [src]="editedTask.priority==='urgent' ? 'assets/imgs/add-task/urgent_white.png' : 'assets/imgs/add-task/urgent_default.png'" />
+                  <img [src]="
+                      editedTask.priority === 'urgent'
+                        ? 'assets/imgs/add-task/urgent_white.png'
+                        : 'assets/imgs/add-task/urgent_default.png'
+                    " />
                 </button>
-                <button type="button" class="priority medium" [class.active]="editedTask.priority==='medium'"
-                  (click)="editedTask.priority='medium'">
+                <button type="button" class="priority medium" [class.active]="editedTask.priority === 'medium'"
+                  (click)="editedTask.priority = 'medium'">
                   <span>Medium</span>
-                  <img
-                    [src]="editedTask.priority==='medium' ? 'assets/imgs/add-task/medium_white.png' : 'assets/imgs/add-task/medium_default.png'" />
+                  <img [src]="
+                      editedTask.priority === 'medium'
+                        ? 'assets/imgs/add-task/medium_white.png'
+                        : 'assets/imgs/add-task/medium_default.png'
+                    " />
                 </button>
-                <button type="button" class="priority low" [class.active]="editedTask.priority==='low'"
-                  (click)="editedTask.priority='low'">
+                <button type="button" class="priority low" [class.active]="editedTask.priority === 'low'"
+                  (click)="editedTask.priority = 'low'">
                   <span>Low</span>
-                  <img
-                    [src]="editedTask.priority==='low' ? 'assets/imgs/add-task/low_white.png' : 'assets/imgs/add-task/low_default.png'" />
+                  <img [src]="
+                      editedTask.priority === 'low'
+                        ? 'assets/imgs/add-task/low_white.png'
+                        : 'assets/imgs/add-task/low_default.png'
+                    " />
                 </button>
               </div>
             </div>
@@ -180,7 +181,7 @@
 
                 <div class="subtask-actions">
                   <img src="assets/imgs/add-task/delete_grey.png" class="subtask-icon delete"
-                    (click)="newSubtaskTitle=''" />
+                    (click)="newSubtaskTitle = ''" />
 
                   <div class="subtask-divider"></div>
 
@@ -190,9 +191,8 @@
               <div class="subtask-list-container">
                 <div class="subtask-list">
                   <div *ngFor="let subtask of editedTask.subtasks; let i = index" class="subtask-item"
-                    [class.editing]="editingSubtaskIndex === i" (mouseenter)="hoveredSubtaskIndex=i"
-                    (mouseleave)="hoveredSubtaskIndex=null" (click)="startSubtaskEdit(i)">
-
+                    [class.editing]="editingSubtaskIndex === i" (mouseenter)="hoveredSubtaskIndex = i"
+                    (mouseleave)="hoveredSubtaskIndex = null" (click)="startSubtaskEdit(i)">
                     <span class="subtask-bullet" *ngIf="editingSubtaskIndex !== i">•</span>
 
                     <ng-container *ngIf="editingSubtaskIndex === i; else viewMode">
@@ -218,13 +218,31 @@
                           (click)="removeSubtask(i); $event.stopPropagation()" />
                       </div>
                     </ng-template>
-
                   </div>
                 </div>
               </div>
-
             </div>
 
+            <div class="form-group">
+              <label>Attachments (images)</label>
+
+              <input type="file" accept="image/png, image/jpeg, image/webp" multiple (change)="onFilesSelected($event)"
+                #editFileInput style="display: none;" />
+
+              <button type="button" class="upload-btn" (click)="editFileInput.click()">
+                Select file(s)
+              </button>
+
+              <p class="error" *ngIf="attachmentError">{{ attachmentError }}</p>
+
+              <div class="attachment-preview-list" #editGallery *ngIf="editedTask.attachments?.length">
+                <div class="attachment-thumb" *ngFor="let att of editedTask.attachments; let i = index">
+                  <img [src]="att.base64" [alt]="att.filename" />
+                  <button type="button" class="remove-attachment"
+                    (click)="removeAttachment(i); $event.stopPropagation()">✕</button>
+                </div>
+              </div>
+            </div>
           </form>
         </div>
       </div>
@@ -235,8 +253,6 @@
           {{ isSaving ? 'Saving...' : 'Ok ✓' }}
         </button>
       </div>
-
     </div>
-
   </div>
 </div>

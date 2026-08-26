@@ -1,6 +1,8 @@
 import {
   Component,
   HostListener,
+  ElementRef,
+  ViewChild,
   Input,
   Output,
   EventEmitter,
@@ -16,6 +18,9 @@ import { ContactService } from '../../firebase-service/contact-service';
 import { Contacts } from '../../interfaces/contacts';
 import { Task, Subtask } from '../../interfaces/task';
 import { AssignedToSelectComponent } from '../../shared/assigned-to-select/assigned-to-select';
+import Viewer from 'viewerjs';
+import { ImageCompressionService } from '../../firebase-service/image-compression.service';
+import { Attachment } from '../../interfaces/task';
 
 import { collectionData } from '@angular/fire/firestore';
 import { map } from 'rxjs/operators';
@@ -58,6 +63,12 @@ export class AddTaskTemplate implements OnInit {
   today: string;
   isCategoryDropdownOpen = false;
 
+  attachments: Attachment[] = [];
+  fileError = '';
+
+  @ViewChild('gallery') galleryRef?: ElementRef<HTMLDivElement>;
+  private viewerInstance: Viewer | null = null;
+
   /**
    * Creates an instance of AddTaskTemplate.
    * @param taskService Service used to create tasks in Firestore.
@@ -66,8 +77,60 @@ export class AddTaskTemplate implements OnInit {
   constructor(
     private taskService: TaskService,
     public contactService: ContactService,
+    private imageCompression: ImageCompressionService,
   ) {
     this.today = new Date().toISOString().split('T')[0];
+  }
+
+  async onFilesSelected(event: Event) {
+    const input = event.target as HTMLInputElement;
+    if (!input.files?.length) return;
+    this.fileError = '';
+
+    for (const file of Array.from(input.files)) {
+      if (!this.imageCompression.isTypeAllowed(file)) {
+        this.fileError = 'Only PNG, JPG, or WEBP files are allowed.';
+        continue;
+      }
+      if (!this.imageCompression.isSizeAllowed(file)) {
+        this.fileError = 'File is too large (max. 5 MB).';
+        continue;
+      }
+      try {
+        const base64 = await this.imageCompression.compressImage(file);
+        this.attachments.push({ filename: file.name, fileType: file.type, base64 });
+      } catch {
+        this.fileError = 'The file could not be processed.';
+      }
+    }
+    input.value = '';
+    this.refreshViewer();
+  }
+
+  removeAttachment(index: number) {
+    this.attachments.splice(index, 1);
+    this.refreshViewer();
+  }
+
+  /**
+   * (Re-)initialisiert Viewer.js, nachdem sich die Galerie geändert hat.
+   * setTimeout wartet, bis Angular das DOM aktualisiert hat.
+   */
+  private refreshViewer() {
+    setTimeout(() => {
+      this.viewerInstance?.destroy();
+      if (this.galleryRef?.nativeElement) {
+        this.viewerInstance = new Viewer(this.galleryRef.nativeElement, {
+          inline: false,
+          toolbar: true,
+          navbar: this.attachments.length > 1,
+        });
+      }
+    });
+  }
+
+  ngOnDestroy() {
+    this.viewerInstance?.destroy();
   }
 
   /**
@@ -217,6 +280,9 @@ export class AddTaskTemplate implements OnInit {
     this.categoryInvalid = false;
     this.editingSubtaskIndex = null;
     this.editingSubtaskTitle = '';
+    this.attachments = [];
+    this.fileError = '';
+    this.viewerInstance?.destroy();
 
     if (this.isDialogMode) this.closeDialog.emit();
   }
@@ -271,6 +337,7 @@ export class AddTaskTemplate implements OnInit {
       subtasks: this.subtasks,
       status: this.column,
       position: 0,
+      attachments: this.attachments,
     };
 
     try {

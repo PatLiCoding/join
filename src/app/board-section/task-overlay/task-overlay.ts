@@ -1,12 +1,14 @@
 import {
   Component,
+  ViewChild,
+  ElementRef,
   Input,
   Output,
   EventEmitter,
   OnInit,
   OnChanges,
   SimpleChanges,
-  HostListener
+  HostListener,
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
@@ -15,6 +17,9 @@ import { Contacts } from '../../interfaces/contacts';
 import { ContactService } from '../../firebase-service/contact-service';
 import { AssignedToSelectComponent } from '../../shared/assigned-to-select/assigned-to-select';
 import { TaskService } from '../../firebase-service/task.service';
+import Viewer from 'viewerjs';
+import { ImageCompressionService } from '../../firebase-service/image-compression.service';
+import { Attachment } from '../../interfaces/task';
 
 /** Interface representing a subtask */
 interface Subtask {
@@ -34,7 +39,6 @@ interface Subtask {
   styleUrls: ['./task-overlay.scss'],
 })
 export class TaskOverlay implements OnInit, OnChanges {
-
   /** Task to display or edit */
   @Input() task: (Task & { id: string }) | null = null;
 
@@ -47,7 +51,6 @@ export class TaskOverlay implements OnInit, OnChanges {
   /** Event emitted when the task is saved */
   @Output() save = new EventEmitter<Omit<Task, 'id' | 'createdAt'>>();
 
-
   isEditMode = false;
   isSaving = false;
   today = new Date().toISOString().split('T')[0];
@@ -57,6 +60,11 @@ export class TaskOverlay implements OnInit, OnChanges {
   subtaskBackup: string | null = null;
   originalDueDate: string | null = null;
   assignedContacts: Contacts[] = [];
+  attachmentError = '';
+
+  @ViewChild('viewGallery') viewGalleryRef?: ElementRef<HTMLDivElement>;
+  @ViewChild('editGallery') editGalleryRef?: ElementRef<HTMLDivElement>;
+  private viewerInstance: Viewer | null = null;
 
   /** Task data being edited */
   editedTask: Omit<Task, 'id' | 'createdAt'> = {
@@ -69,6 +77,7 @@ export class TaskOverlay implements OnInit, OnChanges {
     status: 'todo',
     assignedTo: [],
     position: 0,
+    attachments: [],
   };
 
   /**
@@ -79,7 +88,51 @@ export class TaskOverlay implements OnInit, OnChanges {
   constructor(
     public contactService: ContactService,
     private taskService: TaskService,
-  ) { }
+    private imageCompression: ImageCompressionService,
+  ) {}
+
+  async onFilesSelected(event: Event) {
+    const input = event.target as HTMLInputElement;
+    if (!input.files?.length) return;
+    this.attachmentError = '';
+
+    for (const file of Array.from(input.files)) {
+      if (!this.imageCompression.isTypeAllowed(file)) {
+        this.attachmentError = 'Only PNG, JPG, or WEBP files are allowed.';
+        continue;
+      }
+      if (!this.imageCompression.isSizeAllowed(file)) {
+        this.attachmentError = 'File is too large (max. 5 MB).';
+        continue;
+      }
+      try {
+        const base64 = await this.imageCompression.compressImage(file);
+        this.editedTask.attachments = [
+          ...(this.editedTask.attachments || []),
+          { filename: file.name, fileType: file.type, base64 },
+        ];
+      } catch {
+        this.attachmentError = 'The file could not be processed.';
+      }
+    }
+    input.value = '';
+    this.refreshViewer('edit');
+  }
+
+  removeAttachment(index: number) {
+    this.editedTask.attachments = (this.editedTask.attachments || []).filter((_, i) => i !== index);
+    this.refreshViewer('edit');
+  }
+
+  private refreshViewer(target: 'edit' | 'view') {
+    setTimeout(() => {
+      const ref = target === 'edit' ? this.editGalleryRef : this.viewGalleryRef;
+      this.viewerInstance?.destroy();
+      if (ref?.nativeElement) {
+        this.viewerInstance = new Viewer(ref.nativeElement, { inline: false, toolbar: true });
+      }
+    });
+  }
 
   /**
    * Lifecycle hook called on component initialization.
@@ -98,6 +151,11 @@ export class TaskOverlay implements OnInit, OnChanges {
   ngOnChanges(_: SimpleChanges) {
     this.loadTaskData();
     this.loadAssignedContacts();
+    this.refreshViewer('edit');
+  }
+
+  ngOnDestroy() {
+    this.viewerInstance?.destroy();
   }
 
   /**
@@ -129,8 +187,8 @@ export class TaskOverlay implements OnInit, OnChanges {
    */
   private loadAssignedContacts() {
     if (this.task?.assignedTo?.length) {
-      this.assignedContacts = this.contactService.contactList.filter(c =>
-        (this.task?.assignedTo || []).includes(c.name)
+      this.assignedContacts = this.contactService.contactList.filter((c) =>
+        (this.task?.assignedTo || []).includes(c.name),
       );
     } else {
       this.assignedContacts = [];
@@ -142,7 +200,7 @@ export class TaskOverlay implements OnInit, OnChanges {
    * @param selectedContacts Array of selected contacts
    */
   onContactsChange(selectedContacts: Contacts[]) {
-    this.editedTask.assignedTo = selectedContacts.map(c => c.name);
+    this.editedTask.assignedTo = selectedContacts.map((c) => c.name);
     this.assignedContacts = [...selectedContacts];
   }
 
@@ -164,7 +222,7 @@ export class TaskOverlay implements OnInit, OnChanges {
     if (!name) return '';
     return name
       .split(' ')
-      .map(n => n[0])
+      .map((n) => n[0])
       .join('')
       .toUpperCase()
       .substring(0, 2);
@@ -246,7 +304,8 @@ export class TaskOverlay implements OnInit, OnChanges {
    */
   private updateSubtasksInTask() {
     if (!this.task?.id) return;
-    this.taskService.updateTask(this.task.id, { subtasks: this.editedTask.subtasks })
+    this.taskService
+      .updateTask(this.task.id, { subtasks: this.editedTask.subtasks })
       .catch(console.error);
   }
 
@@ -257,6 +316,7 @@ export class TaskOverlay implements OnInit, OnChanges {
     if (!this.task) return;
     this.editedTask = this.extractEditableTask(this.task);
     this.isEditMode = true;
+    this.refreshViewer('edit');
   }
 
   /**
@@ -271,10 +331,7 @@ export class TaskOverlay implements OnInit, OnChanges {
    * @returns Boolean indicating form validity
    */
   private isFormValid(): boolean {
-    return !!(
-      this.editedTask.title?.trim() &&
-      this.editedTask.dueDate
-    );
+    return !!(this.editedTask.title?.trim() && this.editedTask.dueDate);
   }
 
   /**
@@ -336,6 +393,7 @@ export class TaskOverlay implements OnInit, OnChanges {
       category: t?.category || 'User Story',
       assignedTo: t?.assignedTo || [],
       subtasks: t?.subtasks || [],
+      attachments: t?.attachments || [],
     };
   }
 
@@ -382,7 +440,13 @@ export class TaskOverlay implements OnInit, OnChanges {
   @HostListener('document:click', ['$event'])
   onDocumentClick(event: MouseEvent) {
     const overlay = document.querySelector('.task-overlay');
-    if (overlay && !overlay.contains(event.target as Node)) {
+    const viewerEl = document.querySelector('.viewer-container');
+    const target = event.target as Node;
+
+    const clickedInsideOverlay = overlay?.contains(target);
+    const clickedInsideViewer = viewerEl?.contains(target);
+
+    if (!clickedInsideOverlay && !clickedInsideViewer) {
       this.onClose();
     }
   }
