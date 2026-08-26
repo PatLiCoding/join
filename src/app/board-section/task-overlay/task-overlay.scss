@@ -9,6 +9,93 @@
   animation: fadeIn 0.2s ease;
 }
 
+.upload-btn {
+  align-self: flex-start;
+  height: 40px;
+  width: 100%;
+  padding: 0 16px;
+  border: 1px solid #d1d1d1;
+  border-radius: 10px;
+  background: #fff;
+  font-family: 'Inter', sans-serif;
+  font-size: 20px;
+  transition:
+    box-shadow 0.2s ease,
+    border-color 0.2s ease;
+  &:hover {
+    cursor: pointer;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+  }
+}
+
+.attachment-preview-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+  max-height: 80px;
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-right: 4px;
+  overflow-y: auto;
+
+  &::-webkit-scrollbar {
+    width: 4px;
+  }
+
+  &::-webkit-scrollbar-track {
+    background: #f6f7f8;
+    border-radius: 10px;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background: #a8a8a8;
+    border-radius: 10px;
+  }
+
+  &::-webkit-scrollbar-thumb:hover {
+    background: #2a3647;
+  }
+}
+
+.attachment-thumb {
+  position: relative;
+  width: 64px;
+  height: 64px;
+
+  img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 8px;
+    border: 1px solid #d1d1d1;
+    &:hover {
+      cursor: pointer;
+      filter: brightness(1.1);
+      box-shadow: 2px 2px 2px rgba(0, 0, 0, 0.2);
+    }
+  }
+
+  .remove-attachment {
+    position: absolute;
+    top: -6px;
+    right: -6px;
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    background: #2a3647;
+    color: #fff;
+    border: none;
+    font-size: 12px;
+    line-height: 1;
+    &:hover {
+      cursor: pointer;
+      background: #fff;
+      color: #2a3647;
+      border: 1px solid #2a3647;
+    }
+  }
+}
+
 @keyframes fadeIn {
   from {
     opacity: 0;
@@ -79,7 +166,7 @@
   min-height: 0;
   overflow-y: auto;
   padding: 20px;
-  max-height: calc(95vh - 48px*2 - 57px - 24px);
+  max-height: calc(95vh - 48px * 2 - 57px - 24px);
 }
 
 .category-badge {
@@ -237,7 +324,7 @@
     padding: 8px 16px;
     background-color: white;
     border: none;
-    color: #2A3647;
+    color: #2a3647;
 
     .btn-icon {
       width: 18px;
@@ -270,7 +357,7 @@
   }
 
   .save-btn {
-    background-color: #2A3647;
+    background-color: #2a3647;
     color: #fff;
     width: 89px;
     height: 57px;
@@ -285,13 +372,12 @@
     gap: 4px;
 
     &:hover {
-      background-color: #29ABE2;
+      background-color: #29abe2;
     }
   }
 }
 
 .task-container--view {
-
   .subtasks-list-view {
     display: flex;
     flex-direction: column;
@@ -309,12 +395,12 @@
     }
 
     &::-webkit-scrollbar-thumb {
-      background: #A8A8A8;
+      background: #a8a8a8;
       border-radius: 10px;
     }
 
     &::-webkit-scrollbar-thumb:hover {
-      background: #2A3647;
+      background: #2a3647;
     }
 
     .subtask-item {
@@ -348,18 +434,17 @@
     }
   }
 
-  .form-group>.label {
-    font-size: clamp(16px, 3vw, 20px); 
+  .form-group > .label {
+    font-size: clamp(16px, 3vw, 20px);
     font-weight: 400;
     color: #2a3647;
-    margin-top: 24px; 
+    margin-top: 24px;
     margin-bottom: 8px;
     display: block;
   }
 }
 
 .task-container--edit {
-
   .overlay-header {
     position: relative;
 
@@ -395,7 +480,7 @@
     margin-top: 32px;
 
     label {
-      font-size: 20px; 
+      font-size: 20px;
       font-weight: 400;
       color: #2a3647;
       margin-bottom: 8px;
@@ -416,7 +501,7 @@
 
       &:focus {
         outline: none;
-        border-color: #29ABE2;
+        border-color: #29abe2;
       }
 
       &::placeholder {
@@ -429,7 +514,7 @@
       resize: vertical;
     }
 
-    input[type="date"] {
+    input[type='date'] {
       cursor: pointer;
     }
 
@@ -448,7 +533,7 @@
       width: 136px;
       height: 56px;
       padding: 0 12px;
-      border: 1px solid #D1D1D1;
+      border: 1px solid #d1d1d1;
       border-radius: 10px;
       background-color: #fff;
       cursor: pointer;
@@ -456,7 +541,7 @@
       font-weight: 400;
       font-size: 20px;
       line-height: 120%;
-      color: #2A3647;
+      color: #2a3647;
       transition: 0.2s ease;
       display: flex;
       align-items: center;
@@ -475,8 +560,8 @@
         }
 
         &.active {
-          background-color: #FF3D00;
-          border-color: #FF3D00;
+          background-color: #ff3d00;
+          border-color: #ff3d00;
           color: #fff;
         }
       }
@@ -487,8 +572,8 @@
         }
 
         &.active {
-          background-color: #FFA800;
-          border-color: #FFA800;
+          background-color: #ffa800;
+          border-color: #ffa800;
           color: #fff;
         }
       }
@@ -499,8 +584,8 @@
         }
 
         &.active {
-          background-color: #7AE229;
-          border-color: #7AE229;
+          background-color: #7ae229;
+          border-color: #7ae229;
           color: #fff;
         }
       }
@@ -605,12 +690,12 @@
         }
 
         &.editing {
-          border-bottom: 2px solid #29ABE2; 
-          border-radius: 0; 
+          border-bottom: 2px solid #29abe2;
+          border-radius: 0;
           padding-bottom: 2px;
 
           .edit-input {
-            flex: 1; 
+            flex: 1;
             border: none;
             outline: none;
             background: transparent;
@@ -622,9 +707,6 @@
     }
   }
 
-
-
-  
   .subtask-input {
     display: flex;
     align-items: center;
@@ -661,47 +743,46 @@
       opacity: 1;
       pointer-events: auto;
     }
-
   }
 
   .subtask-input {
-  display: flex;
-  align-items: center;
-  padding: 6px 12px;
-  border: 1px solid #d1d1d1;
-  border-radius: 10px;
-  position: relative;
-  width: 100%;
-  gap: 8px;
-
-  input {
-    flex: 1;
-    border: none;
-    outline: none;
-    font-size: 16px;
-    padding-right: 80px;
-  }
-
-  .subtask-actions {
-    position: absolute;
-    right: 10px;
-    top: 50%;
-    transform: translateY(-50%);
     display: flex;
+    align-items: center;
+    padding: 6px 12px;
+    border: 1px solid #d1d1d1;
+    border-radius: 10px;
+    position: relative;
+    width: 100%;
     gap: 8px;
 
-    opacity: 0;
-    pointer-events: none;
-    transition: opacity 0.2s ease;
-  }
+    input {
+      flex: 1;
+      border: none;
+      outline: none;
+      font-size: 16px;
+      padding-right: 80px;
+    }
 
-  &.active {
     .subtask-actions {
-      opacity: 1;
-      pointer-events: auto;
+      position: absolute;
+      right: 10px;
+      top: 50%;
+      transform: translateY(-50%);
+      display: flex;
+      gap: 8px;
+
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.2s ease;
+    }
+
+    &.active {
+      .subtask-actions {
+        opacity: 1;
+        pointer-events: auto;
+      }
     }
   }
-}
 
   .overlay-footer {
     display: flex;
@@ -712,7 +793,7 @@
     padding-top: 24px;
 
     .save-btn {
-      background-color: #2A3647;
+      background-color: #2a3647;
       color: #fff;
       width: 89px;
       height: 57px;
@@ -726,7 +807,7 @@
       cursor: pointer;
 
       &:hover {
-        background-color: #29ABE2;
+        background-color: #29abe2;
       }
 
       &:disabled {
@@ -750,20 +831,20 @@
 
 @media (max-width: 550px) {
   .task-container--edit .priority-buttons .priority {
-    width: 100% !important; 
-    justify-content: center; 
+    width: 100% !important;
+    justify-content: center;
   }
 
   .priority-buttons {
     flex-direction: column;
-    align-items: stretch; 
+    align-items: stretch;
     gap: 8px;
-    width: 100%; 
+    width: 100%;
   }
 
   .priority-buttons .priority {
-    width: 100%; 
-    justify-content: center; 
+    width: 100%;
+    justify-content: center;
   }
 }
 
@@ -796,7 +877,6 @@
 }
 
 @media (max-width: 340px) {
-
   .subtask-item .subtask-title-text,
   .subtask-input input {
     font-size: 13px;
