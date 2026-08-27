@@ -1,9 +1,7 @@
 <div class="add-task-container" [ngClass]="{ 'dialog-mode': isDialogMode }">
   <h2 class="add-task-heading">Add Task</h2>
   <div class="add-task-section">
-
     <div class="add-task-left">
-
       <div class="form-group">
         <label for="title">Title<span class="required">*</span></label>
         <input
@@ -45,19 +43,21 @@
         </p>
       </div>
 
+      <div class="form-group">
+  <app-attachments [(attachments)]="attachments"></app-attachments>
+</div>
     </div>
 
     <div class="devide-section" aria-hidden="true"></div>
 
     <div class="add-task-right">
-
       <div class="form-group">
         <label>Priority</label>
         <div class="priority-buttons">
           <button
             type="button"
             class="priority urgent"
-            [class.active]="priority==='urgent'"
+            [class.active]="priority === 'urgent'"
             (click)="setPriority('urgent')"
           >
             <span>Urgent</span>
@@ -73,7 +73,7 @@
           <button
             type="button"
             class="priority medium"
-            [class.active]="priority==='medium'"
+            [class.active]="priority === 'medium'"
             (click)="setPriority('medium')"
           >
             <span>Medium</span>
@@ -89,7 +89,7 @@
           <button
             type="button"
             class="priority low"
-            [class.active]="priority==='low'"
+            [class.active]="priority === 'low'"
             (click)="setPriority('low')"
           >
             <span>Low</span>
@@ -141,14 +141,14 @@
 
       <div class="form-group">
         <label>Subtasks</label>
-        <div class="subtask-input" >
+        <div class="subtask-input">
           <input
             type="text"
             placeholder="Add new subtask"
             [(ngModel)]="newSubtask"
             (keyup.enter)="addSubtask()"
             (click)="$event.stopPropagation()"
-            style="height: 48px;"
+            style="height: 48px"
           />
           <div class="subtask-actions">
             <img
@@ -157,7 +157,7 @@
               class="subtask-icon delete"
               (mousedown)="$event.preventDefault()"
               (click)="newSubtask = ''"
-              style="width: 24px; height: 24px;"
+              style="width: 24px; height: 24px"
             />
             <div class="subtask-divider"></div>
             <img
@@ -166,7 +166,7 @@
               class="subtask-icon check"
               (mousedown)="$event.preventDefault()"
               (click)="addSubtask()"
-              style="width: 24px; height: 24px;"
+              style="width: 24px; height: 24px"
             />
           </div>
         </div>
@@ -177,18 +177,24 @@
               *ngFor="let task of subtasks; let i = index"
               class="subtask-item"
               [class.editing]="editingSubtaskIndex === i"
-              style="display: flex; align-items: center; position: relative; height: 48px;"
+              style="display: flex; align-items: center; position: relative; height: 48px"
             >
               <ng-container *ngIf="editingSubtaskIndex === i; else viewSubtask">
-                <div class="subtask-input existing-subtask" style="flex: 1; display: flex; align-items: center; height: 48px;">
+                <div
+                  class="subtask-input existing-subtask"
+                  style="flex: 1; display: flex; align-items: center; height: 48px"
+                >
                   <input
                     type="text"
                     [(ngModel)]="editingSubtaskTitle"
                     (click)="$event.stopPropagation()"
                     (keyup.enter)="saveSubtaskEdit(i)"
-                    style="flex: 1; height: 48px;"
+                    style="flex: 1; height: 48px"
                   />
-                  <div class="subtask-actions" style="margin-left: 8px; display: flex; align-items: center;">
+                  <div
+                    class="subtask-actions"
+                    style="margin-left: 8px; display: flex; align-items: center"
+                  >
                     <img
                       src="assets/imgs/add-task/trash.png"
                       alt="Delete subtask"
@@ -196,7 +202,10 @@
                       (mousedown)="$event.preventDefault()"
                       (click)="$event.stopPropagation(); removeSubtask(i)"
                     />
-                    <div class="subtask-divider" style="width: 1px; height: 20px; background: #A8A8A8; margin: 0 8px;"></div>
+                    <div
+                      class="subtask-divider"
+                      style="width: 1px; height: 20px; background: #a8a8a8; margin: 0 8px"
+                    ></div>
                     <img
                       src="assets/imgs/add-task/check_grey.png"
                       alt="Save subtask"
@@ -209,22 +218,28 @@
               </ng-container>
 
               <ng-template #viewSubtask>
-                <span style="font-size: 20px; margin-right: 8px;">&bull;</span>
+                <span style="font-size: 20px; margin-right: 8px">&bull;</span>
                 <span
                   class="subtask-title-text"
-                  style="flex: 1; cursor: pointer;"
+                  style="flex: 1; cursor: pointer"
                   (click)="startEditSubtask(i, task.title)"
                 >
                   {{ task.title }}
                 </span>
-                <div class="subtask-actions" style="margin-left: 8px; display: flex; align-items: center;">
+                <div
+                  class="subtask-actions"
+                  style="margin-left: 8px; display: flex; align-items: center"
+                >
                   <img
                     src="assets/imgs/add-task/edit.png"
                     alt="Bearbeiten"
                     class="subtask-icon edit"
                     (click)="startEditSubtask(i, task.title)"
                   />
-                  <div class="subtask-divider" style="width: 1px; height: 20px; background: #A8A8A8; margin: 0 8px;"></div>
+                  <div
+                    class="subtask-divider"
+                    style="width: 1px; height: 20px; background: #a8a8a8; margin: 0 8px"
+                  ></div>
                   <img
                     src="assets/imgs/add-task/trash.png"
                     alt="Löschen"
@@ -237,9 +252,10 @@
           </div>
         </div>
 
-        <p class="inline-required-hint-right"><span class="required">*</span>This field is required</p>
+        <p class="inline-required-hint-right">
+          <span class="required">*</span>This field is required
+        </p>
       </div>
-
     </div>
   </div>
 
@@ -247,18 +263,14 @@
     <p class="inline-required-hint"><span class="required">*</span>This field is required</p>
     <div class="action-buttons">
       <button type="button" class="clear-btn" (click)="clearForm()">Clear ✕</button>
-      <button
-        type="button"
-        class="create-btn"
-        [disabled]="!isFormValid"
-        (click)="createTask()"
-      >
+      <button type="button" class="create-btn" [disabled]="!isFormValid" (click)="createTask()">
         Create Task ✓
       </button>
     </div>
   </div>
 
   <div class="task-saved-message center-animate" *ngIf="taskSavedMessage">
-    Task added to board! <img class="board-icon" src="assets/imgs/add-task/board-icon.png" alt="Success" />
+    Task added to board!
+    <img class="board-icon" src="assets/imgs/add-task/board-icon.png" alt="Success" />
   </div>
 </div>

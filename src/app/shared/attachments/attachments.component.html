@@ -1,0 +1,37 @@
+<div class="attachments-component">
+  <label *ngIf="label" class="attachments-label">{{ label }}</label>
+
+  <ng-container *ngIf="isEditable">
+    <input
+      #fileInput
+      type="file"
+      accept="image/png, image/jpeg, image/webp"
+      multiple
+      (change)="onFilesSelected($event)"
+      style="display: none"
+    />
+
+    <button type="button" class="upload-btn" (click)="fileInput.click()">
+      Select file(s)
+    </button>
+
+    <p class="error-message" *ngIf="fileError">
+      {{ fileError }}
+    </p>
+  </ng-container>
+
+  <div class="attachment-preview-list" #gallery *ngIf="attachments.length">
+    <div class="attachment-thumb" *ngFor="let att of attachments; let i = index">
+      <img [src]="att.base64" [alt]="att.filename" />
+      <button
+        *ngIf="isEditable"
+        type="button"
+        class="remove-attachment"
+        (click)="removeAttachment(i); $event.stopPropagation()"
+        aria-label="Remove attachment"
+      >
+        ✕
+      </button>
+    </div>
+  </div>
+</div>

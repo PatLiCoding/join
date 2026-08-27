@@ -6,59 +6,60 @@ import {
   OnInit,
   OnChanges,
   SimpleChanges,
-  HostListener
+  HostListener,
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { Task } from '../../interfaces/task';
+import { Task, Subtask } from '../../interfaces/task';
 import { Contacts } from '../../interfaces/contacts';
 import { ContactService } from '../../firebase-service/contact-service';
 import { AssignedToSelectComponent } from '../../shared/assigned-to-select/assigned-to-select';
 import { TaskService } from '../../firebase-service/task.service';
-
-/** Interface representing a subtask */
-interface Subtask {
-  title: string;
-  completed: boolean;
-}
+import { AttachmentsComponent } from '../../shared/attachments/attachments.component';
 
 /**
- * Component representing a task overlay panel.
- * Handles task editing, subtasks management, assignment to contacts, and saving/deleting tasks.
+ * Overlay component for viewing and editing task details, including assignment,
+ * subtasks, priority, category, due date, and attachments.
  */
 @Component({
   selector: 'app-task-overlay',
   standalone: true,
-  imports: [CommonModule, FormsModule, AssignedToSelectComponent],
+  imports: [CommonModule, FormsModule, AssignedToSelectComponent, AttachmentsComponent],
   templateUrl: './task-overlay.html',
   styleUrls: ['./task-overlay.scss'],
 })
 export class TaskOverlay implements OnInit, OnChanges {
-
-  /** Task to display or edit */
+  /** The task object to display or edit. */
   @Input() task: (Task & { id: string }) | null = null;
-
-  /** Event emitted when overlay is closed */
+  /** Event emitted when the overlay is closed. */
   @Output() close = new EventEmitter<void>();
-
-  /** Event emitted when the task is deleted */
+  /** Event emitted when the task is deleted, passing the task ID. */
   @Output() delete = new EventEmitter<string>();
-
-  /** Event emitted when the task is saved */
+  /** Event emitted when the task updates are saved. */
   @Output() save = new EventEmitter<Omit<Task, 'id' | 'createdAt'>>();
 
-
+  /** Indicates whether the overlay is in active edit mode. */
   isEditMode = false;
+  /** Indicates whether a save operation is currently pending. */
   isSaving = false;
+  /** Today's date in YYYY-MM-DD format, used for date comparisons. */
   today = new Date().toISOString().split('T')[0];
+  /** Zero-based index of the subtask currently being edited, or null if none. */
   editingSubtaskIndex: number | null = null;
+  /** Zero-based index of the subtask currently hovered by the user cursor. */
   hoveredSubtaskIndex: number | null = null;
+  /** Title text input for adding a new subtask. */
   newSubtaskTitle = '';
+  /** Backup copy of a subtask's original title before editing began. */
   subtaskBackup: string | null = null;
+  /** Original task due date before editing, used to detect modifications. */
   originalDueDate: string | null = null;
+  /** List of contact objects assigned to this task. */
   assignedContacts: Contacts[] = [];
+  /** Error message displayed for attachment file validation issues. */
+  attachmentError = '';
 
-  /** Task data being edited */
+  /** Local working copy of task data for edit operations. */
   editedTask: Omit<Task, 'id' | 'createdAt'> = {
     title: '',
     description: '',
@@ -69,68 +70,69 @@ export class TaskOverlay implements OnInit, OnChanges {
     status: 'todo',
     assignedTo: [],
     position: 0,
+    attachments: [],
   };
 
   /**
-   * Constructor for TaskOverlay component.
-   * @param contactService Service for managing contacts
-   * @param taskService Service for managing tasks
+   * Initializes a new instance of the TaskOverlay component.
+   * @param contactService Service for fetching and managing user contacts.
+   * @param taskService Service for persisting task modifications.
    */
   constructor(
     public contactService: ContactService,
     private taskService: TaskService,
-  ) { }
+  ) {}
 
   /**
-   * Lifecycle hook called on component initialization.
-   * Loads task data and assigned contacts.
+   * Angular lifecycle hook called on component initialization.
+   * Loads initial task details and assigned contacts.
    */
-  ngOnInit() {
+  ngOnInit(): void {
     this.loadTaskData();
     this.loadAssignedContacts();
   }
 
   /**
-   * Lifecycle hook called when input properties change.
-   * Reloads task data and assigned contacts.
-   * @param _ Changes object
+   * Angular lifecycle hook called when bound input properties change.
+   * Reloads task details and assigned contacts.
+   * @param _ Changes object containing property change metadata.
    */
-  ngOnChanges(_: SimpleChanges) {
+  ngOnChanges(_: SimpleChanges): void {
     this.loadTaskData();
     this.loadAssignedContacts();
   }
 
   /**
-   * Loads editable data from the input task.
+   * Loads and transforms the input task into an editable local format.
    */
-  private loadTaskData() {
+  private loadTaskData(): void {
     if (!this.task) return;
-
     this.editedTask = this.extractEditableTask(this.task);
     this.originalDueDate = this.editedTask.dueDate;
   }
 
   /**
-   * Extracts editable task data from a Task object.
-   * @param task Original task
-   * @returns Editable task object
+   * Extracts editable field properties from a full task object.
+   * @param task Target task instance.
+   * @returns Cleaned editable task object without administrative metadata.
    */
-  private extractEditableTask(task: Task & { id: string }) {
+  private extractEditableTask(task: Task & { id: string }): Omit<Task, 'id' | 'createdAt'> {
     const { id, createdAt, ...taskData } = task;
     return {
       ...taskData,
       dueDate: this.formatDateForInput(task.dueDate),
       assignedTo: task.assignedTo || [],
+      attachments: task.attachments || [],
     };
   }
 
   /**
-   * Loads assigned contacts from the contact service based on the task.
+   * Resolves contact entity objects matching assigned contact names.
    */
-  private loadAssignedContacts() {
+  private loadAssignedContacts(): void {
     if (this.task?.assignedTo?.length) {
-      this.assignedContacts = this.contactService.contactList.filter(c =>
-        (this.task?.assignedTo || []).includes(c.name)
+      this.assignedContacts = this.contactService.contactList.filter((c) =>
+        (this.task?.assignedTo || []).includes(c.name),
       );
     } else {
       this.assignedContacts = [];
@@ -138,52 +140,52 @@ export class TaskOverlay implements OnInit, OnChanges {
   }
 
   /**
-   * Updates the list of assigned contacts when changed.
-   * @param selectedContacts Array of selected contacts
+   * Handles selection changes in the assigned contacts picker.
+   * @param selectedContacts Updated array of selected contact objects.
    */
-  onContactsChange(selectedContacts: Contacts[]) {
-    this.editedTask.assignedTo = selectedContacts.map(c => c.name);
+  onContactsChange(selectedContacts: Contacts[]): void {
+    this.editedTask.assignedTo = selectedContacts.map((c) => c.name);
     this.assignedContacts = [...selectedContacts];
   }
 
   /**
-   * Gets the color associated with a contact.
-   * @param contact Contact object
-   * @returns Color string
+   * Retrieves the assigned theme color for a given contact.
+   * @param contact Target contact instance.
+   * @returns Color code hex or CSS string.
    */
   getContactColor(contact: Contacts): string {
     return this.contactService.getContactColor(contact);
   }
 
   /**
-   * Returns the initials for a contact name.
-   * @param name Contact name
-   * @returns Initials (2 letters)
+   * Generates uppercase initials (up to two characters) from a full contact name.
+   * @param name Full name string.
+   * @returns Capitalized initials string.
    */
   getInitials(name: string): string {
     if (!name) return '';
     return name
       .split(' ')
-      .map(n => n[0])
+      .map((n) => n[0])
       .join('')
       .toUpperCase()
       .substring(0, 2);
   }
 
   /**
-   * Starts editing a subtask.
-   * @param index Index of the subtask
+   * Enables inline editing mode for a specific subtask.
+   * @param index Zero-based index of the subtask.
    */
-  startSubtaskEdit(index: number) {
+  startSubtaskEdit(index: number): void {
     this.editingSubtaskIndex = index;
     this.subtaskBackup = this.editedTask.subtasks[index]?.title || '';
   }
 
   /**
-   * Saves changes to a subtask.
-   * @param index Index of the subtask
+   * Saves updates to an edited subtask or deletes it if the input title is empty.
+   * @param index Zero-based index of the subtask.
    */
-  saveSubtaskEdit(index: number) {
+  saveSubtaskEdit(index: number): void {
     const title = this.editedTask.subtasks[index]?.title?.trim();
     if (!title) this.removeSubtask(index);
     this.editingSubtaskIndex = null;
@@ -191,9 +193,9 @@ export class TaskOverlay implements OnInit, OnChanges {
   }
 
   /**
-   * Cancels editing a subtask and restores its previous title.
+   * Cancels subtask inline editing and restores the original title from backup.
    */
-  cancelSubtaskEdit() {
+  cancelSubtaskEdit(): void {
     if (this.editingSubtaskIndex !== null && this.subtaskBackup !== null) {
       this.editedTask.subtasks[this.editingSubtaskIndex].title = this.subtaskBackup;
       this.editingSubtaskIndex = null;
@@ -202,29 +204,29 @@ export class TaskOverlay implements OnInit, OnChanges {
   }
 
   /**
-   * Handles keyboard events for subtasks (Enter/Escape).
-   * @param event Keyboard event
-   * @param index Index of the subtask
+   * Keyboard shortcut handler for subtask inline editing inputs.
+   * @param event DOM KeyboardEvent.
+   * @param index Zero-based index of the subtask.
    */
-  handleSubtaskKey(event: KeyboardEvent, index: number) {
+  handleSubtaskKey(event: KeyboardEvent, index: number): void {
     if (event.key === 'Enter') this.saveSubtaskEdit(index);
     if (event.key === 'Escape') this.cancelSubtaskEdit();
   }
 
   /**
-   * Adds a new subtask to the task.
+   * Appends a new subtask to the subtask array if the input field is non-empty.
    */
-  addSubtask() {
+  addSubtask(): void {
     if (!this.newSubtaskTitle.trim()) return;
     this.editedTask.subtasks.push({ title: this.newSubtaskTitle.trim(), completed: false });
     this.newSubtaskTitle = '';
   }
 
   /**
-   * Removes a subtask from the task.
-   * @param index Index of the subtask to remove
+   * Deletes a subtask from the list by index.
+   * @param index Zero-based index of the subtask to remove.
    */
-  removeSubtask(index: number) {
+  removeSubtask(index: number): void {
     this.editedTask.subtasks.splice(index, 1);
     if (this.editingSubtaskIndex === index) {
       this.editingSubtaskIndex = null;
@@ -233,54 +235,52 @@ export class TaskOverlay implements OnInit, OnChanges {
   }
 
   /**
-   * Toggles completion status of a subtask.
-   * @param subtask Subtask object
+   * Toggles the completion state of a subtask and updates backend storage.
+   * @param subtask Target subtask instance.
    */
-  toggleSubtask(subtask: Subtask) {
+  toggleSubtask(subtask: Subtask): void {
     subtask.completed = !subtask.completed;
     this.updateSubtasksInTask();
   }
 
   /**
-   * Updates the subtasks in the backend task.
+   * Persists subtask state changes to Firestore.
    */
-  private updateSubtasksInTask() {
+  private updateSubtasksInTask(): void {
     if (!this.task?.id) return;
-    this.taskService.updateTask(this.task.id, { subtasks: this.editedTask.subtasks })
+    this.taskService
+      .updateTask(this.task.id, { subtasks: this.editedTask.subtasks })
       .catch(console.error);
   }
 
   /**
-   * Enables edit mode for the task.
+   * Switches the overlay panel to edit mode and populates the form controls.
    */
-  enableEdit() {
+  enableEdit(): void {
     if (!this.task) return;
     this.editedTask = this.extractEditableTask(this.task);
     this.isEditMode = true;
   }
 
   /**
-   * Cancels edit mode without saving changes.
+   * Exits edit mode without persisting unsaved modifications.
    */
-  cancelEdit() {
+  cancelEdit(): void {
     this.isEditMode = false;
   }
 
   /**
-   * Checks if the task form is valid.
-   * @returns Boolean indicating form validity
+   * Validates required form fields for task updating.
+   * @returns True if title and due date inputs are valid; false otherwise.
    */
   private isFormValid(): boolean {
-    return !!(
-      this.editedTask.title?.trim() &&
-      this.editedTask.dueDate
-    );
+    return !!(this.editedTask.title?.trim() && this.editedTask.dueDate);
   }
 
   /**
-   * Saves the task if the form is valid.
+   * Emits the updated task payload if validation succeeds and updates local reference.
    */
-  onSave() {
+  onSave(): void {
     if (!this.isFormValid()) return;
 
     this.isSaving = true;
@@ -291,32 +291,32 @@ export class TaskOverlay implements OnInit, OnChanges {
   }
 
   /**
-   * Resets the saving flag after a short delay.
+   * Resets the `isSaving` flag after a brief timeout delay.
    */
-  private resetSavingFlag() {
+  private resetSavingFlag(): void {
     setTimeout(() => (this.isSaving = false), 500);
   }
 
   /**
-   * Deletes the task.
+   * Triggers task deletion and emits the delete event with task ID.
    */
-  onDelete() {
+  onDelete(): void {
     if (!this.task?.id) return;
     this.delete.emit(this.task.id);
     this.onClose();
   }
 
   /**
-   * Closes the overlay.
+   * Emits the close event to dismiss the overlay modal.
    */
-  onClose() {
+  onClose(): void {
     this.close.emit();
   }
 
   /**
-   * Formats a date string for HTML input elements.
-   * @param date Date string
-   * @returns Formatted date string (YYYY-MM-DD)
+   * Formats a raw date string into YYYY-MM-DD for standard HTML date inputs.
+   * @param date Date input string.
+   * @returns Formatted date string (YYYY-MM-DD) or empty string.
    */
   formatDateForInput(date: string): string {
     if (!date) return '';
@@ -324,7 +324,7 @@ export class TaskOverlay implements OnInit, OnChanges {
   }
 
   /**
-   * Returns a safe task object with default values for missing fields.
+   * Returns a safe task representation with fallback default values for missing properties.
    */
   get safeTask() {
     const t = this.task;
@@ -336,53 +336,63 @@ export class TaskOverlay implements OnInit, OnChanges {
       category: t?.category || 'User Story',
       assignedTo: t?.assignedTo || [],
       subtasks: t?.subtasks || [],
+      attachments: t?.attachments || [],
     };
   }
 
   /**
-   * Checks if the selected due date is in the past.
-   * @returns Boolean indicating whether date is past
+   * Checks whether the selected due date is in the past relative to today.
+   * @returns True if the newly selected date precedes today's date; false otherwise.
    */
   isDateInPast(): boolean {
     if (!this.editedTask.dueDate) return false;
     if (this.editedTask.dueDate === this.originalDueDate) return false;
-
     const selected = new Date(this.editedTask.dueDate);
     const today = new Date();
     today.setHours(0, 0, 0, 0);
-
     return selected < today;
   }
 
   /**
-   * Returns the color associated with the task category.
+   * Calculates the accent color corresponding to the current task category.
+   * @returns Hex color code string.
    */
   get categoryColor(): string {
     return this.safeTask.category === 'Technical Task' ? '#1FD7C1' : '#0038FF';
   }
 
   /**
-   * TrackBy function for contacts in ngFor.
+   * TrackBy function for optimizing contact rendering in ngFor loops.
+   * @param index Item index.
+   * @param contact Contact item.
+   * @returns Unique contact identifier or fallback string index.
    */
-  trackByContactId(index: number, contact: Contacts) {
-    return contact.id;
+  trackByContactId(index: number, contact: Contacts): string {
+    return contact.id ?? index.toString();
   }
 
   /**
-   * TrackBy function for subtasks in ngFor.
+   * TrackBy function for optimizing subtask rendering in ngFor loops.
+   * @param index Subtask index.
+   * @param subtask Subtask item.
+   * @returns Subtask index.
    */
-  trackBySubtask(index: number, subtask: Subtask) {
+  trackBySubtask(index: number, subtask: Subtask): number {
     return index;
   }
 
   /**
-   * Handles clicks outside the overlay to close it.
-   * @param event MouseEvent object
+   * Closes the overlay when a click occurs outside the overlay and image viewer containers.
+   * @param event DOM MouseEvent listener object.
    */
   @HostListener('document:click', ['$event'])
-  onDocumentClick(event: MouseEvent) {
+  onDocumentClick(event: MouseEvent): void {
     const overlay = document.querySelector('.task-overlay');
-    if (overlay && !overlay.contains(event.target as Node)) {
+    const viewerEl = document.querySelector('.viewer-container');
+    const target = event.target as Node;
+    const clickedInsideOverlay = overlay?.contains(target);
+    const clickedInsideViewer = viewerEl?.contains(target);
+    if (!clickedInsideOverlay && !clickedInsideViewer) {
       this.onClose();
     }
   }
