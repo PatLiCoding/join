@@ -439,158 +439,6 @@ input[type='date']::-webkit-calendar-picker-indicator {
   }
 }
 
-.subtask-input {
-  position: relative;
-  display: flex;
-  align-items: center;
-  width: 100%;
-  margin-bottom: 8px;
-
-  .subtask-list-container {
-    max-height: calc(3 * 48px);
-    min-height: calc(3 * 48px);
-    overflow-y: auto;
-  }
-
-  .subtask-list {
-    display: flex;
-    flex-direction: column;
-    gap: 8px;
-  }
-
-  input {
-    flex: 1;
-    width: 100%;
-    min-width: 0;
-    height: 48px;
-    padding: 6px 70px 6px 10px;
-    border: 1px solid #ccc;
-    border-radius: 6px;
-    box-sizing: border-box;
-    font-family: 'Inter', sans-serif;
-    font-weight: 400;
-    font-size: 20px;
-    line-height: 120%;
-    letter-spacing: 0;
-    color: #000000;
-  }
-
-  .subtask-actions {
-    position: absolute;
-    right: 10px;
-    top: 50%;
-    transform: translateY(-50%);
-    display: none;
-    align-items: center;
-    gap: 8px;
-  }
-
-  .subtask-icon {
-    width: 24px !important;
-    height: 24px !important;
-    min-width: 24px !important;
-    min-height: 24px !important;
-    max-width: 22px !important;
-    max-height: 24px !important;
-    cursor: pointer;
-    object-fit: contain;
-    display: block;
-  }
-
-  .subtask-divider {
-    width: 1px;
-    height: 20px;
-    background-color: #d1d1d1;
-  }
-}
-
-.subtask-input:focus-within .subtask-actions {
-  display: flex;
-}
-
-.subtask-input input:not(:placeholder-shown) ~ .subtask-actions {
-  display: flex;
-}
-
-.existing-subtask .subtask-actions {
-  display: flex;
-}
-
-.subtask-list {
-  margin: 8px 0 0 0;
-  padding-left: 20px;
-  list-style: disc;
-  max-height: 140px;
-  overflow-y: auto;
-}
-
-.subtask-item {
-  cursor: pointer;
-}
-
-.subtask-item .subtask-actions {
-  display: none !important;
-}
-
-.subtask-item:hover .subtask-actions,
-.subtask-item.editing .subtask-actions {
-  display: flex !important;
-}
-
-.subtask-item .subtask-actions {
-  display: none;
-}
-
-.subtask-item:hover .subtask-actions,
-.subtask-item.editing .subtask-actions {
-  display: flex;
-}
-
-.subtask-item .subtask-divider {
-  display: none;
-}
-
-.subtask-item:hover .subtask-divider,
-.subtask-item.editing .subtask-divider {
-  display: block;
-}
-
-.subtask-item .subtask-actions {
-  display: none;
-}
-
-.subtask-item:hover .subtask-actions,
-.subtask-item.editing .subtask-actions {
-  display: flex;
-}
-
-.subtask-item.editing {
-  list-style: none;
-  margin-left: -20px;
-}
-
-.subtask-title-text {
-  font-family: 'Inter', sans-serif;
-  font-weight: 400;
-  font-size: 16px;
-  line-height: 120%;
-  letter-spacing: 0;
-  color: #000000;
-}
-
-.existing-subtask input {
-  font-family: 'Inter', sans-serif;
-  font-weight: 400;
-  font-size: 16px;
-  line-height: 120%;
-  letter-spacing: 0;
-  color: #000000;
-  height: 32px;
-  border: none;
-  border-bottom: 1px solid #29abe2;
-  border-radius: 0;
-}
-
 @media (min-width: 1250px) and (max-height: 855px) {
   .add-task-section {
     align-items: flex-start !important;
@@ -691,10 +539,6 @@ input[type='date']::-webkit-calendar-picker-indicator {
     font-size: 16px !important;
   }
 
-  .subtask-input input::placeholder {
-    font-size: 16px !important;
-  }
-
   .priority-buttons .priority {
     font-size: 16px !important;
     height: 41px !important;
@@ -740,11 +584,6 @@ input[type='date']::-webkit-calendar-picker-indicator {
   .priority-buttons .priority {
     width: 100%;
     justify-content: space-between;
-  }
-
-  .subtask-input input {
-    font-size: 16px;
-    padding: 6px 60px 6px 8px;
   }
 }
 

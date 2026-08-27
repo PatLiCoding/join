@@ -16,6 +16,7 @@ import { ContactService } from '../../firebase-service/contact-service';
 import { AssignedToSelectComponent } from '../../shared/assigned-to-select/assigned-to-select';
 import { TaskService } from '../../firebase-service/task.service';
 import { AttachmentsComponent } from '../../shared/attachments/attachments.component';
+import { SubtaskComponent } from '../../shared/subtask/subtask.component';
 
 /**
  * Overlay component for viewing and editing task details, including assignment,
@@ -24,7 +25,13 @@ import { AttachmentsComponent } from '../../shared/attachments/attachments.compo
 @Component({
   selector: 'app-task-overlay',
   standalone: true,
-  imports: [CommonModule, FormsModule, AssignedToSelectComponent, AttachmentsComponent],
+  imports: [
+    CommonModule,
+    FormsModule,
+    AssignedToSelectComponent,
+    AttachmentsComponent,
+    SubtaskComponent,
+  ],
   templateUrl: './task-overlay.html',
   styleUrls: ['./task-overlay.scss'],
 })
@@ -170,68 +177,6 @@ export class TaskOverlay implements OnInit, OnChanges {
       .join('')
       .toUpperCase()
       .substring(0, 2);
-  }
-
-  /**
-   * Enables inline editing mode for a specific subtask.
-   * @param index Zero-based index of the subtask.
-   */
-  startSubtaskEdit(index: number): void {
-    this.editingSubtaskIndex = index;
-    this.subtaskBackup = this.editedTask.subtasks[index]?.title || '';
-  }
-
-  /**
-   * Saves updates to an edited subtask or deletes it if the input title is empty.
-   * @param index Zero-based index of the subtask.
-   */
-  saveSubtaskEdit(index: number): void {
-    const title = this.editedTask.subtasks[index]?.title?.trim();
-    if (!title) this.removeSubtask(index);
-    this.editingSubtaskIndex = null;
-    this.subtaskBackup = null;
-  }
-
-  /**
-   * Cancels subtask inline editing and restores the original title from backup.
-   */
-  cancelSubtaskEdit(): void {
-    if (this.editingSubtaskIndex !== null && this.subtaskBackup !== null) {
-      this.editedTask.subtasks[this.editingSubtaskIndex].title = this.subtaskBackup;
-      this.editingSubtaskIndex = null;
-      this.subtaskBackup = null;
-    }
-  }
-
-  /**
-   * Keyboard shortcut handler for subtask inline editing inputs.
-   * @param event DOM KeyboardEvent.
-   * @param index Zero-based index of the subtask.
-   */
-  handleSubtaskKey(event: KeyboardEvent, index: number): void {
-    if (event.key === 'Enter') this.saveSubtaskEdit(index);
-    if (event.key === 'Escape') this.cancelSubtaskEdit();
-  }
-
-  /**
-   * Appends a new subtask to the subtask array if the input field is non-empty.
-   */
-  addSubtask(): void {
-    if (!this.newSubtaskTitle.trim()) return;
-    this.editedTask.subtasks.push({ title: this.newSubtaskTitle.trim(), completed: false });
-    this.newSubtaskTitle = '';
-  }
-
-  /**
-   * Deletes a subtask from the list by index.
-   * @param index Zero-based index of the subtask to remove.
-   */
-  removeSubtask(index: number): void {
-    this.editedTask.subtasks.splice(index, 1);
-    if (this.editingSubtaskIndex === index) {
-      this.editingSubtaskIndex = null;
-      this.subtaskBackup = null;
-    }
   }
 
   /**
