@@ -1,8 +1,6 @@
 import {
   Component,
   HostListener,
-  ElementRef,
-  ViewChild,
   Input,
   Output,
   EventEmitter,
@@ -13,183 +11,102 @@ import {
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { collectionData } from '@angular/fire/firestore';
+import { map } from 'rxjs/operators';
+
 import { TaskService } from '../../firebase-service/task.service';
 import { ContactService } from '../../firebase-service/contact-service';
 import { Contacts } from '../../interfaces/contacts';
-import { Task, Subtask } from '../../interfaces/task';
+import { Task, Subtask, Attachment } from '../../interfaces/task';
 import { AssignedToSelectComponent } from '../../shared/assigned-to-select/assigned-to-select';
-import Viewer from 'viewerjs';
-import { ImageCompressionService } from '../../firebase-service/image-compression.service';
-import { Attachment } from '../../interfaces/task';
-
-import { collectionData } from '@angular/fire/firestore';
-import { map } from 'rxjs/operators';
+import { AttachmentsComponent } from '../../shared/attachments/attachments.component';
 import { mapToContact } from './add-task-form.helpers';
 
 /**
  * Component for creating a new task, including title, description, due date,
- * priority, category, assigned contacts, and subtasks.
- * Can be used inline or as a dialog (see isDialogMode).
+ * priority, category, assigned contacts, subtasks, and file attachments.
+ * Can be rendered inline or as a modal dialog.
  */
 @Component({
   selector: 'app-add-task-template',
   standalone: true,
-  imports: [CommonModule, FormsModule, AssignedToSelectComponent],
+  imports: [CommonModule, FormsModule, AssignedToSelectComponent, AttachmentsComponent],
   templateUrl: './add-task-template.html',
   styleUrls: ['./add-task-template.scss'],
 })
 export class AddTaskTemplate implements OnInit {
-  /** Status column the new task is created in (e.g. 'todo'). */
+  /** Target status column where the new task will be created (e.g., 'todo'). */
   @Input() column: Task['status'] = 'todo';
-  /** Whether this component is rendered inside a modal dialog. */
+  /** Indicates whether the component is rendered inside a modal dialog. */
   @Input() isDialogMode = false;
-  /** Emitted when the dialog should be closed (only relevant in dialog mode). */
+  /** Emits when the modal dialog should be closed (dialog mode only). */
   @Output() closeDialog = new EventEmitter<void>();
 
-  /** Injector used to run Firestore calls inside a valid injection context. */
+  /** Injection context reference used to run Firestore reactive queries. */
   private injector = inject(Injector);
 
-  /** Title entered by the user. */
+  /** Task title entered by the user. */
   title = '';
-  /** Optional description entered by the user. */
+  /** Optional task description. */
   description = '';
-  /** Due date in ISO format (YYYY-MM-DD). */
+  /** Due date formatted as YYYY-MM-DD. */
   dueDate = '';
-  /** Whether the due date currently fails validation. */
+  /** Indicates whether the due date currently fails validation. */
   dueDateInvalid = false;
-  /** Whether the title currently fails validation. */
+  /** Indicates whether the title currently fails validation. */
   titleInvalid = false;
-  /** Selected task priority. */
+  /** Selected priority level ('urgent', 'medium', or 'low'). */
   priority: 'urgent' | 'medium' | 'low' = 'medium';
-  /** Selected task category. */
+  /** Selected category for the task. */
   category = '';
-  /** Whether the category currently fails validation. */
+  /** Indicates whether the category selection fails validation. */
   categoryInvalid = false;
-  /** Subtasks added to the new task. */
+  /** Array of subtasks added to the task. */
   subtasks: Subtask[] = [];
-  /** Text currently typed into the "new subtask" input. */
+  /** Input value for creating a new subtask. */
   newSubtask = '';
   /** Index of the subtask currently being edited, or null if none. */
   editingSubtaskIndex: number | null = null;
-  /** Working copy of the title of the subtask currently being edited. */
+  /** Temporary title buffer for the subtask currently being edited. */
   editingSubtaskTitle = '';
-  /** Whether the "task saved" confirmation message is currently shown. */
+  /** Indicates whether the "Task saved" toast notification is visible. */
   taskSavedMessage = false;
-
-  /** Contacts currently assigned to the new task. */
+  /** Array of contacts assigned to the task. */
   assignedToContacts: Contacts[] = [];
-  /** All contacts available for assignment. */
+  /** Array of all contacts available for assignment. */
   allContacts: Contacts[] = [];
-  /** Today's date in ISO format, used as the minimum selectable due date. */
+  /** Today's date in YYYY-MM-DD format, used as the minimum selectable date. */
   today: string;
-  /** Whether the category dropdown is currently open. */
+  /** Indicates whether the category dropdown menu is open. */
   isCategoryDropdownOpen = false;
-
-  /** Attachments added to the new task, stored as base64. */
+  /** File attachments added to the new task. */
   attachments: Attachment[] = [];
-  /** Current file-upload validation/processing error message, if any. */
+  /** Validation or processing error message for attachments. */
   fileError = '';
 
-  /** Reference to the attachment thumbnail gallery, used to (re-)init Viewer.js. */
-  @ViewChild('gallery') galleryRef?: ElementRef<HTMLDivElement>;
-  /** Active Viewer.js instance for previewing attachments, if any. */
-  private viewerInstance: Viewer | null = null;
-
   /**
-   * Creates an instance of AddTaskTemplate.
-   * @param taskService Service used to create tasks in Firestore.
-   * @param contactService Service used to access the list of contacts.
+   * Initializes a new instance of the AddTaskTemplate component.
+   * @param taskService Service for creating and managing tasks in Firestore.
+   * @param contactService Service for loading user contact data.
    */
   constructor(
     private taskService: TaskService,
     public contactService: ContactService,
-    private imageCompression: ImageCompressionService,
   ) {
     this.today = new Date().toISOString().split('T')[0];
   }
 
   /**
-   * Handles the file-input change event and processes every selected file.
-   * @param event The change event from the file input.
-   */
-  async onFilesSelected(event: Event) {
-    const input = event.target as HTMLInputElement;
-    if (!input.files?.length) return;
-    this.fileError = '';
-
-    for (const file of Array.from(input.files)) {
-      await this.processFile(file);
-    }
-    input.value = '';
-    this.refreshViewer();
-  }
-
-  /**
-   * Validates and compresses a single file, then adds it as an attachment.
-   * Sets fileError if the file is rejected or cannot be processed.
-   * @param file The file to process.
-   */
-  private async processFile(file: File) {
-    if (!this.imageCompression.isTypeAllowed(file)) {
-      this.fileError = 'Only PNG, JPG, or WEBP files are allowed.';
-      return;
-    }
-    if (!this.imageCompression.isSizeAllowed(file)) {
-      this.fileError = 'File is too large (max. 5 MB).';
-      return;
-    }
-    try {
-      const base64 = await this.imageCompression.compressImage(file);
-      this.attachments.push({ filename: file.name, fileType: file.type, base64 });
-    } catch {
-      this.fileError = 'The file could not be processed.';
-    }
-  }
-
-  /**
-   * Removes an attachment at the given index and refreshes the viewer.
-   * @param index The index of the attachment to remove.
-   */
-  removeAttachment(index: number) {
-    this.attachments.splice(index, 1);
-    this.refreshViewer();
-  }
-
-  /**
-   * (Re-)initializes Viewer.js after the attachment gallery has changed.
-   * The setTimeout defers execution until Angular has updated the DOM.
-   */
-  private refreshViewer() {
-    setTimeout(() => {
-      this.viewerInstance?.destroy();
-      if (this.galleryRef?.nativeElement) {
-        this.viewerInstance = new Viewer(this.galleryRef.nativeElement, {
-          inline: false,
-          toolbar: true,
-          navbar: this.attachments.length > 1,
-        });
-      }
-    });
-  }
-
-  /**
-   * Lifecycle hook called when the component is destroyed.
-   * Destroys the Viewer.js instance to avoid leaking DOM nodes/listeners.
-   */
-  ngOnDestroy() {
-    this.viewerInstance?.destroy();
-  }
-
-  /**
-   * Initializes the component and loads all contacts from the service.
+   * Angular lifecycle hook called after component initialization.
+   * Loads the contact list.
    */
   ngOnInit(): void {
     this.loadContacts();
   }
 
   /**
-   * Subscribes to the contacts collection and keeps allContacts in sync.
-   * Runs inside the injection context, as required by collectionData().
+   * Subscribes to the contacts collection in Firestore and syncs allContacts.
+   * Executed within an injection context required by collectionData().
    */
   private loadContacts(): void {
     runInInjectionContext(this.injector, () => {
@@ -202,29 +119,29 @@ export class AddTaskTemplate implements OnInit {
   }
 
   /**
-   * Sets the priority of the task.
-   * @param value The priority value ('urgent', 'medium', or 'low').
+   * Updates the priority of the task.
+   * @param value Priority level ('urgent', 'medium', or 'low').
    */
-  setPriority(value: 'urgent' | 'medium' | 'low') {
+  setPriority(value: 'urgent' | 'medium' | 'low'): void {
     this.priority = value;
   }
 
   /**
-   * Toggles the category dropdown open or closed.
-   * @param event Optional event to stop propagation.
+   * Toggles the category selection dropdown menu open or closed.
+   * @param event Optional DOM click event to prevent event bubbling.
    */
-  toggleCategoryDropdown(event?: Event) {
+  toggleCategoryDropdown(event?: Event): void {
     if (event) event.stopPropagation();
     this.isCategoryDropdownOpen = !this.isCategoryDropdownOpen;
     if (!this.isCategoryDropdownOpen) this.validateCategory();
   }
 
   /**
-   * Selects a category and closes the dropdown.
-   * @param value The selected category value.
-   * @param event The click event to stop propagation.
+   * Selects a task category and closes the dropdown menu.
+   * @param value Selected category name.
+   * @param event DOM click event to prevent event bubbling.
    */
-  selectCategory(value: string, event: Event) {
+  selectCategory(value: string, event: Event): void {
     event.stopPropagation();
     this.category = value;
     this.isCategoryDropdownOpen = false;
@@ -232,9 +149,9 @@ export class AddTaskTemplate implements OnInit {
   }
 
   /**
-   * Adds a new subtask to the subtasks array if not empty.
+   * Adds a new subtask to the subtasks list if the input text is not empty.
    */
-  addSubtask() {
+  addSubtask(): void {
     if (this.newSubtask.trim()) {
       this.subtasks.push({ title: this.newSubtask.trim(), completed: false });
       this.newSubtask = '';
@@ -242,10 +159,10 @@ export class AddTaskTemplate implements OnInit {
   }
 
   /**
-   * Removes a subtask at the given index and updates editing state if necessary.
-   * @param index The index of the subtask to remove.
+   * Removes a subtask by index and updates editing state accordingly.
+   * @param index Zero-based index of the subtask to remove.
    */
-  removeSubtask(index: number) {
+  removeSubtask(index: number): void {
     this.subtasks.splice(index, 1);
     if (this.editingSubtaskIndex !== null) {
       if (this.editingSubtaskIndex === index) {
@@ -258,20 +175,20 @@ export class AddTaskTemplate implements OnInit {
   }
 
   /**
-   * Starts editing a subtask at the given index.
-   * @param index The index of the subtask to edit.
-   * @param title The current title of the subtask.
+   * Sets a subtask into inline edit mode.
+   * @param index Zero-based index of the subtask to edit.
+   * @param title Current title of the subtask.
    */
-  startEditSubtask(index: number, title: string) {
+  startEditSubtask(index: number, title: string): void {
     this.editingSubtaskIndex = index;
     this.editingSubtaskTitle = title;
   }
 
   /**
-   * Saves the edited subtask title or removes the subtask if the title is empty.
-   * @param index The index of the subtask being edited.
+   * Saves changes to an edited subtask, or removes it if the updated title is empty.
+   * @param index Zero-based index of the subtask being edited.
    */
-  saveSubtaskEdit(index: number) {
+  saveSubtaskEdit(index: number): void {
     if (this.editingSubtaskIndex !== index) return;
     const trimmedTitle = this.editingSubtaskTitle.trim();
     if (!trimmedTitle) {
@@ -284,11 +201,11 @@ export class AddTaskTemplate implements OnInit {
   }
 
   /**
-   * Handles clicks outside certain elements to close dropdowns or stop editing.
-   * @param event The mouse event.
+   * Closes dropdowns or subtask edit modes when clicking outside designated container elements.
+   * @param event Mouse click event listener object.
    */
   @HostListener('document:click', ['$event'])
-  handleClickOutside(event: MouseEvent) {
+  handleClickOutside(event: MouseEvent): void {
     const target = event.target as HTMLElement;
     if (!target.closest('.category-select')) {
       if (this.isCategoryDropdownOpen) {
@@ -303,18 +220,18 @@ export class AddTaskTemplate implements OnInit {
   }
 
   /**
-   * Clears the form fields and resets the component state.
+   * Resets all form fields and validation indicators to initial values.
    */
-  clearForm() {
+  clearForm(): void {
     this.resetFormFields();
     this.resetAttachments();
     if (this.isDialogMode) this.closeDialog.emit();
   }
 
   /**
-   * Resets all plain form fields and validation flags to their defaults.
+   * Resets all main input field states to their defaults.
    */
-  private resetFormFields() {
+  private resetFormFields(): void {
     this.title = '';
     this.description = '';
     this.dueDate = '';
@@ -332,40 +249,39 @@ export class AddTaskTemplate implements OnInit {
   }
 
   /**
-   * Resets attachments, the file error, and destroys the image viewer.
+   * Clears attachments and attachment-related error messages.
    */
-  private resetAttachments() {
+  private resetAttachments(): void {
     this.attachments = [];
     this.fileError = '';
-    this.viewerInstance?.destroy();
   }
 
   /**
-   * Validates the title field and sets the invalid state.
+   * Validates the task title field.
    */
-  validateTitle() {
+  validateTitle(): void {
     const trimmed = this.title ? this.title.trim() : '';
     this.titleInvalid = !trimmed || trimmed.length < 2 || /^\d+$/.test(trimmed);
   }
 
   /**
-   * Validates the due date field and sets the invalid state.
+   * Validates the task due date against today's date.
    */
-  validateDueDate() {
+  validateDueDate(): void {
     const todayIso = new Date().toISOString().split('T')[0];
     this.dueDateInvalid = !this.dueDate || this.dueDate < todayIso;
   }
 
   /**
-   * Validates the category field and sets the invalid state.
+   * Validates the task category selection.
    */
-  validateCategory() {
+  validateCategory(): void {
     this.categoryInvalid = !this.category || !this.category.trim();
   }
 
   /**
-   * Returns whether the form is valid based on required fields.
-   * @returns True if the form is valid, otherwise false.
+   * Evaluates overall form validity based on required fields and date constraints.
+   * @returns True if all required form inputs are valid; false otherwise.
    */
   get isFormValid(): boolean {
     const todayIso = new Date().toISOString().split('T')[0];
@@ -373,9 +289,9 @@ export class AddTaskTemplate implements OnInit {
   }
 
   /**
-   * Creates a new task if the form is valid and handles errors.
+   * Submits and creates a new task in Firestore if validation passes.
    */
-  async createTask() {
+  async createTask(): Promise<void> {
     this.validateTitle();
     this.validateCategory();
     if (this.titleInvalid || !this.isFormValid || this.categoryInvalid) return;
@@ -389,8 +305,8 @@ export class AddTaskTemplate implements OnInit {
   }
 
   /**
-   * Builds the task payload from the current form state.
-   * @returns The task object ready to be persisted (without createdAt).
+   * Constructs the task payload object from current component state.
+   * @returns Task object ready for persistence, excluding the createdAt timestamp.
    */
   private buildTaskPayload(): Omit<Task, 'createdAt'> {
     return {
@@ -408,9 +324,9 @@ export class AddTaskTemplate implements OnInit {
   }
 
   /**
-   * Handles UI updates after a task is created.
+   * Handles post-task creation steps such as showing confirmation toasts and closing dialogs.
    */
-  private handleTaskCreated() {
+  private handleTaskCreated(): void {
     this.clearForm();
     this.taskSavedMessage = true;
     const hideMessage = () => (this.taskSavedMessage = false);

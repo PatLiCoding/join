@@ -44,40 +44,8 @@
       </div>
 
       <div class="form-group">
-        <label for="attachments">Attachments (images)</label>
-
-        <input
-          id="attachments"
-          type="file"
-          accept="image/png, image/jpeg, image/webp"
-          multiple
-          (change)="onFilesSelected($event)"
-          #fileInput
-          style="display: none"
-        />
-
-        <button type="button" class="upload-btn" (click)="fileInput.click()">
-          Select file(s)
-        </button>
-
-        <p class="error-message" [style.visibility]="fileError ? 'visible' : 'hidden'">
-          {{ fileError || 'Placeholder' }}
-        </p>
-
-        <div class="attachment-preview-list" #gallery *ngIf="attachments.length">
-          <div class="attachment-thumb" *ngFor="let att of attachments; let i = index">
-            <img [src]="att.base64" [alt]="att.filename" />
-            <button
-              type="button"
-              class="remove-attachment"
-              (click)="removeAttachment(i); $event.stopPropagation()"
-              aria-label="Remove attachment"
-            >
-              ✕
-            </button>
-          </div>
-        </div>
-      </div>
+  <app-attachments [(attachments)]="attachments"></app-attachments>
+</div>
     </div>
 
     <div class="devide-section" aria-hidden="true"></div>
