@@ -51,19 +51,32 @@ export class TaskOverlay implements OnInit, OnChanges {
   /** Event emitted when the task is saved */
   @Output() save = new EventEmitter<Omit<Task, 'id' | 'createdAt'>>();
 
+  /** Whether the overlay is currently in edit mode (vs. read-only view). */
   isEditMode = false;
+  /** Whether a save operation is currently in progress. */
   isSaving = false;
+  /** Today's date in ISO format, used for date validation. */
   today = new Date().toISOString().split('T')[0];
+  /** Index of the subtask currently being edited, or null if none. */
   editingSubtaskIndex: number | null = null;
+  /** Index of the subtask currently hovered, used for UI hover states. */
   hoveredSubtaskIndex: number | null = null;
+  /** Text currently typed into the "new subtask" input. */
   newSubtaskTitle = '';
+  /** Backup of a subtask's title while it is being edited, used on cancel. */
   subtaskBackup: string | null = null;
+  /** Due date of the task before editing started, used to detect changes. */
   originalDueDate: string | null = null;
+  /** Contacts currently assigned to the task. */
   assignedContacts: Contacts[] = [];
+  /** Current attachment validation/processing error message, if any. */
   attachmentError = '';
 
+  /** Reference to the read-only attachment gallery. */
   @ViewChild('viewGallery') viewGalleryRef?: ElementRef<HTMLDivElement>;
+  /** Reference to the edit-mode attachment gallery. */
   @ViewChild('editGallery') editGalleryRef?: ElementRef<HTMLDivElement>;
+  /** Active Viewer.js instance for previewing attachments, if any. */
   private viewerInstance: Viewer | null = null;
 
   /** Task data being edited */
@@ -91,39 +104,62 @@ export class TaskOverlay implements OnInit, OnChanges {
     private imageCompression: ImageCompressionService,
   ) {}
 
+  /**
+   * Handles the file-input change event and processes every selected file.
+   * @param event The change event from the file input.
+   */
   async onFilesSelected(event: Event) {
     const input = event.target as HTMLInputElement;
     if (!input.files?.length) return;
     this.attachmentError = '';
 
     for (const file of Array.from(input.files)) {
-      if (!this.imageCompression.isTypeAllowed(file)) {
-        this.attachmentError = 'Only PNG, JPG, or WEBP files are allowed.';
-        continue;
-      }
-      if (!this.imageCompression.isSizeAllowed(file)) {
-        this.attachmentError = 'File is too large (max. 5 MB).';
-        continue;
-      }
-      try {
-        const base64 = await this.imageCompression.compressImage(file);
-        this.editedTask.attachments = [
-          ...(this.editedTask.attachments || []),
-          { filename: file.name, fileType: file.type, base64 },
-        ];
-      } catch {
-        this.attachmentError = 'The file could not be processed.';
-      }
+      await this.processFile(file);
     }
     input.value = '';
     this.refreshViewer('edit');
   }
 
+  /**
+   * Validates and compresses a single file, then appends it to editedTask.attachments.
+   * Sets attachmentError if the file is rejected or cannot be processed.
+   * @param file The file to process.
+   */
+  private async processFile(file: File) {
+    if (!this.imageCompression.isTypeAllowed(file)) {
+      this.attachmentError = 'Only PNG, JPG, or WEBP files are allowed.';
+      return;
+    }
+    if (!this.imageCompression.isSizeAllowed(file)) {
+      this.attachmentError = 'File is too large (max. 5 MB).';
+      return;
+    }
+    try {
+      const base64 = await this.imageCompression.compressImage(file);
+      this.editedTask.attachments = [
+        ...(this.editedTask.attachments || []),
+        { filename: file.name, fileType: file.type, base64 },
+      ];
+    } catch {
+      this.attachmentError = 'The file could not be processed.';
+    }
+  }
+
+  /**
+   * Removes an attachment at the given index and refreshes the edit-mode viewer.
+   * @param index The index of the attachment to remove.
+   */
   removeAttachment(index: number) {
     this.editedTask.attachments = (this.editedTask.attachments || []).filter((_, i) => i !== index);
     this.refreshViewer('edit');
   }
 
+  /**
+   * (Re-)initializes Viewer.js for either the read-only view gallery or the
+   * edit-mode gallery. The setTimeout defers execution until Angular has
+   * updated the DOM (e.g. after *ngIf toggles visibility of the gallery).
+   * @param target Which gallery to attach the viewer to.
+   */
   private refreshViewer(target: 'edit' | 'view') {
     setTimeout(() => {
       const ref = target === 'edit' ? this.editGalleryRef : this.viewGalleryRef;
@@ -154,6 +190,10 @@ export class TaskOverlay implements OnInit, OnChanges {
     this.refreshViewer('edit');
   }
 
+  /**
+   * Lifecycle hook called when the component is destroyed.
+   * Destroys the Viewer.js instance to avoid leaking DOM nodes/listeners.
+   */
   ngOnDestroy() {
     this.viewerInstance?.destroy();
   }

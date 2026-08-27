@@ -24,6 +24,7 @@ import { Attachment } from '../../interfaces/task';
 
 import { collectionData } from '@angular/fire/firestore';
 import { map } from 'rxjs/operators';
+import { mapToContact } from './add-task-form.helpers';
 
 /**
  * Component for creating a new task, including title, description, due date,
@@ -38,35 +39,60 @@ import { map } from 'rxjs/operators';
   styleUrls: ['./add-task-template.scss'],
 })
 export class AddTaskTemplate implements OnInit {
+  /** Status column the new task is created in (e.g. 'todo'). */
   @Input() column: Task['status'] = 'todo';
+  /** Whether this component is rendered inside a modal dialog. */
   @Input() isDialogMode = false;
+  /** Emitted when the dialog should be closed (only relevant in dialog mode). */
   @Output() closeDialog = new EventEmitter<void>();
 
+  /** Injector used to run Firestore calls inside a valid injection context. */
   private injector = inject(Injector);
 
+  /** Title entered by the user. */
   title = '';
+  /** Optional description entered by the user. */
   description = '';
+  /** Due date in ISO format (YYYY-MM-DD). */
   dueDate = '';
+  /** Whether the due date currently fails validation. */
   dueDateInvalid = false;
+  /** Whether the title currently fails validation. */
   titleInvalid = false;
+  /** Selected task priority. */
   priority: 'urgent' | 'medium' | 'low' = 'medium';
+  /** Selected task category. */
   category = '';
+  /** Whether the category currently fails validation. */
   categoryInvalid = false;
+  /** Subtasks added to the new task. */
   subtasks: Subtask[] = [];
+  /** Text currently typed into the "new subtask" input. */
   newSubtask = '';
+  /** Index of the subtask currently being edited, or null if none. */
   editingSubtaskIndex: number | null = null;
+  /** Working copy of the title of the subtask currently being edited. */
   editingSubtaskTitle = '';
+  /** Whether the "task saved" confirmation message is currently shown. */
   taskSavedMessage = false;
 
+  /** Contacts currently assigned to the new task. */
   assignedToContacts: Contacts[] = [];
+  /** All contacts available for assignment. */
   allContacts: Contacts[] = [];
+  /** Today's date in ISO format, used as the minimum selectable due date. */
   today: string;
+  /** Whether the category dropdown is currently open. */
   isCategoryDropdownOpen = false;
 
+  /** Attachments added to the new task, stored as base64. */
   attachments: Attachment[] = [];
+  /** Current file-upload validation/processing error message, if any. */
   fileError = '';
 
+  /** Reference to the attachment thumbnail gallery, used to (re-)init Viewer.js. */
   @ViewChild('gallery') galleryRef?: ElementRef<HTMLDivElement>;
+  /** Active Viewer.js instance for previewing attachments, if any. */
   private viewerInstance: Viewer | null = null;
 
   /**
@@ -82,39 +108,56 @@ export class AddTaskTemplate implements OnInit {
     this.today = new Date().toISOString().split('T')[0];
   }
 
+  /**
+   * Handles the file-input change event and processes every selected file.
+   * @param event The change event from the file input.
+   */
   async onFilesSelected(event: Event) {
     const input = event.target as HTMLInputElement;
     if (!input.files?.length) return;
     this.fileError = '';
 
     for (const file of Array.from(input.files)) {
-      if (!this.imageCompression.isTypeAllowed(file)) {
-        this.fileError = 'Only PNG, JPG, or WEBP files are allowed.';
-        continue;
-      }
-      if (!this.imageCompression.isSizeAllowed(file)) {
-        this.fileError = 'File is too large (max. 5 MB).';
-        continue;
-      }
-      try {
-        const base64 = await this.imageCompression.compressImage(file);
-        this.attachments.push({ filename: file.name, fileType: file.type, base64 });
-      } catch {
-        this.fileError = 'The file could not be processed.';
-      }
+      await this.processFile(file);
     }
     input.value = '';
     this.refreshViewer();
   }
 
+  /**
+   * Validates and compresses a single file, then adds it as an attachment.
+   * Sets fileError if the file is rejected or cannot be processed.
+   * @param file The file to process.
+   */
+  private async processFile(file: File) {
+    if (!this.imageCompression.isTypeAllowed(file)) {
+      this.fileError = 'Only PNG, JPG, or WEBP files are allowed.';
+      return;
+    }
+    if (!this.imageCompression.isSizeAllowed(file)) {
+      this.fileError = 'File is too large (max. 5 MB).';
+      return;
+    }
+    try {
+      const base64 = await this.imageCompression.compressImage(file);
+      this.attachments.push({ filename: file.name, fileType: file.type, base64 });
+    } catch {
+      this.fileError = 'The file could not be processed.';
+    }
+  }
+
+  /**
+   * Removes an attachment at the given index and refreshes the viewer.
+   * @param index The index of the attachment to remove.
+   */
   removeAttachment(index: number) {
     this.attachments.splice(index, 1);
     this.refreshViewer();
   }
 
   /**
-   * (Re-)initialisiert Viewer.js, nachdem sich die Galerie geändert hat.
-   * setTimeout wartet, bis Angular das DOM aktualisiert hat.
+   * (Re-)initializes Viewer.js after the attachment gallery has changed.
+   * The setTimeout defers execution until Angular has updated the DOM.
    */
   private refreshViewer() {
     setTimeout(() => {
@@ -129,6 +172,10 @@ export class AddTaskTemplate implements OnInit {
     });
   }
 
+  /**
+   * Lifecycle hook called when the component is destroyed.
+   * Destroys the Viewer.js instance to avoid leaking DOM nodes/listeners.
+   */
   ngOnDestroy() {
     this.viewerInstance?.destroy();
   }
@@ -137,22 +184,17 @@ export class AddTaskTemplate implements OnInit {
    * Initializes the component and loads all contacts from the service.
    */
   ngOnInit(): void {
+    this.loadContacts();
+  }
+
+  /**
+   * Subscribes to the contacts collection and keeps allContacts in sync.
+   * Runs inside the injection context, as required by collectionData().
+   */
+  private loadContacts(): void {
     runInInjectionContext(this.injector, () => {
       collectionData(this.contactService.getContactsRef(), { idField: 'id' })
-        .pipe(
-          map((contacts: any[]) =>
-            contacts.map(
-              (c) =>
-                ({
-                  id: c.id?.toString(),
-                  name: c.name || '',
-                  email: c.email || '',
-                  phone: c.phone || '',
-                  selected: false,
-                }) as Contacts,
-            ),
-          ),
-        )
+        .pipe(map((contacts: any[]) => contacts.map(mapToContact)))
         .subscribe((contacts: Contacts[]) => {
           this.allContacts = contacts;
         });
@@ -248,14 +290,12 @@ export class AddTaskTemplate implements OnInit {
   @HostListener('document:click', ['$event'])
   handleClickOutside(event: MouseEvent) {
     const target = event.target as HTMLElement;
-
     if (!target.closest('.category-select')) {
       if (this.isCategoryDropdownOpen) {
         this.isCategoryDropdownOpen = false;
         this.validateCategory();
       }
     }
-
     if (!target.closest('.subtask-item')) {
       this.editingSubtaskIndex = null;
       this.editingSubtaskTitle = '';
@@ -266,6 +306,15 @@ export class AddTaskTemplate implements OnInit {
    * Clears the form fields and resets the component state.
    */
   clearForm() {
+    this.resetFormFields();
+    this.resetAttachments();
+    if (this.isDialogMode) this.closeDialog.emit();
+  }
+
+  /**
+   * Resets all plain form fields and validation flags to their defaults.
+   */
+  private resetFormFields() {
     this.title = '';
     this.description = '';
     this.dueDate = '';
@@ -280,11 +329,15 @@ export class AddTaskTemplate implements OnInit {
     this.categoryInvalid = false;
     this.editingSubtaskIndex = null;
     this.editingSubtaskTitle = '';
+  }
+
+  /**
+   * Resets attachments, the file error, and destroys the image viewer.
+   */
+  private resetAttachments() {
     this.attachments = [];
     this.fileError = '';
     this.viewerInstance?.destroy();
-
-    if (this.isDialogMode) this.closeDialog.emit();
   }
 
   /**
@@ -327,7 +380,20 @@ export class AddTaskTemplate implements OnInit {
     this.validateCategory();
     if (this.titleInvalid || !this.isFormValid || this.categoryInvalid) return;
 
-    const task: Omit<Task, 'createdAt'> = {
+    try {
+      await this.taskService.createTask(this.buildTaskPayload());
+      this.handleTaskCreated();
+    } catch (error) {
+      console.error('Error creating task:', error);
+    }
+  }
+
+  /**
+   * Builds the task payload from the current form state.
+   * @returns The task object ready to be persisted (without createdAt).
+   */
+  private buildTaskPayload(): Omit<Task, 'createdAt'> {
+    return {
       title: this.title,
       description: this.description,
       dueDate: this.dueDate,
@@ -339,13 +405,6 @@ export class AddTaskTemplate implements OnInit {
       position: 0,
       attachments: this.attachments,
     };
-
-    try {
-      await this.taskService.createTask(task);
-      this.handleTaskCreated();
-    } catch (error) {
-      console.error('Error creating task:', error);
-    }
   }
 
   /**
