@@ -44,8 +44,8 @@
       </div>
 
       <div class="form-group">
-  <app-attachments [(attachments)]="attachments"></app-attachments>
-</div>
+        <app-attachments [(attachments)]="attachments"></app-attachments>
+      </div>
     </div>
 
     <div class="devide-section" aria-hidden="true"></div>
@@ -141,120 +141,7 @@
 
       <div class="form-group">
         <label>Subtasks</label>
-        <div class="subtask-input">
-          <input
-            type="text"
-            placeholder="Add new subtask"
-            [(ngModel)]="newSubtask"
-            (keyup.enter)="addSubtask()"
-            (click)="$event.stopPropagation()"
-            style="height: 48px"
-          />
-          <div class="subtask-actions">
-            <img
-              src="assets/imgs/add-task/delete_grey.png"
-              alt="Clear subtask"
-              class="subtask-icon delete"
-              (mousedown)="$event.preventDefault()"
-              (click)="newSubtask = ''"
-              style="width: 24px; height: 24px"
-            />
-            <div class="subtask-divider"></div>
-            <img
-              src="assets/imgs/add-task/check_grey.png"
-              alt="Add subtask"
-              class="subtask-icon check"
-              (mousedown)="$event.preventDefault()"
-              (click)="addSubtask()"
-              style="width: 24px; height: 24px"
-            />
-          </div>
-        </div>
-
-        <div class="subtask-list-container">
-          <div class="subtask-list">
-            <div
-              *ngFor="let task of subtasks; let i = index"
-              class="subtask-item"
-              [class.editing]="editingSubtaskIndex === i"
-              style="display: flex; align-items: center; position: relative; height: 48px"
-            >
-              <ng-container *ngIf="editingSubtaskIndex === i; else viewSubtask">
-                <div
-                  class="subtask-input existing-subtask"
-                  style="flex: 1; display: flex; align-items: center; height: 48px"
-                >
-                  <input
-                    type="text"
-                    [(ngModel)]="editingSubtaskTitle"
-                    (click)="$event.stopPropagation()"
-                    (keyup.enter)="saveSubtaskEdit(i)"
-                    style="flex: 1; height: 48px"
-                  />
-                  <div
-                    class="subtask-actions"
-                    style="margin-left: 8px; display: flex; align-items: center"
-                  >
-                    <img
-                      src="assets/imgs/add-task/trash.png"
-                      alt="Delete subtask"
-                      class="subtask-icon delete"
-                      (mousedown)="$event.preventDefault()"
-                      (click)="$event.stopPropagation(); removeSubtask(i)"
-                    />
-                    <div
-                      class="subtask-divider"
-                      style="width: 1px; height: 20px; background: #a8a8a8; margin: 0 8px"
-                    ></div>
-                    <img
-                      src="assets/imgs/add-task/check_grey.png"
-                      alt="Save subtask"
-                      class="subtask-icon check"
-                      (mousedown)="$event.preventDefault()"
-                      (click)="$event.stopPropagation(); saveSubtaskEdit(i)"
-                    />
-                  </div>
-                </div>
-              </ng-container>
-
-              <ng-template #viewSubtask>
-                <span style="font-size: 20px; margin-right: 8px">&bull;</span>
-                <span
-                  class="subtask-title-text"
-                  style="flex: 1; cursor: pointer"
-                  (click)="startEditSubtask(i, task.title)"
-                >
-                  {{ task.title }}
-                </span>
-                <div
-                  class="subtask-actions"
-                  style="margin-left: 8px; display: flex; align-items: center"
-                >
-                  <img
-                    src="assets/imgs/add-task/edit.png"
-                    alt="Bearbeiten"
-                    class="subtask-icon edit"
-                    (click)="startEditSubtask(i, task.title)"
-                  />
-                  <div
-                    class="subtask-divider"
-                    style="width: 1px; height: 20px; background: #a8a8a8; margin: 0 8px"
-                  ></div>
-                  <img
-                    src="assets/imgs/add-task/trash.png"
-                    alt="Löschen"
-                    class="subtask-icon delete"
-                    (click)="removeSubtask(i)"
-                  />
-                </div>
-              </ng-template>
-            </div>
-          </div>
-        </div>
-
-        <p class="inline-required-hint-right">
-          <span class="required">*</span>This field is required
-        </p>
+        <app-subtask [(subtasks)]="subtasks"></app-subtask>
       </div>
     </div>
   </div>

@@ -21,6 +21,7 @@ import { Task, Subtask, Attachment } from '../../interfaces/task';
 import { AssignedToSelectComponent } from '../../shared/assigned-to-select/assigned-to-select';
 import { AttachmentsComponent } from '../../shared/attachments/attachments.component';
 import { mapToContact } from './add-task-form.helpers';
+import { SubtaskComponent } from '../../shared/subtask/subtask.component';
 
 /**
  * Component for creating a new task, including title, description, due date,
@@ -30,7 +31,13 @@ import { mapToContact } from './add-task-form.helpers';
 @Component({
   selector: 'app-add-task-template',
   standalone: true,
-  imports: [CommonModule, FormsModule, AssignedToSelectComponent, AttachmentsComponent],
+  imports: [
+    CommonModule,
+    FormsModule,
+    AssignedToSelectComponent,
+    AttachmentsComponent,
+    SubtaskComponent,
+  ],
   templateUrl: './add-task-template.html',
   styleUrls: ['./add-task-template.scss'],
 })
@@ -146,58 +153,6 @@ export class AddTaskTemplate implements OnInit {
     this.category = value;
     this.isCategoryDropdownOpen = false;
     this.categoryInvalid = false;
-  }
-
-  /**
-   * Adds a new subtask to the subtasks list if the input text is not empty.
-   */
-  addSubtask(): void {
-    if (this.newSubtask.trim()) {
-      this.subtasks.push({ title: this.newSubtask.trim(), completed: false });
-      this.newSubtask = '';
-    }
-  }
-
-  /**
-   * Removes a subtask by index and updates editing state accordingly.
-   * @param index Zero-based index of the subtask to remove.
-   */
-  removeSubtask(index: number): void {
-    this.subtasks.splice(index, 1);
-    if (this.editingSubtaskIndex !== null) {
-      if (this.editingSubtaskIndex === index) {
-        this.editingSubtaskIndex = null;
-        this.editingSubtaskTitle = '';
-      } else if (this.editingSubtaskIndex > index) {
-        this.editingSubtaskIndex--;
-      }
-    }
-  }
-
-  /**
-   * Sets a subtask into inline edit mode.
-   * @param index Zero-based index of the subtask to edit.
-   * @param title Current title of the subtask.
-   */
-  startEditSubtask(index: number, title: string): void {
-    this.editingSubtaskIndex = index;
-    this.editingSubtaskTitle = title;
-  }
-
-  /**
-   * Saves changes to an edited subtask, or removes it if the updated title is empty.
-   * @param index Zero-based index of the subtask being edited.
-   */
-  saveSubtaskEdit(index: number): void {
-    if (this.editingSubtaskIndex !== index) return;
-    const trimmedTitle = this.editingSubtaskTitle.trim();
-    if (!trimmedTitle) {
-      this.removeSubtask(index);
-      return;
-    }
-    this.subtasks[index] = { ...this.subtasks[index], title: trimmedTitle };
-    this.editingSubtaskIndex = null;
-    this.editingSubtaskTitle = '';
   }
 
   /**

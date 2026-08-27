@@ -1,0 +1,88 @@
+<div class="subtask-container">
+  <div class="subtask-input">
+    <input
+      type="text"
+      placeholder="Add new subtask"
+      [(ngModel)]="newSubtaskTitle"
+      (keydown.enter)="addSubtask($event)"
+      (click)="$event.stopPropagation()"
+    />
+
+    <div class="subtask-actions" *ngIf="newSubtaskTitle.trim()">
+      <img
+        src="assets/imgs/add-task/delete_grey.png"
+        alt="Clear subtask"
+        class="subtask-icon delete"
+        (mousedown)="$event.preventDefault()"
+        (click)="clearInput()"
+      />
+      <div class="subtask-divider"></div>
+      <img
+        src="assets/imgs/add-task/check_grey.png"
+        alt="Add subtask"
+        class="subtask-icon check"
+        (mousedown)="$event.preventDefault()"
+        (click)="addSubtask($event)"
+      />
+    </div>
+  </div>
+
+  <div class="subtask-list">
+    <div
+      *ngFor="let task of subtasks; let i = index"
+      class="subtask-item"
+      [class.editing]="editingIndex === i"
+    >
+      <ng-container *ngIf="editingIndex === i; else viewSubtask">
+        <div class="existing-subtask">
+          <input
+            type="text"
+            [(ngModel)]="editedTitle"
+            (click)="$event.stopPropagation()"
+            (keydown.enter)="saveEdit(i, $event)"
+            (keydown.escape)="cancelEdit()"
+          />
+          <div class="subtask-actions">
+            <img
+              src="assets/imgs/add-task/check_grey.png"
+              alt="Save subtask"
+              class="subtask-icon check"
+              (mousedown)="$event.preventDefault()"
+              (click)="$event.stopPropagation(); saveEdit(i, $event)"
+            />
+            <div class="subtask-divider"></div>
+            <img
+              src="assets/imgs/add-task/trash.png"
+              alt="Delete subtask"
+              class="subtask-icon delete"
+              (mousedown)="$event.preventDefault()"
+              (click)="$event.stopPropagation(); removeSubtask(i)"
+            />
+          </div>
+        </div>
+      </ng-container>
+
+      <ng-template #viewSubtask>
+        <div class="subtask-view-content" (dblclick)="startEdit(i)">
+          <span class="subtask-bullet">&bull;</span>
+          <span class="subtask-title-text">{{ task.title }}</span>
+        </div>
+        <div class="subtask-actions">
+          <img
+            src="assets/imgs/add-task/edit.png"
+            alt="Edit"
+            class="subtask-icon edit"
+            (click)="startEdit(i); $event.stopPropagation()"
+          />
+          <div class="subtask-divider"></div>
+          <img
+            src="assets/imgs/add-task/trash.png"
+            alt="Delete"
+            class="subtask-icon delete"
+            (click)="removeSubtask(i); $event.stopPropagation()"
+          />
+        </div>
+      </ng-template>
+    </div>
+  </div>
+</div>
