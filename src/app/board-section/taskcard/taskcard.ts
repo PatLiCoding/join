@@ -113,7 +113,7 @@ export class Taskcard {
    * @returns Matching contact object or undefined
    */
   getContactByName(name: string) {
-    return this.contactService.contactList.find((c) => c.name === name);
+    return this.contactService.contactList.find((c) => c.name === name) ?? null;
   }
 
   /**

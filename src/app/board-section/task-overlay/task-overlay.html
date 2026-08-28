@@ -31,7 +31,10 @@
               <span class="label">Priority:</span>
               <div class="priority-badge" [ngClass]="safeTask.priority">
                 <span>{{ safeTask.priority | titlecase }}</span>
-                <img [src]="'assets/imgs/add-task/' + safeTask.priority + '_default.png'" />
+                <img
+                  [src]="'assets/imgs/add-task/' + safeTask.priority + '_default.png'"
+                  [alt]="'Priorität: ' + safeTask.priority"
+                />
               </div>
             </div>
           </div>
@@ -79,6 +82,7 @@
                     'assets/imgs/add-task/' +
                     (subtask.completed ? 'checkbox-checked.png' : 'check_unchecked.png')
                   "
+                  [alt]="subtask.completed ? 'Subtask checked' : 'Subtask unchecked'"
                 />
 
                 <span class="subtask-title-text">
@@ -100,14 +104,14 @@
 
       <div class="overlay-footer">
         <button class="delete-btn" (click)="onDelete()">
-          <img src="assets/icon/contact-info/delete-default.png" class="btn-icon" />
+          <img src="assets/icon/contact-info/delete-default.png" class="btn-icon" alt="Delete" />
           Delete
         </button>
 
         <div class="divider"></div>
 
         <button class="edit-btn" (click)="enableEdit(); $event.stopPropagation()">
-          <img src="assets/icon/contact-info/edit-default.png" class="btn-icon" />
+          <img src="assets/icon/contact-info/edit-default.png" class="btn-icon" alt="Edit" />
           Edit
         </button>
       </div>
@@ -171,6 +175,7 @@
                         ? 'assets/imgs/add-task/urgent_white.png'
                         : 'assets/imgs/add-task/urgent_default.png'
                     "
+                    alt="Urgent"
                   />
                 </button>
                 <button
@@ -186,6 +191,7 @@
                         ? 'assets/imgs/add-task/medium_white.png'
                         : 'assets/imgs/add-task/medium_default.png'
                     "
+                    alt="Medium"
                   />
                 </button>
                 <button
@@ -201,6 +207,7 @@
                         ? 'assets/imgs/add-task/low_white.png'
                         : 'assets/imgs/add-task/low_default.png'
                     "
+                    alt="Low"
                   />
                 </button>
               </div>

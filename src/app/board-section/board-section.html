@@ -3,7 +3,7 @@
     <div class="headline">
       <h1>Board</h1>
       <div class="addBtnMobil" (click)="openAddTaskDialog('todo')">
-        <img src="assets/icon/task/board/add.png" />
+        <img src="assets/icon/task/board/add.png" alt="Add"/>
       </div>
     </div>
     <div class="addBtnSearchContainer">
@@ -18,7 +18,7 @@
           (mouseleave)="hoveredIcon = null"
         ></textarea>
         <div class="lensArea">
-          <img src="assets/icon/task/board/search-borderline.png" />
+          <img src="assets/icon/task/board/search-borderline.png" alt="Borderline"/>
           <img
             class="lensImg"
             [src]="
@@ -26,12 +26,13 @@
                 ? 'assets/icon/task/board/search-hover.png'
                 : 'assets/icon/task/board/search-default.png'
             "
+            alt="Search"
           />
         </div>
       </div>
       <div class="addBtn" (click)="openAddTaskDialog('todo')">
         <p>Add Task</p>
-        <img src="assets/icon/task/board/add.png" />
+        <img src="assets/icon/task/board/add.png" alt="Add"/>
       </div>
     </div>
   </div>
@@ -49,6 +50,7 @@
               : 'assets/icon/task/board/add-task-default.png'
           "
           (click)="openAddTaskDialog('todo')"
+          alt="Add ToDo"
         />
       </div>
       <div
@@ -89,6 +91,7 @@
               : 'assets/icon/task/board/add-task-default.png'
           "
           (click)="openAddTaskDialog('inProgress')"
+          alt="Add Progress"
         />
       </div>
       <div
@@ -129,6 +132,7 @@
               : 'assets/icon/task/board/add-task-default.png'
           "
           (click)="openAddTaskDialog('awaitFeedback')"
+          alt="Add Await"
         />
       </div>
       <div
