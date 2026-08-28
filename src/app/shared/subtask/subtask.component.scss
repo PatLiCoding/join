@@ -1,11 +1,12 @@
+@use 'mixins' as *;
+
 .subtask-container {
   width: 100%;
 }
 
 .subtask-input {
   position: relative;
-  display: flex;
-  align-items: center;
+  @include flex-row;
   width: 100%;
   margin-bottom: 8px;
 
@@ -37,13 +38,9 @@
   }
 
   .subtask-actions {
-    position: absolute;
-    right: 12px;
-    top: 50%;
+    @include absolute($top: 50%, $right: 12px);
     transform: translateY(-50%);
-    display: flex;
-    align-items: center;
-    gap: 8px;
+    @include flex-row(8px);
   }
 }
 
@@ -70,23 +67,9 @@
   list-style: none;
   max-height: 160px;
   overflow-y: auto;
-  display: flex;
-  flex-direction: column;
-  gap: 4px;
+  @include flex-col(4px);
 
-  &::-webkit-scrollbar {
-    width: 4px;
-  }
-
-  &::-webkit-scrollbar-track {
-    background: #f6f7f8;
-    border-radius: 10px;
-  }
-
-  &::-webkit-scrollbar-thumb {
-    background: #a8a8a8;
-    border-radius: 10px;
-  }
+  @include custom-scrollbar;
 
   &::-webkit-scrollbar-thumb:hover {
     background: #2a3647;
@@ -95,13 +78,10 @@
 
 .subtask-item {
   position: relative;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
+  @include flex(row, center, space-between, 12px);
   min-height: 38px;
   padding: 6px 12px;
   border-radius: 10px;
-  gap: 12px;
   transition: background-color 0.15s ease;
 
   &:hover {
@@ -114,8 +94,7 @@
   }
 
   .subtask-view-content {
-    display: flex;
-    align-items: flex-start;
+    @include flex(row, flex-start, flex-start);
     flex: 1;
     min-width: 0;
   }
@@ -129,17 +108,13 @@
 
   .subtask-title-text {
     min-width: 0;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
+    @include truncate;
     font-size: 16px;
     color: #2a3647;
   }
 
   .subtask-actions {
-    display: flex;
-    align-items: center;
-    gap: 8px;
+    @include flex-row(8px);
     flex-shrink: 0;
     opacity: 0;
     visibility: hidden;
@@ -153,8 +128,7 @@
     padding: 0;
 
     .existing-subtask {
-      display: flex;
-      align-items: center;
+      @include flex-row;
       width: 100%;
       position: relative;
 
@@ -180,9 +154,7 @@
       .subtask-actions {
         opacity: 1;
         visibility: visible;
-        position: absolute;
-        right: 12px;
-        top: 50%;
+        @include absolute($top: 50%, $right: 12px);
         transform: translateY(-50%);
       }
     }

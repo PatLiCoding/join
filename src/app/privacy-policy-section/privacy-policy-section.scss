@@ -1,14 +1,13 @@
+@use 'mixins' as *;
+
 .privacy-policy {
-  display: flex;
-  flex-direction: column;
+  @include flex-col;
   height: 100%;
-  padding: 24px;
+  @include padding(24px);
   box-sizing: border-box;
 
   .privacy-header {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
+    @include flex(row, center, space-between);
     margin-bottom: 24px;
     flex-shrink: 0;
 
@@ -37,6 +36,7 @@
     flex: 1;
     overflow-y: auto;
     padding-right: 8px;
+    @include custom-scrollbar;
   }
 
   h2 {

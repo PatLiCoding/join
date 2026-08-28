@@ -1,19 +1,19 @@
+@use 'mixins' as *;
+
 .add-task-dialog-overlay {
   position: fixed;
   top: 0;
   left: 0;
   width: 100%;
   height: 100vh;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  @include flex-center;
   z-index: 2000;
 }
 
 .add-task-dialog-backdrop {
   position: absolute;
   inset: 0;
-  background: rgba(0,0,0,0.3);
+  background: rgba(0, 0, 0, 0.3);
   z-index: 1;
 }
 
@@ -27,16 +27,13 @@
   overflow: visible;
   background: #f6f7fb;
   border-radius: 30px;
-  box-shadow: 0 4px 20px rgba(0,0,0,0.2);
-  display: flex;
-  flex-direction: column;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+  @include flex-col;
   padding: 10px;
 }
 
 .dialog-close-btn {
-  position: absolute;
-  top: 24px;
-  right: 24px;
+  @include absolute($top: 24px, $right: 24px);
   z-index: 3;
   background: transparent;
   border: none;
@@ -50,13 +47,12 @@
     max-width: 100%;
     margin: auto;
   }
-
 }
 
 @media (orientation: landscape) and (max-height: 600px) {
   .scroll-wrapper {
-    height: 95vh;       
-    max-height: 95vh;   
-    overflow-y: auto;    
+    height: 95vh;
+    max-height: 95vh;
+    overflow-y: auto;
   }
 }

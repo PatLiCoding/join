@@ -1,3 +1,5 @@
+@use 'mixins' as *;
+
 .task-saved-message {
   position: fixed;
   left: 50%;
@@ -5,11 +7,9 @@
   transform: translate(-50%, 50%);
   background-color: #2a3647;
   color: white;
-  padding: 20px 40px;
+  @include padding(20px, 40px);
   border-radius: 20px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  @include flex-center;
   z-index: 9999;
   animation: slideFromBottom 0.6s ease-out forwards;
 }
@@ -35,11 +35,7 @@ label {
 }
 
 .add-task-section {
-  display: flex;
-  gap: 32px;
-  flex-direction: row;
-  align-items: stretch;
-  justify-content: flex-start;
+  @include flex(row, stretch, flex-start, 32px);
   width: 100%;
   max-width: 945px;
   flex: 1 1 auto;
@@ -48,6 +44,7 @@ label {
   padding-bottom: 0px;
   overflow-y: auto;
   max-height: 100%;
+  @include custom-scrollbar;
 
   @media (min-width: 1250px) and (max-height: 855px) {
     .add-task-section {
@@ -106,8 +103,7 @@ label {
 .add-task-right {
   width: 100%;
   max-width: 440px;
-  display: flex;
-  flex-direction: column;
+  @include flex-col;
 }
 
 .text-button-div {
@@ -130,14 +126,13 @@ label {
 }
 
 .form-group {
-  display: flex;
-  flex-direction: column;
+  @include flex-col;
   margin-bottom: 15px;
 
   input,
   textarea {
     font-family: 'Inter', sans-serif;
-    padding: 10px 12px;
+    @include padding(10px, 12px);
     border: 1px solid #d1d1d1;
     border-radius: 10px;
     font-size: 20px;
@@ -164,13 +159,12 @@ input[type='date']::-webkit-calendar-picker-indicator {
 }
 
 .priority-buttons {
-  display: flex;
-  gap: 10px;
+  @include flex(row, center, flex-start, 10px);
 
   .priority {
     width: 136px;
     height: 56px;
-    padding: 0 12px;
+    @include padding(0, 12px);
     border: 1px solid #d1d1d1;
     border-radius: 10px;
     background-color: #ffffff;
@@ -180,9 +174,7 @@ input[type='date']::-webkit-calendar-picker-indicator {
     font-size: 20px;
     line-height: 120%;
     transition: 0.2s ease;
-    display: flex;
-    align-items: center;
-    justify-content: center;
+    @include flex-center;
     gap: 8px;
     box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.03);
 
@@ -287,7 +279,7 @@ input[type='date']::-webkit-calendar-picker-indicator {
     min-height: 36px;
     border: 1px solid #ccc;
     border-radius: 6px;
-    padding: 6px 10px;
+    @include padding(6px, 10px);
     background-color: #fff;
     gap: 8px;
     margin-bottom: 10px;
@@ -329,15 +321,13 @@ input[type='date']::-webkit-calendar-picker-indicator {
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
     z-index: 1000;
     padding: 6px 0;
-    display: flex;
-    flex-direction: column;
-    gap: 4px;
+    @include flex(column, stretch, flex-start, 4px);
 
     .single-contact {
       display: flex;
       align-items: center;
       gap: 16px;
-      padding: 6px 12px;
+      @include padding(6px, 12px);
       cursor: pointer;
       border-radius: 10px;
 
@@ -354,9 +344,7 @@ input[type='date']::-webkit-calendar-picker-indicator {
         width: 42px;
         height: 42px;
         border-radius: 50%;
-        display: flex;
-        align-items: center;
-        justify-content: center;
+        @include flex-center;
         font-family: 'Inter', sans-serif;
         font-weight: 400;
         font-size: 16px;
@@ -395,7 +383,7 @@ input[type='date']::-webkit-calendar-picker-indicator {
   border-radius: 8px;
   background: #fff;
   cursor: pointer;
-  padding: 8px 12px;
+  @include padding(8px, 12px);
 
   .category-selected {
     flex: 1;
@@ -426,7 +414,7 @@ input[type='date']::-webkit-calendar-picker-indicator {
     z-index: 10;
 
     .category-option {
-      padding: 10px 12px;
+      @include padding(10px, 12px);
       font-size: 16px;
       color: #2a3647;
       font-family: 'Inter', sans-serif;

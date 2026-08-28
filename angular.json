@@ -19,9 +19,7 @@
           "builder": "@angular/build:application",
           "options": {
             "browser": "src/main.ts",
-            "polyfills": [
-              "zone.js"
-            ],
+            "polyfills": ["zone.js"],
             "tsConfig": "tsconfig.app.json",
             "assets": [
               {
@@ -29,10 +27,10 @@
                 "input": "public"
               }
             ],
-            "styles": [
-              "src/styles.scss",
-              "node_modules/viewerjs/dist/viewer.css"
-            ]
+            "styles": ["src/styles.scss", "node_modules/viewerjs/dist/viewer.css"],
+            "stylePreprocessorOptions": {
+              "includePaths": ["src/styles", "src/app/shared/style"]
+            }
           },
           "configurations": {
             "production": {
@@ -81,10 +79,7 @@
         "test": {
           "builder": "@angular/build:karma",
           "options": {
-            "polyfills": [
-              "zone.js",
-              "zone.js/testing"
-            ],
+            "polyfills": ["zone.js", "zone.js/testing"],
             "tsConfig": "tsconfig.spec.json",
             "assets": [
               {
@@ -92,9 +87,10 @@
                 "input": "public"
               }
             ],
-            "styles": [
-              "src/styles.scss"
-            ]
+            "styles": ["src/styles.scss"],
+            "stylePreprocessorOptions": {
+              "includePaths": ["src/styles", "src/app/shared/style"]
+            }
           }
         }
       }

@@ -1,0 +1,254 @@
+// =========================================================
+// _mixins.scss
+// Central collection of reusable SCSS mixins
+// Import with: @use 'mixins' as *;
+// =========================================================
+
+/// Generates flexbox layout with customizable direction, alignment, justification, and gap.
+///
+/// @param {String} $direction [row] - Flex direction (row | column | row-reverse | column-reverse)
+/// @param {String} $align [center] - Align-items CSS property
+/// @param {String} $justify [center] - Justify-content CSS property
+/// @param {Number|Length} $gap [0] - Gap between flex items
+///
+/// @example scss
+///   .container {
+///     @include flex(column, flex-start, space-between, 16px);
+///   }
+@mixin flex($direction: row, $align: center, $justify: center, $gap: 0) {
+  display: flex;
+  flex-direction: $direction;
+  align-items: $align;
+  justify-content: $justify;
+  @if $gap != 0 {
+    gap: $gap;
+  }
+}
+
+/// Shorthand for vertical flexbox layout with optional gap.
+///
+/// @param {Number|Length} $gap [0] - Gap between flex items
+///
+/// @example scss
+///   .list {
+///     @include flex-col(12px);
+///   }
+@mixin flex-col($gap: 0) {
+  @include flex(column, stretch, flex-start, $gap);
+}
+
+/// Shorthand for horizontal flexbox layout with optional gap.
+///
+/// @param {Number|Length} $gap [0] - Gap between flex items
+///
+/// @example scss
+///   .bar {
+///     @include flex-row(8px);
+///   }
+@mixin flex-row($gap: 0) {
+  @include flex(row, center, flex-start, $gap);
+}
+
+/// Centers flex items horizontally and vertically.
+///
+/// @example scss
+///   .icon-button {
+///     @include flex-center;
+///   }
+@mixin flex-center {
+  @include flex(row, center, center);
+}
+
+/// Sets absolute positioning for top, right, bottom, and left coordinates.
+///
+/// @param {Number|Null} $top [null] - Top offset
+/// @param {Number|Null} $right [null] - Right offset
+/// @param {Number|Null} $bottom [null] - Bottom offset
+/// @param {Number|Null} $left [null] - Left offset
+///
+/// @example scss
+///   .close-btn {
+///     @include absolute($top: 24px, $right: 24px);
+///   }
+@mixin absolute($top: null, $right: null, $bottom: null, $left: null) {
+  position: absolute;
+  @if $top != null { top: $top; }
+  @if $right != null { right: $right; }
+  @if $bottom != null { bottom: $bottom; }
+  @if $left != null { left: $left; }
+}
+
+/// Positions an element fixed across the entire viewport.
+///
+/// @example scss
+///   .backdrop {
+///     @include fixed-fullscreen;
+///   }
+@mixin fixed-fullscreen {
+  position: fixed;
+  inset: 0;
+}
+
+/// Creates a fullscreen modal overlay centered on screen with z-index control.
+///
+/// @param {Number} $z [1000] - Z-index stack level
+///
+/// @example scss
+///   .dialog-overlay {
+///     @include overlay(2000);
+///   }
+@mixin overlay($z: 1000) {
+  @include fixed-fullscreen;
+  @include flex-center;
+  z-index: $z;
+}
+
+/// Applies standard card background, border radius, and box shadow styles.
+///
+/// @param {Length} $radius [24px] - Border radius
+/// @param {Color} $bg [#ffffff] - Background color
+///
+/// @example scss
+///   .user-card {
+///     @include card(16px, #f9f9f9);
+///   }
+@mixin card($radius: 24px, $bg: #ffffff) {
+  background-color: $bg;
+  border-radius: $radius;
+  box-shadow:
+    0px 4px 12px rgba(0, 0, 0, 0.08),
+    0px 1px 3px rgba(0, 0, 0, 0.12);
+}
+
+/// Resets browser default button styles.
+///
+/// @example scss
+///   button {
+///     @include button-reset;
+///   }
+@mixin button-reset {
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  padding: 0;
+  font: inherit;
+}
+
+/// Applies primary button styling with hover and disabled states.
+///
+/// @param {Color} $bg [#2a3647] - Default background color
+/// @param {Color} $hover [#29abe2] - Hover state background color
+///
+/// @example scss
+///   .submit-btn {
+///     @include btn-primary;
+///   }
+@mixin btn-primary($bg: #2a3647, $hover: #29abe2) {
+  @include flex-center;
+  background-color: $bg;
+  color: #fff;
+  border: none;
+  border-radius: 10px;
+  font-family: 'Inter', sans-serif;
+  font-weight: 700;
+  cursor: pointer;
+  transition: background 0.2s ease, box-shadow 0.2s ease;
+
+  &:hover {
+    background-color: $hover;
+  }
+
+  &:disabled {
+    background-color: #d1d1d1;
+    cursor: not-allowed;
+  }
+}
+
+/// Mirrors standard CSS padding shorthand syntax.
+///
+/// @param {Length} $top - Top padding (or uniform padding if single value)
+/// @param {Length} $right [$top] - Right padding
+/// @param {Length} $bottom [$top] - Bottom padding
+/// @param {Length} $left [$right] - Left padding
+///
+/// @example scss
+///   .box {
+///     @include padding(10px, 20px);
+///   }
+@mixin padding($top, $right: $top, $bottom: $top, $left: $right) {
+  padding: $top $right $bottom $left;
+}
+
+/// Sets typography properties (font family, size, weight, line-height).
+///
+/// @param {Length} $size [20px] - Font size
+/// @param {Number} $weight [400] - Font weight
+/// @param {List|String} $family [('Inter', sans-serif)] - Font family stack
+///
+/// @example scss
+///   .heading {
+///     @include font(24px, 700);
+///   }
+@mixin font($size: 20px, $weight: 400, $family: ('Inter', sans-serif)) {
+  font-family: $family;
+  font-weight: $weight;
+  font-size: $size;
+  line-height: 120%;
+}
+
+/// Truncates text with an ellipsis when overflowing its container.
+///
+/// @example scss
+///   .title {
+///     @include truncate;
+///   }
+@mixin truncate {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/// Hides scrollbars while maintaining scroll functionality (WebKit & Firefox).
+///
+/// @param {String} $direction [y] - Scroll axis (x | y)
+///
+/// @example scss
+///   .scroll-area {
+///     @include scrollbar-hidden;
+///   }
+@mixin scrollbar-hidden($direction: y) {
+  @if $direction == y {
+    overflow-y: scroll;
+  } @else {
+    overflow-x: auto;
+  }
+  scrollbar-width: none;
+  &::-webkit-scrollbar {
+    display: none;
+  }
+}
+
+/// Styles custom scrollbars for WebKit browsers.
+///
+/// @param {Length} $width [4px] - Scrollbar width
+/// @param {Color} $thumb [#a8a8a8] - Scrollbar thumb color
+/// @param {Color} $track [#f6f7f8] - Scrollbar track color
+///
+/// @example scss
+///   .custom-list {
+///     @include custom-scrollbar(6px, #2a3647);
+///   }
+@mixin custom-scrollbar($width: 4px, $thumb: #a8a8a8, $track: #f6f7f8) {
+  &::-webkit-scrollbar {
+    width: $width;
+  }
+  &::-webkit-scrollbar-track {
+    background: $track;
+    border-radius: 10px;
+  }
+  &::-webkit-scrollbar-thumb {
+    background: $thumb;
+    border-radius: 10px;
+  }
+  padding-right: 4px;
+}

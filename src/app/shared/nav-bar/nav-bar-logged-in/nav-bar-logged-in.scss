@@ -1,14 +1,13 @@
+@use 'mixins' as *;
+
 .navbar {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
+  @include flex(column, center, flex-start);
   width: 232px;
   height: 100vh;
   background-color: #2A3647;
   padding: 24px 0;
   box-sizing: border-box;
 }
-
 
 .logo img {
   width: 100px;
@@ -19,9 +18,7 @@
 }
 
 .desktop-links-wrapper {
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between; 
+  @include flex(column, stretch, space-between);
   padding-top: 40px;
   padding-bottom: 40px;
   height: calc(100vh - 124px); 
@@ -29,16 +26,12 @@
 }
 
 .navbar-main-links {
-  display: flex;
-  flex-direction: column;
+  @include flex-col(8px);
   width: 100%;
-  gap: 8px;
 }
 
 .navbar-main-links a {
-  display: flex;
-  align-items: center;
-  gap: 12px;
+  @include flex-row(12px);
   color: white;
   text-decoration: none;
   padding: 10px 60px;
@@ -59,11 +52,8 @@
  background-color: #000000;
 }
 
-
 .navbar-footer-links {
-  display: flex;
-  flex-direction: column;
-  gap: 6px;
+  @include flex-col(6px);
   width: 100%;
   margin-top: 32px;
 }
@@ -88,7 +78,6 @@
   color: white;
 }
 
-
 .desktop-only {
   display: block;
 }
@@ -96,7 +85,6 @@
 .mobile-only {
   display: none;
 }
-
 
 @media (max-width: 768px) {
 
@@ -106,15 +94,12 @@
     left: 0;
     width: 100%;
     height: 64px;
-    flex-direction: row;
-    justify-content: center;
-    align-items: center;
+    @include flex(row, center, center);
     padding: 0 8px;
     z-index: 1000;
     box-sizing: border-box;
   }
 
- 
   .desktop-only {
     display: none !important;
   }
@@ -124,29 +109,21 @@
   }
 
   .navbar-main-links.mobile-only.logged-in .mobile-links-wrapper {
-    display: flex;
-    flex-direction: row;
-    justify-content: space-between; 
-    align-items: center;
+    @include flex(row, center, space-between);
     width: 100%;
     height: 100%;
   }
 
- 
   .navbar-main-links.mobile-only.logged-in .mobile-links-wrapper a {
-display: flex;
-        flex-direction: column;
-        align-items: center;
-        justify-content: center;
-        flex: 1;
-        text-align: center;
-        color: white;
-        text-decoration: none;
-        font-size: 16px;
-        gap: 2px;
-        box-sizing: border-box;
-        padding: 4px 0;
-        border-radius: 10px;
+    @include flex(column, center, center, 2px);
+    flex: 1;
+    text-align: center;
+    color: white;
+    text-decoration: none;
+    font-size: 16px;
+    box-sizing: border-box;
+    padding: 4px 0;
+    border-radius: 10px;
   }
 
   .navbar-main-links.mobile-only.logged-in .mobile-links-wrapper a img {
@@ -154,9 +131,7 @@ display: flex;
     height: 24px;
   }
 
- 
   .navbar-main-links.mobile-only.logged-in .mobile-links-wrapper a.active {
     background-color: black; 
-   
   }
 }

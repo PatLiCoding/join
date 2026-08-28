@@ -1,7 +1,7 @@
+@use 'mixins' as *;
+
 header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
+  @include flex(row, center, space-between);
   padding: 20px 40px;
   background: white;
   box-shadow: 0 6px 6px -4px rgba(0, 0, 0, 0.1);
@@ -10,9 +10,7 @@ header {
 }
 
 .header-left {
-  display: flex;
-  align-items: center;
-  gap: 20px;
+  @include flex-row(20px);
   flex: 1;
 }
 
@@ -39,9 +37,7 @@ header {
 }
 
 .header-right {
-  display: flex;
-  align-items: center;
-  gap: 20px;
+  @include flex-row(20px);
 }
 
 .header-right .help {
@@ -62,9 +58,7 @@ header {
   border-radius: 50%;
   background: white;
   color: #29abe2;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  @include flex-center;
   font-weight: bold;
   cursor: pointer;
   font-size: 16px;
@@ -75,30 +69,22 @@ header {
 }
 
 .header-popup.desktop-popup {
-  position: absolute;
-  top: 100%;
-  right: 20px;
+  @include absolute($top: 100%, $right: 20px);
   background: #2a3647;
   box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
   border-radius: 20px 0px 20px 20px;
   padding: 20px;
-  display: flex;
-  flex-direction: column;
-  gap: 15px;
+  @include flex-col(15px);
   min-width: 180px;
 }
 
 .header-popup.mobile-popup {
-  position: absolute;
-  top: 65px;
-  right: 10px;
+  @include absolute($top: 65px, $right: 10px);
   background: #2a3647;
   box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
   border-radius: 10px 0px 10px 10px;
   padding: 20px;
-  display: flex;
-  flex-direction: column;
-  gap: 15px;
+  @include flex-col(15px);
   min-width: 180px;
 }
 

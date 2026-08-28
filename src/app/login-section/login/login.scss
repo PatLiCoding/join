@@ -1,3 +1,5 @@
+@use 'mixins' as *;
+
 .login-form {
   width: 650px;
   max-width: 100%;
@@ -5,17 +7,12 @@
   background: white;
   border-radius: 30px;
   box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
-  display: flex;
-  flex-direction: column;
-  gap: 32px;
+  @include flex-col(32px);
   box-sizing: border-box;
 }
 
 .login-header {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 8px;
+  @include flex(column, center, flex-start, 8px);
 
   h1 {
     margin: 0;
@@ -30,9 +27,7 @@
 }
 
 .contact-input-wrapper {
-  display: flex;
-  flex-direction: column;
-  gap: 6px;
+  @include flex-col(6px);
   .login-error {
     opacity: 0;
     height: 10px;
@@ -58,13 +53,11 @@
 }
 
 .contact-input {
-  display: flex;
-  align-items: center;
+  @include flex-row(10px);
   height: 48px;
   border: 1px solid #d1d1d1;
   border-radius: 10px;
   padding: 12px 21px;
-  gap: 10px;
   box-sizing: border-box;
   transition:
     border 0.2s ease,
@@ -107,14 +100,11 @@
 }
 
 .login-section-buttons {
-  display: flex;
-  gap: 32px;
-  justify-content: center;
+  @include flex(row, center, center, 32px);
 
   .login-btn,
   .guest-btn {
-    display: flex;
-    align-items: center;
+    @include flex-row;
     padding: 12px;
     border-radius: 8px;
     cursor: pointer;
@@ -185,16 +175,11 @@
     width: 100%;
   }
   .login-section-buttons {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 21px;
+    @include flex(column, center, center, 21px);
     .login-btn,
     .guest-btn {
       width: 180px;
-      display: flex;
-      justify-content: center;
-      align-items: center;
+      @include flex-center;
       font-size: 16px;
     }
   }

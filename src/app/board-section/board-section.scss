@@ -1,25 +1,17 @@
+@use 'mixins' as *;
+
 section {
-  display: flex;
-  flex-direction: column;
-  gap: 40px;
+  @include flex(column, stretch, flex-start, 40px);
   padding-top: 60px;
-  padding-left: 40px;
-  padding-right: 40px;
+  @include padding(60px, 40px, 0, 40px);
   height: 100%;
-  overflow-y: scroll;
-  scrollbar-width: none;
   .headlineContainer {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
+    @include flex(row, center, space-between, 0);
     h1 {
       font-size: 60px;
     }
     .addBtnSearchContainer {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      gap: 32px;
+      @include flex(row, center, space-between, 32px);
     }
   }
   &:hover {
@@ -30,8 +22,7 @@ section {
 .searchSection {
   position: relative;
   width: 312px;
-  display: flex;
-  align-items: center;
+  @include flex(row, center, flex-start, 0);
   textarea {
     border-radius: 10px;
     border: 1px solid #a8a8a8;
@@ -41,8 +32,7 @@ section {
     padding-right: 40px;
     padding-left: 12px;
     padding-top: 12px;
-    font-size: 20px;
-    font-weight: 400;
+    @include font(20px, 400);
 
     &::placeholder {
       color: #d1d1d1;
@@ -55,12 +45,8 @@ section {
     }
   }
   .lensArea {
-    position: absolute;
-    top: 8px;
-    right: 20px;
-    display: flex;
-    align-items: center;
-    gap: 16px;
+    @include absolute($top: 8px, $right: 20px);
+    @include flex(row, center, flex-start, 16px);
     height: 32px;
     .lensImg {
       height: 18px;
@@ -75,19 +61,16 @@ section {
   display: none;
 }
 .addBtn {
-  display: flex;
-  justify-content: center;
-  align-items: center;
+  @include flex-center;
   gap: 8px;
-  padding: 8px 16px;
+  @include padding(8px, 16px);
   border-radius: 10px;
   background-color: #2a3647;
   width: 160px;
   height: 48px;
   p {
     color: #ffffff;
-    font-weight: 700;
-    font-size: 21px;
+    @include font(21px, 700);
   }
   img {
     height: 18px;
@@ -100,23 +83,16 @@ section {
 }
 
 .boardContainer {
-  display: flex;
-  justify-content: space-between;
-  gap: 16px;
+  @include flex(row, stretch, space-between, 16px);
   width: 100%;
   min-height: 285px;
   .listContant {
-    display: flex;
-    flex-direction: column;
-    gap: 16px;
+    @include flex-col(16px);
     min-height: 100px;
     .listHeadline {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
+      @include flex(row, center, space-between, 0);
       p {
-        font-size: 20px;
-        font-weight: 700;
+        @include font(20px, 700);
         color: #42526e;
       }
       img {
@@ -127,9 +103,7 @@ section {
       }
     }
     .listContainer {
-      display: flex;
-      flex-direction: column;
-      gap: 16px;
+      @include flex-col(16px);
       padding: 2px;
       padding-bottom: 8px;
       overflow-y: scroll;
@@ -142,9 +116,7 @@ section {
         border-radius: 24px;
       }
       .placeholder {
-        display: flex;
-        justify-content: center;
-        align-items: center;
+        @include flex-center;
         height: 48px;
         width: 240px;
         color: #a8a8a8;
@@ -168,19 +140,12 @@ section {
 }
 
 .cdk-drag-preview {
-  padding-right: 20px;
-  padding-left: 8px;
-  padding-top: 8px;
-  padding-bottom: 20px;
+  @include padding(8px, 20px, 20px, 8px);
   position: fixed;
 }
 
 .rotation-wrapper {
-  background-color: #ffffff;
-  border-radius: 24px;
-  box-shadow:
-    0px 4px 12px rgba(0, 0, 0, 0.08),
-    0px 1px 3px rgba(0, 0, 0, 0.12);
+  @include card(24px, #ffffff);
 }
 
 .cdk-drag-preview .preview-container {
@@ -198,23 +163,16 @@ section {
   section {
     height: auto;
     .headlineContainer {
-      display: flex;
-      flex-direction: column;
-      align-items: flex-start;
-      gap: 32px;
+      @include flex(column, flex-start, flex-start, 32px);
       width: 100%;
       .headline {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
+        @include flex(row, center, space-between, 0);
         width: 100%;
         h1 {
           font-size: 48px;
         }
         .addBtnMobil {
-          display: flex;
-          justify-content: center;
-          align-items: center;
+          @include flex-center;
           height: 40px;
           width: 40px;
           background-color: #2a3647;
@@ -246,16 +204,13 @@ section {
       height: 100%;
       .listHeadline {
         p {
-          font-size: 26px;
-          font-weight: 700;
+          @include font(26px, 700);
           color: #2a3647;
         }
       }
       .listContainer {
-        padding-top: 24px;
-        padding-bottom: 24px;
-        display: flex;
-        flex-direction: row;
+        @include padding(24px, 0, 24px, 0);
+        @include flex(row, stretch, flex-start, 0);
         overflow-y: hidden;
         overflow-x: auto;
         scrollbar-width: auto;

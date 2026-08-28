@@ -1,7 +1,7 @@
+@use 'mixins' as *;
+
 .attachments-component {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
+  @include flex-col(8px);
   width: 100%;
 
   .attachments-label {
@@ -51,19 +51,7 @@
     padding-right: 8px;
     overflow-y: auto;
 
-    &::-webkit-scrollbar {
-      width: 4px;
-    }
-
-    &::-webkit-scrollbar-track {
-      background: #f6f7f8;
-      border-radius: 10px;
-    }
-
-    &::-webkit-scrollbar-thumb {
-      background: #a8a8a8;
-      border-radius: 10px;
-    }
+    @include custom-scrollbar;
 
     &::-webkit-scrollbar-thumb:hover {
       background: #2a3647;
@@ -90,9 +78,7 @@
     }
 
     .remove-attachment {
-      position: absolute;
-      top: -6px;
-      right: -6px;
+      @include absolute($top: -6px, $right: -6px);
       width: 20px;
       height: 20px;
       border-radius: 50%;
