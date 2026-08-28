@@ -1,13 +1,12 @@
+@use 'mixins' as *;
+
 .signup-wrapper {
   position: relative;
   width: 100%;
   min-width: 0;
   min-height: 100vh;
   padding: 150px 16px 100px 16px;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
+  @include flex(column, center, center);
 }
 
 .signup-wrapper,
@@ -25,25 +24,19 @@
   background: white;
   border-radius: 30px;
   box-shadow: 0 8px 20px rgba(0,0,0,0.1);
-  display: flex;
-  flex-direction: column;
-  gap: 15px;
+  @include flex-col(15px);
   font-family: sans-serif;
 
   .signup-scroll-area {
     flex: 1 1 auto;
     overflow-y: auto;
     margin-bottom: 16px;
-    display: flex;
-    flex-direction: column;
-    gap: 8px;
+    @include flex-col(8px);
+    @include custom-scrollbar;
   }
 
   .signup-header {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 8px;
+    @include flex(column, center, flex-start, 8px);
     padding-bottom: 16px;
 
     h1 {
@@ -67,17 +60,14 @@
   }
 
   .input-group-wrapper {
-    display: flex;
-    flex-direction: column;
-    gap: 2px;
+    @include flex-col(2px);
     min-height: 55px;
     width: 100%;
     flex: 0 0 auto;
   }
 
   .input-group {
-    display: flex;
-    align-items: center;
+    @include flex-row;
     border: 1px solid #d1d1d1;
     border-radius: 8px;
     padding: 0 10px;
@@ -140,12 +130,9 @@
   }
 
   .privacy {
-    display: flex;
-    align-items: center;
-    justify-content: center;
+    @include flex(row, center, center, 6px);
     width: 100%;
     font-size: 16px;
-    gap: 6px;
 
     input[type='checkbox'] {
         position: absolute;
@@ -193,9 +180,7 @@
     font-weight: 700;
     letter-spacing: 0;
     align-self: center;
-    display: flex;
-    align-items: center;
-    justify-content: center;
+    @include flex-center;
     transition: background-color 0.2s ease;
 
     &:hover:not(:disabled) {
@@ -210,9 +195,7 @@
 }
 
 .success-overlay {
-  position: absolute;
-  bottom: 0;
-  left: 50%;
+  @include absolute($bottom: 0, $left: 50%);
   transform: translateX(-50%) translateY(100%);
   width: 90%;
   max-width: 360px;
@@ -236,15 +219,11 @@
 }
 
 .back-btn {
-  position: absolute;
-  top: 50px;
-  left: 70px;
+  @include absolute($top: 50px, $left: 70px);
   transform: none;
   width: 40px;
   height: 40px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  @include flex-center;
   border: none;
   border-radius: 50%;
   cursor: pointer;

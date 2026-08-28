@@ -17,7 +17,7 @@
         @if (mode === 'change') {
           <p class="profile-letters">{{ contactsService.getInitials(contactsService.selectedContact?.name) }}</p>
         } @else {
-          <img src="assets/imgs/contact-list/person.png">
+          <img src="assets/imgs/contact-list/person.png" alt="Person">
         }
       </div>
       <div class="dialog-right-content">
@@ -34,7 +34,7 @@
                 pattern="(?=.*[A-Za-z]).{2,}"
                 required
               >
-              <img src="assets/imgs/contact-list/personGrey.png">
+              <img src="assets/imgs/contact-list/personGrey.png" alt="Person grey">
               @if (name.invalid && name.touched) {
                 <div class="error-message">Name must be at least 2 letters.</div>
               }

@@ -1,16 +1,18 @@
+@use 'mixins' as *;
+
 :root {
   --header-height: 96px;
   --mobile-nav-height: 64px;
 }
 
 .wrapper {
-  display: flex;
+  @include flex(row, stretch, flex-start);
   width: 100%;
   min-height: 100vh;
 }
 
 .app-layout {
-  display: flex;
+  @include flex(row, stretch, flex-start);
   width: 100%;
   max-width: 1440px;
   min-height: 100vh;
@@ -24,8 +26,7 @@ app-nav-bar {
 
 .main-area {
   flex: 1;
-  display: flex;
-  flex-direction: column;
+  @include flex-col;
   min-width: 0;
 }
 
@@ -69,8 +70,7 @@ app-header {
 
 @media (min-width: 1440px) {
   .extra-header-placeholder {
-    display: flex;
-    flex-direction: column;
+    @include flex-col;
     background-color: #F6F7F8;
     width: calc(100vw - 1440px);
     min-width: 0px;

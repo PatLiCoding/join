@@ -1,6 +1,8 @@
+@use 'mixins' as *;
+
 section {
   cursor: default;
-  padding: 72px 40px;
+  @include padding(72px, 40px);
   height: 100%;
   width: 100%;
   position: relative;
@@ -18,9 +20,7 @@ section {
 }
 
 .headlineContainer {
-  display: flex;
-  gap: 24px;
-  align-items: center;
+  @include flex(row, center, flex-start, 24px);
   width: 100%;
   height: 72px;
   h1 {
@@ -37,17 +37,13 @@ section {
 }
 
 .contactContant {
-  display: flex;
-  flex-direction: column;
-  gap: 32px;
+  @include flex-col(32px);
   @media (min-width: 1001px) {
     animation: contact-slide-in-right 0.35s ease-out both;
   }
   .contactNameContainer {
-    display: flex;
-    align-items: center;
+    @include flex(row, center, flex-start, 32px);
     flex-wrap: wrap;
-    gap: 32px;
     padding-top: 24px;
     width: 520px;
     padding-right: 24px;
@@ -56,30 +52,23 @@ section {
       height: 100px;
       border: 3px solid white;
       border-radius: 80px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
+      @include flex-center;
       p {
         font-size: 36px;
         color: #ffffff;
       }
     }
     .nameEditContant {
-      display: flex;
-      flex-direction: column;
-      gap: 8px;
+      @include flex-col(8px);
       h2 {
         font-size: 36px;
         font-weight: 600;
         margin: 0;
       }
       .editContainer {
-        display: flex;
-        gap: 24px;
+        @include flex(row, stretch, flex-start, 24px);
         .editBox {
-          display: flex;
-          align-items: center;
-          gap: 8px;
+          @include flex(row, center, flex-start, 8px);
           transition: all 125ms ease-in;
           img {
             height: 24px;
@@ -95,18 +84,14 @@ section {
   }
 
   .contactInfo {
-    display: flex;
-    flex-direction: column;
-    gap: 32px;
+    @include flex-col(32px);
     padding-bottom: 80px;
     h4 {
       font-size: 20px;
       font-weight: 400;
     }
     .emailPhoneContainer {
-      display: flex;
-      flex-direction: column;
-      gap: 22px;
+      @include flex-col(22px);
       p {
         font-weight: bold;
         padding-bottom: 12px;
@@ -138,11 +123,7 @@ section {
     padding-top: 64px;
   }
   .headlineContainer {
-    display: flex;
-    flex-direction: column;
-    align-items: flex-start;
-    justify-content: flex-start;
-    gap: 16px;
+    @include flex(column, flex-start, flex-start, 16px);
     width: 100%;
     height: 120px;
     h1 {
@@ -179,9 +160,7 @@ section {
   }
 
   .contactInfo {
-    display: flex;
-    flex-direction: column;
-    gap: 20px;
+    @include flex-col(20px);
     h4 {
       font-size: 20px;
       font-weight: 400;
@@ -197,9 +176,7 @@ section {
   }
 
   .backArrowBtn {
-    display: flex;
-    justify-content: center;
-    align-items: center;
+    @include flex-center;
     position: absolute;
     z-index: 2;
     top: 20px;
@@ -219,16 +196,12 @@ section {
   }
 
   .editBurgermenu {
-    display: flex;
+    @include flex(row, flex-end, flex-end);
     position: fixed;
     bottom: 20px;
     right: 20px;
-    align-items: flex-end;
-    justify-content: flex-end;
     .preview {
-      display: flex;
-      justify-content: center;
-      align-items: center;
+      @include flex-center;
       height: 40px;
       width: 40px;
       background-color: #2a3647;
@@ -242,17 +215,13 @@ section {
       }
     }
     .menu {
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      flex-direction: column;
-      gap: 8px;
+      @include flex(column, center, center, 8px);
       background-color: #ffffff;
       box-shadow:
         0 2px 4px rgba(0, 0, 0, 0.1),
         0 8px 16px rgba(0, 0, 0, 0.15);
       border-radius: 25px 25px 0 25px;
-      padding: 16px;
+      @include padding(16px);
       position: absolute;
       right: 0;
       bottom: 0;
@@ -264,9 +233,7 @@ section {
         opacity 0.2s ease;
       will-change: transform, opacity;
       .editBox {
-        display: flex;
-        align-items: center;
-        gap: 8px;
+        @include flex(row, center, flex-start, 8px);
         width: 100%;
         transition: all 125ms ease-in;
         &:hover {

@@ -1,7 +1,7 @@
+@use 'mixins' as *;
+
 :host {
-  display: flex;
-  justify-content: center;
-  align-items: center;
+  @include flex-center;
   height: 100dvh;
   width: 100%;
 }
@@ -11,11 +11,8 @@
   width: 100%;
   max-width: 1440px;
   height: 100vh;
-  display: flex;
-  justify-content: center;
-  align-items: center;
+  @include flex(column, center, center);
   overflow: hidden;
-  flex-direction: column;
   transition: background-color 1s ease, padding 0.5s ease;
   background-color: #f5f5f5;
 }
@@ -34,16 +31,14 @@
 }
 
 .logo {
-  position: absolute;
-  top: 50%;
-  left: 50%;
+  @include absolute($top: 50%, $left: 50%);
   width: clamp(120px, 18vw, 200px);
   transform: translate(-50%, -50%) scale(1);
   transform-origin: top left;
 }
 
 .logo img {
-  position: absolute;
+  @include absolute;
   width: 100%;
   transition: opacity 0.6s ease;
 }
@@ -135,10 +130,7 @@
 }
 
 .login-form-wrapper {
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
+  @include flex(column, center, center);
   opacity: 0;
   transition: opacity 1s ease;
   width: 100%;
@@ -157,16 +149,13 @@
   background: white;
   border-radius: 15px;
   box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
-  display: flex;
-  flex-direction: column;
+  @include flex-col;
   margin-top: 15px;
   box-sizing: border-box;
 }
 
 .signup-link {
-  display: flex;
-  gap: 12px;
-  align-items: center;
+  @include flex-row(12px);
   opacity: 0;
   transition: opacity 1s ease;
   margin-top: 16px;
@@ -198,20 +187,15 @@
 
 @media (min-width: 768px) {
   .signup-link {
-    position: absolute;
-    top: 20px;
-    right: 20px;
+    @include absolute($top: 20px, $right: 20px);
     margin-top: 0;
   }
 }
 
 .legal-footer {
-  position: absolute;
-  bottom: 24px;
-  left: 50%;
+  @include absolute($bottom: 24px, $left: 50%);
   transform: translateX(-50%);
-  display: flex;
-  gap: 24px;
+  @include flex-row(24px);
   font-size: 16px;
   opacity: 0;
   transition: opacity 1s ease;
@@ -255,10 +239,7 @@
     height: auto;
     min-height: auto;
     overflow-y: auto;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: flex-start;
+    @include flex(column, center, flex-start);
     padding: 20px 16px;
   }
 
@@ -272,7 +253,7 @@
     margin-bottom: 20px;
   }
 
-    .login-form-wrapper {
+  .login-form-wrapper {
     width: 100%;
     max-width: 420px;
   }

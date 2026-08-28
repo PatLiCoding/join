@@ -1,3 +1,5 @@
+@use 'mixins' as *;
+
 .add-task-container.dialog-mode .add-task-heading {
   position: absoluterelative;
   z-index: 1;
@@ -24,20 +26,15 @@
 }
 
 .add-task-container.dialog-mode {
-  padding: 20px 20px;
+  @include padding(20px, 20px);
   max-height: 90vh;
   overflow: hidden;
-  display: flex;
+  @include flex-center;
   flex-direction: column;
-  align-items: center;
-  justify-content: center;
 
   .text-button-div {
     position: static;
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-    justify-content: space-between;
+    @include flex(row, center, space-between);
     width: 100%;
     max-width: 945px;
     margin: 0 auto;
@@ -46,9 +43,7 @@
     box-shadow: none;
     z-index: auto;
     .action-buttons {
-      display: flex;
-      justify-content: flex-end;
-      gap: 10px;
+      @include flex(row, center, flex-end, 10px);
       margin-top: 8px;
       .clear-btn {
         height: 56px;
@@ -111,8 +106,8 @@
     flex: 1 1 auto;
     min-height: 0;
     max-height: 70vh;
-    display: flex;
-    flex-direction: column;
+    @include flex-col;
+    @include custom-scrollbar;
   }
 }
 
@@ -128,15 +123,13 @@
       width: 100%;
       max-width: none;
       margin: 0;
-      padding: 16px 20px 24px 20px;
+      @include padding(16px, 20px, 24px, 20px);
       gap: 16px;
       justify-content: space-between;
       background-color: #f6f7f8;
       z-index: 10;
       box-shadow: none;
-      display: flex;
-      flex-direction: row;
-      align-items: center;
+      @include flex(row, center, space-between, 16px);
     }
     .text-button-div .action-buttons {
       margin-left: auto;
@@ -202,14 +195,10 @@
 }
 
 .add-task-dialog-overlay {
-  position: fixed;
-  top: 0;
-  left: 0;
+  @include fixed-fullscreen;
   width: 100%;
   height: 100vh;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  @include flex-center;
   z-index: 2000;
 }
 
@@ -257,8 +246,7 @@
 
 @media (orientation: landscape) and (max-height: 600px) {
   .add-task-container.dialog-mode {
-    display: flex;
-    flex-direction: column;
+    @include flex-col;
     padding: 42px !important;
     max-height: 77vh; 
     overflow-y: auto; 
@@ -268,9 +256,7 @@
   .add-task-container.dialog-mode .add-task-section {
     flex: 1 1 auto;
     overflow: visible !important;
-    display: flex;
-    flex-direction: column;
-    gap: 16px;
+    @include flex(column, stretch, flex-start, 16px);
     margin-bottom: 220px; 
   }
 
@@ -280,11 +266,9 @@
     left: 50% !important;      
     transform: translateX(-50%); 
     width: 80%;
-    padding: 4px 20px;
+    @include padding(4px, 20px);
     background-color: #f6f7f8;
-    display: flex;
-    justify-content: flex-end;
-    gap: 10px;
+    @include flex(row, center, flex-end, 10px);
     z-index: 9999;
   }
 }

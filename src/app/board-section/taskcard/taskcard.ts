@@ -20,6 +20,13 @@ import { CommonModule, SlicePipe } from '@angular/common';
 import { TaskService } from '../../firebase-service/task.service';
 import { BurgermenuStateService } from '../../firebase-service/burgermenu-state.service';
 
+/**
+ * Taskcard Component
+ *
+ * Represents a single task card within the board.
+ * Displays task details, progress, assigned contacts,
+ * and allows status changes via a context menu.
+ */
 @Component({
   selector: 'app-taskcard',
   standalone: true,
@@ -28,14 +35,20 @@ import { BurgermenuStateService } from '../../firebase-service/burgermenu-state.
   styleUrls: ['./taskcard.scss'],
 })
 export class Taskcard {
+  /** Task entity displayed on this card. */
   @Input() task!: Task;
+  /** Emitted when the task card is clicked to view details. */
   @Output() openTask = new EventEmitter<Task>();
+  /** Injected service for contact metadata. */
   contactService = inject(ContactService);
+  /** Injected task service for status management. */
   private taskService = inject(TaskService);
+  /** Injected state service for menu popovers. */
   private menuState = inject(BurgermenuStateService);
+  /** Reference to component's host element. */
   private elementRef = inject(ElementRef);
 
-  // Status order
+  /** Standard sequential ordering of status states. */
   statusOrder: Task['status'][] = ['todo', 'in-progress', 'await-feedback', 'done'];
 
   /**
@@ -100,7 +113,7 @@ export class Taskcard {
    * @returns Matching contact object or undefined
    */
   getContactByName(name: string) {
-    return this.contactService.contactList.find((c) => c.name === name);
+    return this.contactService.contactList.find((c) => c.name === name) ?? null;
   }
 
   /**
@@ -173,6 +186,12 @@ export class Taskcard {
       await this.taskService.updateTaskStatus(this.task.id, newStatus);
     }
   }
+
+  /**
+   * Returns the list of available move targets for the current task,
+   * intended for use in the template. Returns an empty array if no
+   * task is set.
+   */
   get movesForTemplate() {
     return this.task ? this.getAvailableMoves() : [];
   }

@@ -1,23 +1,27 @@
 <section>
   <div class="headlineContainer">
     <h1>Contacts</h1>
-    <img class="borderlineDestop" src="assets/icon/contact-info/borderline.png" />
+    <img class="borderlineDestop" src="assets/icon/contact-info/borderline.png" alt="Borderline" />
     <h3>Better with a team</h3>
-    <img class="borderlineMobil" src="assets/icon/contact-info/borderline-mobil.png" />
+    <img
+      class="borderlineMobil"
+      src="assets/icon/contact-info/borderline-mobil.png"
+      alt="Borderline"
+    />
   </div>
 
   <div class="backArrowBtn" [class.active]="isActive">
     <img src="assets/icon/contact-info/back-arrow.png" (click)="backToList()" alt="Back Arrow" />
   </div>
 
-  @if (showContactContent && selectedContact?.name) {
+  @if (showContactContent && selectedContact; as contact) {
     <div class="contactContant">
       <div class="contactNameContainer">
         <div class="avatarLetterBox" [style.backgroundColor]="getSelectedColor()">
-          <p>{{ getInitials(selectedContact?.name) }}</p>
+          <p>{{ getInitials(contact.name) }}</p>
         </div>
         <div class="nameEditContant">
-          <h2>{{ getDisplayName(selectedContact?.name) }}</h2>
+          <h2>{{ getDisplayName(contact.name) }}</h2>
           <div class="editContainer">
             <div
               class="editBox"
@@ -31,6 +35,7 @@
                     ? 'assets/icon/contact-info/edit-hover.png'
                     : 'assets/icon/contact-info/edit-default.png'
                 "
+                alt="Edit"
               />
               <p>Edit</p>
             </div>
@@ -46,6 +51,7 @@
                     ? 'assets/icon/contact-info/delete-hover.png'
                     : 'assets/icon/contact-info/delete-default.png'
                 "
+                alt="Delete"
               />
               <p>Delete</p>
             </div>
@@ -58,14 +64,14 @@
         <div class="emailPhoneContainer">
           <div>
             <p>Email</p>
-            <a class="emailLink" [href]="selectedContact ? 'mailto:' + selectedContact.email : ''">
-              {{ selectedContact?.email }}
+            <a class="emailLink" [href]="'mailto:' + contact.email">
+              {{ contact.email }}
             </a>
           </div>
           <div>
             <p>Phone</p>
-            <a class="phoneLink" [href]="selectedContact ? 'tel:' + selectedContact.phone : ''">
-              {{ selectedContact?.phone }}
+            <a class="phoneLink" [href]="'tel:' + contact.phone">
+              {{ contact.phone }}
             </a>
           </div>
         </div>
@@ -93,6 +99,7 @@
               ? 'assets/icon/contact-info/edit-hover.png'
               : 'assets/icon/contact-info/edit-default.png'
           "
+          alt="Edit"
         />
         <p>Edit</p>
       </div>
@@ -108,6 +115,7 @@
               ? 'assets/icon/contact-info/delete-hover.png'
               : 'assets/icon/contact-info/delete-default.png'
           "
+          alt="Delete"
         />
         <p>Delete</p>
       </div>

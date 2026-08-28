@@ -140,6 +140,7 @@ export class TaskService {
       await updateDoc(docRef, taskData as DocumentData);
     });
   }
+
   /**
    * Deletes a task from Firestore.
    * @param taskId The ID of the task to delete.

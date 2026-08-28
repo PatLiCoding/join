@@ -11,7 +11,14 @@ import { setLogLevel, LogLevel } from '@angular/fire';
 import { initializeApp, provideFirebaseApp } from '@angular/fire/app';
 import { getFirestore, provideFirestore } from '@angular/fire/firestore';
 import { getAuth, provideAuth } from '@angular/fire/auth';
+
 setLogLevel(LogLevel.SILENT);
+
+/**
+ * Main application configuration.
+ * Provides routing, Angular change detection,
+ * and Firebase services.
+ */
 export const appConfig: ApplicationConfig = {
   providers: [
     provideBrowserGlobalErrorListeners(),

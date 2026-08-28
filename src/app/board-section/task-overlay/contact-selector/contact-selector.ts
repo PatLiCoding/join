@@ -25,13 +25,20 @@ import { ContactService } from '../../../firebase-service/contact-service';
   styleUrls: ['./contact-selector.scss'],
 })
 export class ContactSelector implements OnInit, OnChanges, OnDestroy {
+  /** Available contacts that can be selected. */
   @Input() contacts: Contacts[] = [];
+  /** Names of the currently selected contacts. */
   @Input() selectedContactNames: string[] = [];
-  @Output() selectedContactsChange = new EventEmitter<string[]>();
-
+  /** Emits the names of the selected contacts when the selection changes. */
+  @Output()
+  selectedContactsChange = new EventEmitter<string[]>();
+  /** Currently selected contact objects. */
   selectedContacts: Contacts[] = [];
+  /** Indicates whether the dropdown is visible. */
   showDropdown = false;
+  /** Current search term used to filter contacts. */
   searchTerm = '';
+
   private clickListener!: () => void;
 
   constructor(
@@ -43,7 +50,6 @@ export class ContactSelector implements OnInit, OnChanges, OnDestroy {
   /** Syncs the initial selection and registers a global click listener to close the dropdown on outside clicks. */
   ngOnInit() {
     this.syncSelectedContacts();
-
     this.clickListener = this.renderer.listen('document', 'click', (event: MouseEvent) => {
       if (!this.elRef.nativeElement.contains(event.target)) {
         this.showDropdown = false;

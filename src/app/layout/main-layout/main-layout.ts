@@ -1,7 +1,6 @@
 import { Component, inject } from '@angular/core';
 import { Router, RouterModule } from '@angular/router';
 
-
 import { Header } from '../../shared/header/header';
 import { NavBar } from '../../shared/nav-bar/nav-bar';
 import { AuthService } from '../../firebase-service/auth.servic';
@@ -20,11 +19,7 @@ import { AuthService } from '../../firebase-service/auth.servic';
 @Component({
   selector: 'app-main-layout',
   standalone: true,
-  imports: [
-    RouterModule,
-    NavBar,
-    Header,
-  ],
+  imports: [RouterModule, NavBar, Header],
   templateUrl: './main-layout.html',
   styleUrls: ['./main-layout.scss'],
 })
@@ -46,13 +41,8 @@ export class MainLayout {
    */
   constructor() {
     this.isLoggedIn$.subscribe((loggedIn: boolean) => {
-      // List of routes accessible without login
       const publicRoutes = ['/privacy', '/legal'];
-
-      // Get the current route
       const currentRoute = this.router.url;
-
-      // Redirect to login if user is not logged in and not on a public route
       if (!loggedIn && !publicRoutes.includes(currentRoute)) {
         this.router.navigate(['/login']);
       }

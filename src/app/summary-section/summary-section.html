@@ -1,9 +1,9 @@
 <div class="summary-section">
   <div class="summary-headline headlineContainer" *ngIf="!isMobile || !showGreetingOnly">
     <h1>Join 360</h1>
-    <img class="borderlineDestop" src="assets/icon/contact-info/borderline.png" />
+    <img class="borderlineDestop" src="assets/icon/contact-info/borderline.png" alt="Borderline"/>
     <h3>Key Metrics at a Glance</h3>
-    <img class="borderlineMobil" src="assets/icon/contact-info/borderline-mobil.png" />
+    <img class="borderlineMobil" src="assets/icon/contact-info/borderline-mobil.png" alt="Borderline"/>
   </div>
 
   <div class="summary-information">
@@ -13,10 +13,10 @@
           <div class="group-one">
             <a class="metric-card" routerLink="/board">
               <div class="icon-wrapper">
-                <img class="summary-icon-general icon-default" src="assets/icon/summary/edit.png" />
+                <img class="summary-icon-general icon-default" src="assets/icon/summary/edit.png" alt="Edit"/>
                 <img
                   class="summary-icon-general icon-hover"
-                  src="assets/icon/summary/edit_hover.png"
+                  src="assets/icon/summary/edit_hover.png" alt="Edit"
                 />
               </div>
               <div class="counter-text">
@@ -30,10 +30,12 @@
                 <img
                   class="summary-icon-general icon-default"
                   src="assets/icon/summary/checked.png"
+                  alt="Checkbox"
                 />
                 <img
                   class="summary-icon-general icon-hover"
                   src="assets/icon/summary/checked_hover.png"
+                  alt="Checkbox"
                 />
               </div>
               <div class="counter-text">
@@ -45,14 +47,14 @@
 
           <a class="metric-card urgent" routerLink="/board">
             <div class="urgentContant">
-              <img class="summary-icon-urgent" src="assets/icon/summary/urgent.png" />
+              <img class="summary-icon-urgent" src="assets/icon/summary/urgent.png" alt="Urgent"/>
               <div class="counter-text">
                 <span class="count">{{ urgentCount }}</span>
                 <span class="label">Urgent</span>
               </div>
             </div>
             <div class="mobil-icon-line">
-              <img class="summary-icon-line" src="assets/icon/summary/line.png" />
+              <img class="summary-icon-line" src="assets/icon/summary/line.png" alt="Borderline"/>
             </div>
             <div class="counter-text">
               <span class="deadline">{{ upcomingDeadline | date: 'MMMM d, yyyy' }}</span>

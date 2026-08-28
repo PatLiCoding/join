@@ -49,25 +49,29 @@
     </div>
   }
   <div class="teamPriorityContainer">
-    <div class="teamContainer" *ngIf="task.assignedTo?.length">
-      <div class="workingTeam" *ngFor="let member of task.assignedTo | slice: 0 : 3">
-        <div
-          class="avatarLetterBox"
-          [style.background-color]="contactService.getContactColor(getContactByName(member))"
-        >
-          <p>{{ contactService.getInitials(member) }}</p>
+    @if (task.assignedTo; as assigned) {
+      <div class="teamContainer">
+        <div class="workingTeam" *ngFor="let member of assigned | slice: 0 : 3">
+          <div
+            class="avatarLetterBox"
+            [style.background-color]="contactService.getContactColor(getContactByName(member))"
+          >
+            <p>{{ contactService.getInitials(member) }}</p>
+          </div>
         </div>
+        @if (assigned.length > 3) {
+          <p>
+            +<span>{{ assigned.length - 3 }}</span>
+          </p>
+        }
       </div>
-      <p *ngIf="(task.assignedTo?.length ?? 0) > 3">
-        +<span>{{ (task.assignedTo?.length ?? 0) - 3 }}</span>
-      </p>
-    </div>
+    }
     @if (task.priority == 'low') {
-      <img src="assets/icon/task/priority-symbol-low.png" />
+      <img src="assets/icon/task/priority-symbol-low.png" alt="Low" />
     } @else if (task.priority == 'medium') {
-      <img src="assets/icon/task/priority-symbol-medium.png" />
+      <img src="assets/icon/task/priority-symbol-medium.png" alt="Medium" />
     } @else {
-      <img src="assets/icon/task/priority-symbol-urgent.png" />
+      <img src="assets/icon/task/priority-symbol-urgent.png" alt="Urgent" />
     }
   </div>
 </div>

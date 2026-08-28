@@ -14,6 +14,10 @@ import { LegalNoticeSection } from './legal-notice-section/legal-notice-section'
 import { PrivacyPolicySection } from './privacy-policy-section/privacy-policy-section';
 import { authGuard, roleGuard } from './auth-functional-guard';
 
+/**
+ * Defines the application routes and their access permissions.
+ * Protected routes require the user to be authenticated.
+ */
 export const routes: Routes = [
   { path: '', redirectTo: 'login', pathMatch: 'full' },
 
@@ -22,8 +26,8 @@ export const routes: Routes = [
     component: LoginSection,
     children: [
       { path: '', component: LoginComponent },
-      { path: 'signup', component: SignupComponent }
-    ]
+      { path: 'signup', component: SignupComponent },
+    ],
   },
 
   {
@@ -37,8 +41,8 @@ export const routes: Routes = [
       { path: 'help', component: HelpSection, canActivate: [authGuard] },
       { path: 'legal', component: LegalNoticeSection },
       { path: 'privacy', component: PrivacyPolicySection },
-    ]
+    ],
   },
 
-  { path: '**', redirectTo: 'login' }
+  { path: '**', redirectTo: 'login' },
 ];

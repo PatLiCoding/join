@@ -19,6 +19,14 @@ import { ContactService } from '../../firebase-service/contact-service';
 import { Contacts } from '../../interfaces/contacts';
 import { ContactDialogTemplate } from '../contact-dialog-template/contact-dialog-template';
 
+/**
+ * ContactInfo Component
+ *
+ * Displays detailed information about a selected contact.
+ * Handles editing, deletion, menu toggling, and provides
+ * helper methods for initials, color, and display names.
+ * Emits events to switch back to the contact list view.
+ */
 @Component({
   selector: 'app-contact-info',
   imports: [ContactDialogTemplate],
@@ -26,12 +34,20 @@ import { ContactDialogTemplate } from '../contact-dialog-template/contact-dialog
   styleUrl: './contact-info.scss',
 })
 export class ContactInfo implements AfterViewInit {
+  /** Injected contact management service. */
   contactService = inject(ContactService);
+  /** Emits to notify parent component to return to contact list view. */
   @Output() switch = new EventEmitter<void>();
+  /** Reference to contact modal dialog template. */
   @ViewChild('contactDialog') contactDialog?: ContactDialogTemplate;
+
+  /** Active hovered action icon. */
   hoveredIcon: string | null = null;
+  /** Controls context menu visibility state. */
   menuOpen = false;
+  /** Animation active state flag for back navigation. */
   isActive = false;
+  /** Visibility flag for rendering content after init. */
   showContactContent = false;
 
   /**

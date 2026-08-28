@@ -1,35 +1,30 @@
+@use 'mixins' as *;
+
 .taskCard {
-  display: flex;
-  flex-direction: column;
-  gap: 24px;
+  @include flex(column, stretch, flex-start, 24px);
   padding: 12px;
   border-radius: 24px;
   box-shadow:
     0px 4px 12px rgba(0, 0, 0, 0.08),
     0px 1px 3px rgba(0, 0, 0, 0.12);
   .typAndMoveToContainer {
-    display: flex;
-    justify-content: space-between;
+    @include flex(row, stretch, space-between);
     position: relative;
     .typUser {
       height: 26px;
-      padding: 4px 16px;
+      @include padding(4px, 16px);
       border-radius: 10px;
       width: 120px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
+      @include flex-center;
       background-color: #0038ff;
       color: #ffffff;
     }
     .typTechnical {
       height: 26px;
-      padding: 4px 16px;
+      @include padding(4px, 16px);
       border-radius: 10px;
       width: 150px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
+      @include flex-center;
       background-color: #1fd7c1;
       color: #ffffff;
     }
@@ -48,9 +43,7 @@
     word-wrap: break-word;
   }
   .subtaskContainer {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
+    @include flex(row, center, space-between);
     .progress-container {
       width: 100px;
       height: 8px;
@@ -66,9 +59,7 @@
     }
   }
   .teamPriorityContainer {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
+    @include flex(row, center, space-between);
     height: 32px;
     .teamContainer {
       display: flex;
@@ -81,9 +72,7 @@
           border: 1px solid white;
           border-radius: 80px;
           background-color: #007cee;
-          display: flex;
-          align-items: center;
-          justify-content: center;
+          @include flex-center;
           p {
             color: #ffffff;
           }
@@ -116,20 +105,14 @@
         position: absolute;
         right: -72px;
         z-index: 10;
-        display: flex;
-        flex-direction: column;
-        justify-content: space-between;
-        gap: 12px;
+        @include flex(column, stretch, space-between, 12px);
         background-color: #2a3647;
         color: #ffffff;
-        padding: 16px 16px;
+        @include padding(16px, 16px);
         border-radius: 0 20px 20px 20px;
         .menuContant {
-          display: flex;
-          flex-direction: column;
-          justify-content: space-between;
+          @include flex(column, stretch, space-between, 4px);
           padding-top: 4px;
-          gap: 4px;
           .moveToBox {
             display: flex;
             align-items: center;

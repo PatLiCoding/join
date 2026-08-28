@@ -1,6 +1,9 @@
 import { Component } from '@angular/core';
 import { RouterModule } from '@angular/router';
 
+/**
+ * Navigation bar component for logged-in users.
+ */
 @Component({
   selector: 'app-nav-bar-logged-in',
   standalone: true,
