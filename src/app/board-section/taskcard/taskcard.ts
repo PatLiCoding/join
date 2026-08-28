@@ -186,6 +186,12 @@ export class Taskcard {
       await this.taskService.updateTaskStatus(this.task.id, newStatus);
     }
   }
+
+  /**
+   * Returns the list of available move targets for the current task,
+   * intended for use in the template. Returns an empty array if no
+   * task is set.
+   */
   get movesForTemplate() {
     return this.task ? this.getAvailableMoves() : [];
   }

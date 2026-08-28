@@ -118,20 +118,16 @@ export class ContactList implements OnInit, OnDestroy {
     const contacts = [...this.contactService.contactList]
       .filter((contact) => contact.name?.trim())
       .sort((a, b) => a.name.localeCompare(b.name, 'de', { sensitivity: 'base' }));
-
     const groups: ContactGroup[] = [];
-
     for (const contact of contacts) {
       const letter = contact.name.trim().charAt(0).toUpperCase();
       const lastGroup = groups[groups.length - 1];
-
       if (!lastGroup || lastGroup.letter !== letter) {
         groups.push({ letter, contacts: [contact] });
       } else {
         lastGroup.contacts.push(contact);
       }
     }
-
     return groups;
   }
 

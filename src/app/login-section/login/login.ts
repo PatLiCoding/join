@@ -31,46 +31,57 @@ export class LoginComponent {
   async login() {
     const trimmedEmail = this.email.trim();
     const trimmedPassword = this.password.trim();
-
     if (!trimmedEmail || !trimmedPassword) {
       this.loginError = true;
       return;
     }
-
     try {
       const result = await this.auth.login(trimmedEmail, trimmedPassword);
-
       if (result.success) {
-        this.loginError = false;
-        const foundContact = this.contactService.contactList.find(
-          (contact) => contact.email === trimmedEmail,
-        );
-
-        const firebaseUser = this.auth.getCurrentUser();
-
-        const resolvedName =
-          foundContact?.name ||
-          firebaseUser?.displayName ||
-          firebaseUser?.email ||
-          trimmedEmail;
-
-        const resolvedEmail =
-          foundContact?.email ||
-          firebaseUser?.email ||
-          trimmedEmail;
-
-        this.contactService.setCurrentUser(resolvedName, resolvedEmail);
-
-        await this.router.navigate(['/summary'], {
-          state: { fromLogin: true },
-        });
+        this.handleLoginSuccess(trimmedEmail);
+        await this.router.navigate(['/summary'], { state: { fromLogin: true } });
       } else {
         this.loginError = true;
       }
     } catch (error) {
-      
       this.loginError = true;
     }
+  }
+
+  /**
+   * Handles post-login setup after a successful authentication.
+   * Resolves the current user's display name and email from the contact
+   * list or Firebase user data, then sets them as the active contact.
+   *
+   * @param trimmedEmail - The trimmed email used for login.
+   */
+  private handleLoginSuccess(trimmedEmail: string): void {
+    this.loginError = false;
+    const foundContact = this.contactService.contactList.find(
+      (contact) => contact.email === trimmedEmail,
+    );
+    const firebaseUser = this.auth.getCurrentUser();
+    const resolvedName = this.resolveUserName(foundContact, firebaseUser, trimmedEmail);
+    const resolvedEmail = foundContact?.email || firebaseUser?.email || trimmedEmail;
+    this.contactService.setCurrentUser(resolvedName, resolvedEmail);
+  }
+
+  /**
+   * Resolves the display name to use for the logged-in user, preferring
+   * the contact list entry, then the Firebase display name, then the
+   * Firebase email, and finally falling back to the trimmed login email.
+   *
+   * @param foundContact - Matching contact from the contact list, if any.
+   * @param firebaseUser - The currently authenticated Firebase user.
+   * @param trimmedEmail - The trimmed email used for login.
+   * @returns The resolved display name.
+   */
+  private resolveUserName(
+    foundContact: { name?: string } | undefined,
+    firebaseUser: { displayName?: string | null; email?: string | null } | null,
+    trimmedEmail: string,
+  ): string {
+    return foundContact?.name || firebaseUser?.displayName || firebaseUser?.email || trimmedEmail;
   }
 
   /**

@@ -44,18 +44,46 @@ export class LoginSection implements OnInit {
     this.contactService.clearCurrentUser();
     this.auth.logout();
     this.isMobile = window.innerWidth < 768;
+    this.initAnimationState();
+    this.subscribeToSignupLinkVisibility();
+  }
+
+  /**
+   * Initializes the login animation state based on whether the animation
+   * has already played in the current session. If it hasn't played yet,
+   * it is triggered after a short delay and marked as played in
+   * sessionStorage so it won't repeat on subsequent navigations. If it
+   * has already played, the animation state is set to its final state
+   * immediately without replaying it.
+   */
+  private initAnimationState(): void {
     const played = sessionStorage.getItem('loginAnimationPlayed') === 'true';
     this.animationShouldPlay = !played;
     this.animationPlayed = played;
     if (!played) {
-      setTimeout(() => {
-        this.startAnimation = true;
-        this.animationPlayed = true;
-        sessionStorage.setItem('loginAnimationPlayed', 'true');
-      }, 400);
+      setTimeout(() => this.playLoginAnimation(), 400);
     } else {
       this.startAnimation = true;
     }
+  }
+
+  /**
+   * Marks the login animation as started and completed, and persists
+   * that state in sessionStorage so it is not replayed again during
+   * the current session.
+   */
+  private playLoginAnimation(): void {
+    this.startAnimation = true;
+    this.animationPlayed = true;
+    sessionStorage.setItem('loginAnimationPlayed', 'true');
+  }
+
+  /**
+   * Subscribes to router navigation events and updates the visibility
+   * of the signup link based on whether the current route is the
+   * login page.
+   */
+  private subscribeToSignupLinkVisibility(): void {
     this.router.events
       .pipe(filter((event) => event instanceof NavigationEnd))
       .subscribe((event: NavigationEnd) => {

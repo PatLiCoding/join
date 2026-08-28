@@ -130,7 +130,6 @@ export class ContactService implements OnDestroy {
    */
   async updateContact(contact: Contacts) {
     if (!contact.id) return;
-
     try {
       await this.persistContactUpdate(contact);
       this.syncLocalStateAfterUpdate(contact);
@@ -218,7 +217,6 @@ export class ContactService implements OnDestroy {
    */
   getContactColor(contact: Contacts | null | undefined): string {
     if (!contact) return this.colorPalette[0];
-
     const key = this.getContactKey(contact);
     return this.contactColorMap.get(key) ?? this.colorPalette[0];
   }
@@ -230,11 +228,9 @@ export class ContactService implements OnDestroy {
    */
   getInitials(name?: string): string {
     if (!name?.trim()) return '';
-
     const parts = name.trim().split(/\s+/);
     const first = parts[0]?.charAt(0) ?? '';
     const last = parts.length > 1 ? parts[parts.length - 1].charAt(0) : '';
-
     return (first + last).toUpperCase();
   }
 
@@ -252,7 +248,6 @@ export class ContactService implements OnDestroy {
    */
   deleteSelectedContact(): void {
     if (!this.selectedContact) return;
-
     this.deleteContactOnDatabase(this.selectedContact);
     this.selectedContact = null;
   }
@@ -306,9 +301,7 @@ export class ContactService implements OnDestroy {
     const sorted = [...this.contactList].sort((a, b) =>
       a.name.localeCompare(b.name, 'de', { sensitivity: 'base' }),
     );
-
     this.contactColorMap.clear();
-
     sorted.forEach((contact, index) => {
       const key = this.getContactKey(contact);
       const color = this.colorPalette[index % this.colorPalette.length];
