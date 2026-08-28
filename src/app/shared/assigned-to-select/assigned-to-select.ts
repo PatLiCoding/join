@@ -8,26 +8,32 @@ import {
   OnInit,
   OnDestroy,
   OnChanges,
-  SimpleChanges
+  SimpleChanges,
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Contacts } from '../../interfaces/contacts';
 import { ContactService } from '../../firebase-service/contact-service';
 
+/**
+ * Dropdown component for selecting multiple contacts from a searchable list.
+ */
 @Component({
   selector: 'app-assigned-to-select',
   standalone: true,
   imports: [CommonModule],
   templateUrl: './assigned-to-select.html',
-  styleUrls: ['./assigned-to-select.scss']
+  styleUrls: ['./assigned-to-select.scss'],
 })
 export class AssignedToSelectComponent implements OnInit, OnDestroy, OnChanges {
-
+  /** Available contacts that can be selected. */
   @Input() contacts: Contacts[] = [];
+  /** Currently selected contacts. */
   @Input() selectedContacts: Contacts[] = [];
+  /** Emits whenever the selected contacts change. */
   @Output() selectedContactsChange = new EventEmitter<Contacts[]>();
-
+  /** Indicates whether the contact dropdown is open. */
   isDropdownOpen = false;
+  /** Current search term used to filter contacts. */
   contactSearchTerm = '';
 
   private clickListener!: () => void;
@@ -35,17 +41,15 @@ export class AssignedToSelectComponent implements OnInit, OnDestroy, OnChanges {
   constructor(
     private elRef: ElementRef,
     private renderer: Renderer2,
-    private contactService: ContactService
+    private contactService: ContactService,
   ) {}
 
-  /** 
+  /**
    * Initializes click listener for closing dropdown when clicking outside.
    */
   ngOnInit() {
-    this.clickListener = this.renderer.listen(
-      'document',
-      'click',
-      (event: MouseEvent) => this.handleDocumentClick(event)
+    this.clickListener = this.renderer.listen('document', 'click', (event: MouseEvent) =>
+      this.handleDocumentClick(event),
     );
   }
 
@@ -112,9 +116,9 @@ export class AssignedToSelectComponent implements OnInit, OnDestroy, OnChanges {
    * @returns Updated Contacts array
    */
   private getUpdatedContacts(contact: Contacts): Contacts[] {
-    const index = this.selectedContacts.findIndex(c => c.id === contact.id);
+    const index = this.selectedContacts.findIndex((c) => c.id === contact.id);
     if (index > -1) {
-      return this.selectedContacts.filter(c => c.id !== contact.id);
+      return this.selectedContacts.filter((c) => c.id !== contact.id);
     }
     return [...this.selectedContacts, contact];
   }
@@ -125,7 +129,7 @@ export class AssignedToSelectComponent implements OnInit, OnDestroy, OnChanges {
    * @returns boolean
    */
   isSelected(contact: Contacts) {
-    return this.selectedContacts.some(c => c.id === contact.id);
+    return this.selectedContacts.some((c) => c.id === contact.id);
   }
 
   /**
@@ -145,9 +149,7 @@ export class AssignedToSelectComponent implements OnInit, OnDestroy, OnChanges {
     const term = this.contactSearchTerm.toLowerCase();
     const currentUserEmail = this.contactService.currentUserEmail;
 
-    const filtered = this.contacts.filter((c) =>
-      c.name.toLowerCase().includes(term)
-    );
+    const filtered = this.contacts.filter((c) => c.name.toLowerCase().includes(term));
 
     const currentUser = currentUserEmail
       ? filtered.find((c) => c.email === currentUserEmail)
@@ -179,8 +181,10 @@ export class AssignedToSelectComponent implements OnInit, OnDestroy, OnChanges {
    * @returns boolean
    */
   isCurrentUser(contact: Contacts): boolean {
-    return !!this.contactService.currentUserEmail &&
-      contact.email === this.contactService.currentUserEmail;
+    return (
+      !!this.contactService.currentUserEmail &&
+      contact.email === this.contactService.currentUserEmail
+    );
   }
 
   /**

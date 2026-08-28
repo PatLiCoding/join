@@ -39,7 +39,7 @@ export class ContactList implements OnInit, OnDestroy {
 
   @ViewChild('contactDialog') contactDialog?: ContactDialogTemplate;
 
-  constructor(/*public contactService: ContactService*/) {}
+  constructor() {}
 
   /**
    * Angular lifecycle: subscribes to edit requests.
@@ -159,7 +159,7 @@ export class ContactList implements OnInit, OnDestroy {
    */
   private tryScrollToContact(contactId: string): boolean {
     const target = this.contactRows?.find(
-      (row) => row.nativeElement.dataset['contactId'] === contactId
+      (row) => row.nativeElement.dataset['contactId'] === contactId,
     );
     if (target) {
       target.nativeElement.scrollIntoView({ behavior: 'smooth', block: 'nearest' });

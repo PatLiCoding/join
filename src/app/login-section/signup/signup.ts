@@ -11,16 +11,15 @@ import { FormsModule } from '@angular/forms';
   standalone: true,
   imports: [CommonModule, RouterModule, FormsModule],
   templateUrl: './signup.html',
-  styleUrls: ['./signup.scss']
+  styleUrls: ['./signup.scss'],
 })
 export class SignupComponent {
   constructor(
     private router: Router,
     private authService: AuthService,
-    private contactService: ContactService
+    private contactService: ContactService,
   ) {}
 
-  
   name: string = '';
   email: string = '';
   password: string = '';
@@ -76,10 +75,7 @@ export class SignupComponent {
    * @returns {boolean} True if the passwords differ and confirmPassword is not empty.
    */
   get passwordMismatch(): boolean {
-    return (
-      this.confirmPassword.length > 0 &&
-      this.password !== this.confirmPassword
-    );
+    return this.confirmPassword.length > 0 && this.password !== this.confirmPassword;
   }
 
   /**
@@ -90,20 +86,11 @@ export class SignupComponent {
    */
   isFormValid(): boolean {
     const nameValid = this.name.trim().length >= 5;
-    const emailValid =
-      /^[a-zA-Z0-9._%+\-]+@[a-zA-Z0-9.\-]+\.[a-zA-Z]{2,}$/.test(this.email);
+    const emailValid = /^[a-zA-Z0-9._%+\-]+@[a-zA-Z0-9.\-]+\.[a-zA-Z]{2,}$/.test(this.email);
     const passwordValid = this.isPasswordSecure;
-    const confirmValid =
-      this.confirmPassword.length > 0 &&
-      this.password === this.confirmPassword;
+    const confirmValid = this.confirmPassword.length > 0 && this.password === this.confirmPassword;
 
-    return (
-      nameValid &&
-      emailValid &&
-      passwordValid &&
-      confirmValid &&
-      this.acceptedPrivacy
-    );
+    return nameValid && emailValid && passwordValid && confirmValid && this.acceptedPrivacy;
   }
 
   /**
@@ -140,20 +127,17 @@ export class SignupComponent {
     if (!this.isFormValid()) {
       return;
     }
-
     this.isLoading = true;
     this.signupSuccess = false;
     this.emailAlreadyInUse = false;
-
-    this.authService.signup(this.email, this.password, this.name)
-      .then(async (result) => {
-        this.isLoading = false;
-        if (result.success) {
-          await this.handleSignupSuccess();
-        } else {
-          this.handleSignupError(result.error);
-        }
-      });
+    this.authService.signup(this.email, this.password, this.name).then(async (result) => {
+      this.isLoading = false;
+      if (result.success) {
+        await this.handleSignupSuccess();
+      } else {
+        this.handleSignupError(result.error);
+      }
+    });
   }
 
   /**
@@ -165,7 +149,7 @@ export class SignupComponent {
   private async handleSignupSuccess(): Promise<void> {
     await this.contactService.addContactToDataBase({
       name: this.name,
-      email: this.email
+      email: this.email,
     });
     this.signupSuccess = true;
     setTimeout(() => {

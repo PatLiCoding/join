@@ -4,14 +4,18 @@ import {
   AfterViewInit,
   ElementRef,
   ViewChild,
-  OnInit
+  OnInit,
 } from '@angular/core';
 import { Router, RouterModule, NavigationEnd } from '@angular/router';
 import { filter } from 'rxjs/operators';
 import { AuthService } from '../../../firebase-service/auth.servic';
 import { ContactService } from '../../../firebase-service/contact-service';
 
-
+/** 
+ * Header component displayed for authenticated users. 
+ *Handles navigation, user information, responsive behavior, 
+ and the header popup. 
+ */
 @Component({
   selector: 'app-header-logged-in',
   imports: [RouterModule],
@@ -19,7 +23,6 @@ import { ContactService } from '../../../firebase-service/contact-service';
   styleUrl: './header-logged-in.scss',
 })
 export class HeaderLoggedIn implements OnInit, AfterViewInit {
-  
   /** Initials of the current user */
   userInitials: string = 'G';
 
@@ -56,12 +59,10 @@ export class HeaderLoggedIn implements OnInit, AfterViewInit {
   constructor(
     private router: Router,
     private auth: AuthService,
-    private contactService: ContactService
+    private contactService: ContactService,
   ) {
     this.checkScreenSize();
-
     window.addEventListener('resize', () => this.checkScreenSize());
-
     this.router.events
       .pipe(filter((event) => event instanceof NavigationEnd))
       .subscribe((event: any) => {
@@ -79,12 +80,10 @@ export class HeaderLoggedIn implements OnInit, AfterViewInit {
    */
   private setUserInitials() {
     const name = this.contactService.currentUserName;
-
     if (!name) {
       this.userInitials = 'G';
       return;
     }
-
     this.userInitials = this.contactService.getInitials(name) || 'G';
   }
 
@@ -112,7 +111,6 @@ export class HeaderLoggedIn implements OnInit, AfterViewInit {
   /** Toggles the header popup visibility */
   toggleHeaderPopup() {
     this.showPopup = !this.showPopup;
-
     if (this.showPopup) {
       setTimeout(() => {
         this.setupPopupAutoClose();
@@ -125,10 +123,8 @@ export class HeaderLoggedIn implements OnInit, AfterViewInit {
     const popup = this.isMobile
       ? this.mobilePopup?.nativeElement
       : this.desktopPopup?.nativeElement;
-
     if (popup && this.showPopup) {
       const links = popup.querySelectorAll('a');
-
       links.forEach((link: HTMLAnchorElement) => {
         link.addEventListener('click', () => {
           this.showPopup = false;

@@ -1,4 +1,14 @@
-import { AfterViewInit, Component, ElementRef, EventEmitter, OnDestroy, inject, Input, Output, ViewChild } from '@angular/core';
+import {
+  AfterViewInit,
+  Component,
+  ElementRef,
+  EventEmitter,
+  OnDestroy,
+  inject,
+  Input,
+  Output,
+  ViewChild,
+} from '@angular/core';
 import { FormsModule, NgForm } from '@angular/forms';
 import { ContactService } from '../../firebase-service/contact-service';
 import { Contacts } from '../../interfaces/contacts';
@@ -18,10 +28,15 @@ type DialogTextKey = 'title' | 'subtitle' | 'primaryAction' | 'secondaryAction';
   styleUrl: './contact-dialog-template.scss',
 })
 export class ContactDialogTemplate implements AfterViewInit, OnDestroy {
+  /** Injected contact service. */
   contactsService = inject(ContactService);
+  /** Mode of the dialog: 'open' for creating a contact, 'change' for editing. */
   @Input() mode: DialogMode = 'open';
+  /** Event emitted when a contact is successfully created. */
   @Output() contactCreated = new EventEmitter<Contacts>();
+  /** HTML dialog reference. */
   @ViewChild('dialog') dialog?: ElementRef<HTMLDialogElement>;
+  /** NgForm template reference. */
   @ViewChild('f') contactForm?: NgForm;
   private cancelListener?: (event: Event) => void;
   private readonly bodyScrollLockClass = 'dialog-scroll-lock';
@@ -29,8 +44,10 @@ export class ContactDialogTemplate implements AfterViewInit, OnDestroy {
   private isScrollLocked = false;
   private toastShowTimeoutId?: number;
   private toastHideTimeoutId?: number;
-  showSuccessToast = false;
 
+  /** Flag to display success toast feedback. */
+  showSuccessToast = false;
+  /** Configurable UI text dictionary indexed by mode and key. */
   dialogText: Record<DialogMode, Record<DialogTextKey, string>> = {
     open: {
       title: 'Add contact',
@@ -45,7 +62,7 @@ export class ContactDialogTemplate implements AfterViewInit, OnDestroy {
       secondaryAction: 'Delete',
     },
   };
-
+  /** Form model object for contact binding. */
   contact = {
     name: '',
     email: '',
@@ -69,12 +86,10 @@ export class ContactDialogTemplate implements AfterViewInit, OnDestroy {
     if (!dialogEl) {
       return;
     }
-
-    this.cancelListener = event => {
+    this.cancelListener = (event) => {
       event.preventDefault();
       this.close();
     };
-
     dialogEl.addEventListener('cancel', this.cancelListener);
   }
 
@@ -157,7 +172,8 @@ export class ContactDialogTemplate implements AfterViewInit, OnDestroy {
     let fallbackId: number | undefined;
     const handleAnimationEnd = (event: AnimationEvent) => {
       if (event.target !== dialogEl) return;
-      if (event.animationName !== 'dialog-exit-right' && event.animationName !== 'dialog-exit-up') return;
+      if (event.animationName !== 'dialog-exit-right' && event.animationName !== 'dialog-exit-up')
+        return;
       if (fallbackId !== undefined) window.clearTimeout(fallbackId);
       dialogEl.removeEventListener('animationend', handleAnimationEnd);
       this.finishClose(dialogEl);
@@ -202,7 +218,7 @@ export class ContactDialogTemplate implements AfterViewInit, OnDestroy {
    */
   handlePrimaryAction(form: NgForm): void {
     if (!form.valid) {
-      Object.keys(form.controls).forEach(key => {
+      Object.keys(form.controls).forEach((key) => {
         form.controls[key].markAsTouched();
       });
       return;
@@ -211,7 +227,6 @@ export class ContactDialogTemplate implements AfterViewInit, OnDestroy {
       this.submitContact(form);
       return;
     }
-
     this.saveChanges();
   }
 
@@ -223,17 +238,15 @@ export class ContactDialogTemplate implements AfterViewInit, OnDestroy {
     if (!selected?.id) {
       return;
     }
-
     await this.contactsService.updateContact({
       id: selected.id,
       name: this.contact.name,
       email: this.contact.email,
       phone: this.contact.phone,
     });
-
     this.close();
   }
-  
+
   /**
    * Handles the secondary action (cancel or delete contact).
    */
@@ -242,7 +255,6 @@ export class ContactDialogTemplate implements AfterViewInit, OnDestroy {
       this.close();
       return;
     }
-
     this.contactsService.deleteSelectedContact();
     this.close();
   }
@@ -278,13 +290,10 @@ export class ContactDialogTemplate implements AfterViewInit, OnDestroy {
     if (typeof window === 'undefined') {
       return;
     }
-
     this.clearToastTimeouts();
-
     const closeAnimationDuration = 400;
     const delayBeforeShow = closeAnimationDuration + 2000;
     const animationDuration = 1800;
-
     this.toastShowTimeoutId = window.setTimeout(() => {
       this.showSuccessToast = true;
       this.toastHideTimeoutId = window.setTimeout(() => {

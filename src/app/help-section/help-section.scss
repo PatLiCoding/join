@@ -1,6 +1,5 @@
 @use 'mixins' as *;
 
-
 .help {
   height: 100%;
   @include flex-col;
@@ -41,8 +40,17 @@
 }
 
 .join-highlight {
-  color: #29ABE2;
+  color: #29abe2;
   font-weight: 700;
+}
+
+.highlight-blue {
+  color: #29abe2;
+  font-weight: 700;
+  text-decoration: none;
+  &:hover {
+    text-decoration: underline;
+  }
 }
 
 .help p {
@@ -64,7 +72,6 @@
   margin: 0;
 }
 
-
 .help-steps {
   counter-reset: step;
   margin-left: 40px;
@@ -78,19 +85,18 @@
 
 .step-number::before {
   counter-increment: step;
-  content: counter(step) ".";
+  content: counter(step) '.';
   font-weight: 700;
   font-size: 27px;
   min-width: 32px;
 }
 
 @media (max-width: 768px) {
-
   .help-header h1 {
     font-size: 47px;
   }
 
   .help-body {
-    padding-bottom: calc(var(--mobile-nav-height, 64px) + 16px); 
+    padding-bottom: calc(var(--mobile-nav-height, 64px) + 16px);
   }
 }

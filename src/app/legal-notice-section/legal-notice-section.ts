@@ -9,22 +9,19 @@ import { environment } from '../../environments/environment';
   styleUrls: ['./legal-notice-section.scss'],
 })
 export class LegalNoticeSection {
-  
-   /**
+  /**
    * Contains the contact information displayed in the legal notice.
    * The values are loaded from the environment configuration.
    */
   imprint = environment.imprint;
 
-  constructor(
-    private location: Location,
-  ) {}
+  constructor(private location: Location) {}
 
   /**
    * Navigates back to the previous page.
-   * Typically used to close the help section.
+   * Typically used to close the section.
    */
-  closeHelp(): void {
+  close(): void {
     this.location.back();
   }
 }

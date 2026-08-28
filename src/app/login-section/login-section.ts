@@ -17,7 +17,6 @@ import { ContactService } from '../firebase-service/contact-service';
   styleUrls: ['./login-section.scss'],
 })
 export class LoginSection implements OnInit {
-
   startAnimation = false;
   showSignupLink = true;
   animationShouldPlay = false;
@@ -32,7 +31,7 @@ export class LoginSection implements OnInit {
     private router: Router,
     private auth: AuthService,
     private contactService: ContactService,
-  ) { }
+  ) {}
 
   /**
    * Lifecycle hook that is called after data-bound properties are initialized.
@@ -44,13 +43,10 @@ export class LoginSection implements OnInit {
   ngOnInit(): void {
     this.contactService.clearCurrentUser();
     this.auth.logout();
-
     this.isMobile = window.innerWidth < 768;
-
     const played = sessionStorage.getItem('loginAnimationPlayed') === 'true';
     this.animationShouldPlay = !played;
     this.animationPlayed = played;
-
     if (!played) {
       setTimeout(() => {
         this.startAnimation = true;
@@ -60,9 +56,8 @@ export class LoginSection implements OnInit {
     } else {
       this.startAnimation = true;
     }
-
     this.router.events
-      .pipe(filter(event => event instanceof NavigationEnd))
+      .pipe(filter((event) => event instanceof NavigationEnd))
       .subscribe((event: NavigationEnd) => {
         this.showSignupLink = event.urlAfterRedirects === '/login';
       });
