@@ -44,6 +44,12 @@ export class AttachmentsComponent implements OnDestroy, OnChanges {
   /** Active Viewer.js instance used for full-screen gallery lightbox. */
   private viewerInstance: Viewer | null = null;
 
+  /** Index of the attachment currently shown in the viewer, kept in sync via the 'viewed' event. */
+  private currentViewerIndex = 0;
+
+  /** True while a file is being dragged over the dropzone (controls hover styling). */
+  isDragOver = false;
+
   /**
    * Initializes a new instance of the AttachmentsComponent.
    * @param imageCompression Service for compressing uploaded images and validating file types/sizes.
@@ -69,15 +75,8 @@ export class AttachmentsComponent implements OnDestroy, OnChanges {
     if (!this.isEditable) return;
     const input = event.target as HTMLInputElement;
     if (!input.files?.length) return;
-    this.fileError = '';
-    const currentList = [...(this.attachments ?? [])];
-    for (const file of Array.from(input.files)) {
-      await this.processFile(file, currentList);
-    }
+    await this.handleFileList(input.files);
     input.value = '';
-    this.attachments = currentList;
-    this.attachmentsChange.emit(this.attachments);
-    this.refreshViewer();
   }
 
   /**
@@ -94,11 +93,40 @@ export class AttachmentsComponent implements OnDestroy, OnChanges {
       this.fileError = 'File is too large (max. 5 MB).';
       return;
     }
+    await this.compressAndAppend(file, targetList);
+  }
+
+  /**
+   * Compresses a validated file and appends it to the target list,
+   * rejecting it if the combined attachment size would exceed the Firestore limit.
+   * @param file The validated image file.
+   * @param targetList Target attachment array to update.
+   */
+  private async compressAndAppend(file: File, targetList: Attachment[]): Promise<void> {
     try {
       const base64 = await this.imageCompression.compressImage(file);
-      targetList.push({ filename: file.name, fileType: file.type, base64 });
+      const fileSize = this.imageCompression.getBase64SizeInBytes(base64);
+      const candidate: Attachment = { filename: file.name, fileType: file.type, fileSize, base64 };
+      if (!this.imageCompression.isTotalSizeAllowed([...targetList, candidate])) {
+        this.fileError = 'Attachments exceed the 900 KB storage limit for this task.';
+        return;
+      }
+      targetList.push(candidate);
     } catch {
       this.fileError = 'The file could not be processed.';
+    }
+  }
+
+  /**
+   * Handles a click on the entire attachment thumbnail.
+   * In edit mode, removes the attachment. In view mode, opens the viewer.
+   * @param index Zero-based index of the clicked attachment.
+   */
+  onThumbClick(index: number): void {
+    if (this.isEditable) {
+      this.removeAttachment(index);
+    } else {
+      this.openViewer(index);
     }
   }
 
@@ -116,6 +144,15 @@ export class AttachmentsComponent implements OnDestroy, OnChanges {
   }
 
   /**
+   * Opens the Viewer.js lightbox at a specific attachment index.
+   * @param index Zero-based index of the attachment to display.
+   */
+  openViewer(index: number): void {
+    if (!this.viewerInstance) return;
+    this.viewerInstance.view(index);
+  }
+
+  /**
    * Destroys and re-initializes the Viewer.js instance on the updated gallery DOM element.
    */
   private refreshViewer(): void {
@@ -124,11 +161,75 @@ export class AttachmentsComponent implements OnDestroy, OnChanges {
       if (this.galleryRef?.nativeElement && this.attachments?.length) {
         this.viewerInstance = new Viewer(this.galleryRef.nativeElement, {
           inline: false,
-          toolbar: true,
+          toolbar: this.buildToolbar(),
           navbar: this.attachments.length > 1,
+          title: () => this.buildImageTitle(this.currentViewerIndex),
+          view: (event) => this.onImageView(event),
+          filter: (image) => image.classList.contains('attachment-img'),
         });
       }
     });
+  }
+
+  /**
+   * Updates the tracked viewer index when Viewer.js begins showing a new image,
+   * ensuring the title callback reads the correct attachment metadata.
+   * @param event The Viewer.js 'view' custom event.
+   */
+  private onImageView(event: CustomEvent<{ index: number }>): void {
+    this.currentViewerIndex = event.detail.index;
+  }
+
+  /**
+   * Builds the label shown above the viewed image, combining filename,
+   * file type, and formatted file size.
+   * @param index Index of the currently viewed attachment.
+   * @returns The combined metadata label.
+   */
+  private buildImageTitle(index: number): string {
+    const att = this.attachments[index];
+    if (!att) return '';
+    const size = this.imageCompression.formatFileSize(
+      att.fileSize ?? this.imageCompression.getBase64SizeInBytes(att.base64),
+    );
+    return `${att.filename} · ${att.fileType} · ${size}`;
+  }
+
+  /**
+   * Builds the Viewer.js toolbar configuration.
+   * @returns The toolbar configuration object.
+   */
+  private buildToolbar(): NonNullable<Viewer.Options['toolbar']> {
+    return {
+      zoomIn: 1,
+      zoomOut: 1,
+      oneToOne: 1,
+      reset: 1,
+      prev: this.attachments.length > 1 ? 1 : 0,
+      next: this.attachments.length > 1 ? 1 : 0,
+      rotateLeft: 1,
+      rotateRight: 1,
+    };
+  }
+
+  /**
+   * Triggers a browser download of the attachment at the given index.
+   * @param index Zero-based index of the attachment to download.
+   */
+  downloadAttachment(index: number): void {
+    const att = this.attachments[index];
+    if (!att) return;
+    const link = document.createElement('a');
+    link.href = att.base64;
+    link.download = att.filename;
+    link.click();
+  }
+
+  /**
+   * Triggers a browser download of the attachment currently shown in the viewer.
+   */
+  private downloadCurrentAttachment(): void {
+    this.downloadAttachment(this.currentViewerIndex);
   }
 
   /**
@@ -137,5 +238,60 @@ export class AttachmentsComponent implements OnDestroy, OnChanges {
    */
   ngOnDestroy(): void {
     this.viewerInstance?.destroy();
+  }
+
+  /**
+   * Handles dragover events on the dropzone, preventing the browser's default behavior.
+   * @param event The drag event.
+   */
+  onDragOver(event: DragEvent): void {
+    event.preventDefault();
+    this.isDragOver = true;
+  }
+
+  /**
+   * Handles dragleave events on the dropzone.
+   * @param event The drag event.
+   */
+  onDragLeave(event: DragEvent): void {
+    event.preventDefault();
+    this.isDragOver = false;
+  }
+
+  /**
+   * Handles files dropped onto the dropzone by delegating to the same
+   * processing pipeline used for the file picker.
+   * @param event The drop event.
+   */
+  async onDrop(event: DragEvent): Promise<void> {
+    event.preventDefault();
+    this.isDragOver = false;
+    if (!this.isEditable || !event.dataTransfer?.files.length) return;
+    await this.handleFileList(event.dataTransfer.files);
+  }
+
+  /**
+   * Removes all attachments at once and refreshes the gallery.
+   */
+  deleteAllAttachments(): void {
+    if (!this.isEditable) return;
+    this.attachments = [];
+    this.attachmentsChange.emit(this.attachments);
+    this.refreshViewer();
+  }
+
+  /**
+   * Shared pipeline for processing a FileList from either the file picker or a drop event.
+   * @param files The list of selected or dropped files.
+   */
+  private async handleFileList(files: FileList): Promise<void> {
+    this.fileError = '';
+    const currentList = [...(this.attachments ?? [])];
+    for (const file of Array.from(files)) {
+      await this.processFile(file, currentList);
+    }
+    this.attachments = currentList;
+    this.attachmentsChange.emit(this.attachments);
+    this.refreshViewer();
   }
 }

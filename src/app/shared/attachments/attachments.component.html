@@ -1,37 +1,82 @@
 <div class="attachments-component">
-  <label *ngIf="label" class="attachments-label">{{ label }}</label>
+  <div class="attachments-header" *ngIf="label">
+    <label class="attachments-label">{{ label }}</label>
+    <div class="hint-delete-container">
+      <p class="hint-text">Allowed file types are JPEG and PNG</p>
+      <button
+        *ngIf="isEditable && attachments.length"
+        type="button"
+        class="delete-all-btn"
+        (click)="deleteAllAttachments()"
+        aria-label="Delete all attachments"
+      >
+        <img src="assets/imgs/add-task/trash.png" alt="Delete" />
+        <p>Delete all</p>
+      </button>
+    </div>
+  </div>
 
   <ng-container *ngIf="isEditable">
     <input
       #fileInput
       type="file"
-      accept="image/png, image/jpeg, image/webp"
+      accept="image/png, image/jpeg"
       multiple
       (change)="onFilesSelected($event)"
       style="display: none"
     />
 
-    <button type="button" class="upload-btn" (click)="fileInput.click()">
-      Select file(s)
-    </button>
+    <div
+      class="dropzone"
+      role="button"
+      tabindex="0"
+      [class.dragover]="isDragOver"
+      aria-label="Drag a file here or press Enter to browse files"
+      (click)="fileInput.click()"
+      (keydown.enter)="fileInput.click()"
+      (keydown.space)="fileInput.click(); $event.preventDefault()"
+      (dragover)="onDragOver($event)"
+      (dragleave)="onDragLeave($event)"
+      (drop)="onDrop($event)"
+    >
+      Drag a file or browse<img src="assets/imgs/add-task/add.png" alt="add" />
+    </div>
 
-    <p class="error-message" *ngIf="fileError">
+    <p class="error-message" *ngIf="fileError" aria-live="polite">
       {{ fileError }}
     </p>
   </ng-container>
 
-  <div class="attachment-preview-list" #gallery *ngIf="attachments.length">
-    <div class="attachment-thumb" *ngFor="let att of attachments; let i = index">
-      <img [src]="att.base64" [alt]="att.filename" />
-      <button
-        *ngIf="isEditable"
-        type="button"
-        class="remove-attachment"
-        (click)="removeAttachment(i); $event.stopPropagation()"
-        aria-label="Remove attachment"
-      >
-        ✕
-      </button>
-    </div>
-  </div>
+  <ul class="attachment-preview-list" #gallery *ngIf="attachments.length">
+    <li
+      class="attachment-thumb"
+      *ngFor="let att of attachments; let i = index"
+      (click)="onThumbClick(i)"
+    >
+      <div class="attachment-image">
+        <img class="attachment-img" [src]="att.base64" [alt]="att.filename" />
+
+        <button
+          *ngIf="isEditable"
+          type="button"
+          class="remove-attachment"
+          [attr.aria-label]="'Remove ' + att.filename"
+        >
+          <img src="assets/imgs/add-task/trash_attachment.png" alt="Delete" />
+        </button>
+
+        <button *ngIf="!isEditable" type="button" class="download-attachment">
+          <img
+            src="assets/imgs/add-task/cloud_download.png"
+            (click)="downloadAttachment(i); $event.stopPropagation()"
+            [attr.aria-label]="'Download ' + att.filename"
+          />
+        </button>
+
+        <span class="attachment-filename" [title]="att.filename">
+          {{ att.filename }}
+        </span>
+      </div>
+    </li>
+  </ul>
 </div>

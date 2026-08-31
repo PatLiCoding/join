@@ -4,13 +4,64 @@
   @include flex-col(8px);
   width: 100%;
 
-  .attachments-label {
-    font-family: 'Inter', sans-serif;
-    font-size: 20px;
-    font-weight: 400;
-    color: #2a3647;
-    margin-top: 10px;
-    margin-bottom: 6px;
+  .attachments-header {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    gap: 8px;
+    .attachments-label {
+      font-size: 20px;
+      font-weight: 400;
+      color: #2a3647;
+    }
+
+    .hint-delete-container {
+      display: flex;
+      justify-content: space-between;
+      .hint-text {
+        font-size: 16px;
+        color: #848484;
+        display: flex;
+      }
+      .delete-all-btn {
+        display: flex;
+        align-items: center;
+        background: none;
+        border: none;
+        color: #2a3647;
+        font-size: 16px;
+        &:hover {
+          cursor: pointer;
+          color: #e60026;
+        }
+      }
+    }
+  }
+
+  .dropzone {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 10px;
+    height: 48px;
+    border: 1px dashed #686868;
+    border-radius: 10px;
+    padding: 16px;
+    font-size: 16px;
+    background-color: #e7e7e750;
+    color: #686868;
+    img {
+      height: 15px;
+      width: 15px;
+    }
+    &:hover,
+    &.dragover,
+    &:focus-visible {
+      border-color: #29abe2;
+      background: #f5faff;
+      outline: none;
+      cursor: pointer;
+    }
   }
 
   .upload-btn {
@@ -23,10 +74,11 @@
     background: #fff;
     font-family: 'Inter', sans-serif;
     font-size: 20px;
-    cursor: pointer;
-    transition: box-shadow 0.2s ease, border-color 0.2s ease;
-
+    transition:
+      box-shadow 0.2s ease,
+      border-color 0.2s ease;
     &:hover {
+      cursor: pointer;
       box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
     }
   }
@@ -43,57 +95,86 @@
 
   .attachment-preview-list {
     display: flex;
-    flex-wrap: wrap;
     gap: 12px;
-    max-height: 80px;
-    padding-top: 8px;
-    padding-bottom: 8px;
-    padding-right: 8px;
-    overflow-y: auto;
-
-    @include custom-scrollbar;
-
-    &::-webkit-scrollbar-thumb:hover {
-      background: #2a3647;
-    }
+    max-width: 100%;
+    overflow-x: auto;
+    overflow-y: hidden;
+    padding-bottom: 4px;
+    list-style: none;
+    margin: 0;
+    @include custom-scrollbar-x;
   }
 
   .attachment-thumb {
-    position: relative;
-    width: 64px;
-    height: 64px;
-
-    img {
+    width: 112px;
+    min-width: 112px;
+    height: 89px;
+    flex-shrink: 0;
+    border-radius: 12px;
+    border: 1px solid #d1d1d1;
+    overflow: hidden;
+    box-sizing: border-box;
+    .attachment-image {
+      position: relative;
       width: 100%;
       height: 100%;
-      object-fit: cover;
-      border-radius: 8px;
-      border: 1px solid #d1d1d1;
+      img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        display: block;
+      }
+      .remove-attachment,
+      .download-attachment {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: calc(100% - 26px);
+        background: #4f4e4e60;
+        border: none;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        opacity: 0;
+        visibility: hidden;
+        transition:
+          opacity 0.2s ease,
+          visibility 0.2s ease;
+        z-index: 2;
+        img {
+          width: 24px;
+          height: 24px;
+          object-fit: contain;
+        }
+      }
 
-      &:hover {
+      &:hover .remove-attachment,
+      &:hover .download-attachment {
+        opacity: 1;
+        visibility: visible;
         cursor: pointer;
-        filter: brightness(1.1);
-        box-shadow: 2px 2px 2px rgba(0, 0, 0, 0.2);
+      }
+      .attachment-filename {
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        width: 100%;
+        height: 26px;
+        background-color: #ffffff;
+        color: #686868;
+        font-size: 12px;
+        line-height: 26px;
+        padding: 0 6px;
+        box-sizing: border-box;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        z-index: 3;
       }
     }
-
-    .remove-attachment {
-      @include absolute($top: -6px, $right: -6px);
-      width: 20px;
-      height: 20px;
-      border-radius: 50%;
-      background: #2a3647;
-      color: #fff;
-      border: none;
-      font-size: 12px;
-      line-height: 1;
+    &:hover {
       cursor: pointer;
-
-      &:hover {
-        background: #fff;
-        color: #2a3647;
-        border: 1px solid #2a3647;
-      }
     }
   }
 }

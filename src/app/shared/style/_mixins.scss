@@ -252,3 +252,28 @@
   }
   padding-right: 4px;
 }
+
+/// Styles custom scrollbars for WebKit browsers.
+///
+/// @param {Length} $height [4px] - Scrollbar height
+/// @param {Color} $thumb [#a8a8a8] - Scrollbar thumb color
+/// @param {Color} $track [#f6f7f8] - Scrollbar track color
+///
+/// @example scss
+///   .custom-list {
+///     @include custom-scrollbar-x(6px, #2a3647);
+///   }
+@mixin custom-scrollbar-x($height: 4px, $thumb: #a8a8a8, $track: #f6f7f8) {
+  &::-webkit-scrollbar {
+    height: $height;
+  }
+  &::-webkit-scrollbar-track {
+    background: $track;
+    border-radius: 10px;
+  }
+  &::-webkit-scrollbar-thumb {
+    background: $thumb;
+    border-radius: 10px;
+  }
+  padding-bottom: 4px;
+}
