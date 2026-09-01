@@ -54,10 +54,6 @@
                   <div class="avatar" [style.background-color]="getContactColor(contact)">
                     {{ getInitials(contact.name) }}
                   </div>
-
-                  <span class="contact-name">
-                    {{ contact.name }}
-                  </span>
                 </div>
               </div>
 
@@ -68,7 +64,7 @@
           </div>
 
           <div class="form-group">
-            <span class="label">Subtasks:</span>
+            <span class="label">Subtasks</span>
 
             <div class="subtasks-list-view">
               <div
@@ -93,25 +89,50 @@
           </div>
 
           <div class="form-group" *ngIf="safeTask.attachments.length">
+            <span class="label">Attachments (images):</span>
             <app-attachments
               [attachments]="safeTask.attachments"
               [isEditable]="false"
-              label="Attachments:"
+              label="Attachments"
             ></app-attachments>
           </div>
         </div>
       </div>
 
       <div class="overlay-footer">
-        <button class="delete-btn" (click)="onDelete()">
-          <img src="assets/icon/contact-info/delete-default.png" class="btn-icon" alt="Delete" />
+        <button
+          (mouseenter)="hoveredIcon = 'delete'"
+          (mouseleave)="hoveredIcon = null"
+          class="delete-btn"
+          (click)="onDelete()"
+        >
+          <img
+            [src]="
+              hoveredIcon === 'delete'
+                ? 'assets/icon/task/delete-hover.png'
+                : 'assets/icon/task/delete-default.png'
+            "
+            alt="Delete"
+          />
           Delete
         </button>
 
         <div class="divider"></div>
 
-        <button class="edit-btn" (click)="enableEdit(); $event.stopPropagation()">
-          <img src="assets/icon/contact-info/edit-default.png" class="btn-icon" alt="Edit" />
+        <button
+          (mouseenter)="hoveredIcon = 'edit'"
+          (mouseleave)="hoveredIcon = null"
+          class="edit-btn"
+          (click)="enableEdit(); $event.stopPropagation()"
+        >
+          <img
+            [src]="
+              hoveredIcon === 'edit'
+                ? 'assets/icon/task/edit-hover.png'
+                : 'assets/icon/task/edit-default.png'
+            "
+            alt="Edit"
+          />
           Edit
         </button>
       </div>
@@ -224,17 +245,18 @@
             </div>
 
             <div class="form-group">
-              <label>Subtasks</label>
-              <app-subtask [(subtasks)]="editedTask.subtasks"> </app-subtask>
-            </div>
-
-            <div class="form-group">
+              <label>Attachments (images):</label>
               <app-attachments
                 [attachments]="editedTask.attachments || []"
                 (attachmentsChange)="editedTask.attachments = $event"
                 [isEditable]="true"
                 label="Attachments (images)"
               ></app-attachments>
+            </div>
+
+            <div class="form-group">
+              <label>Subtasks</label>
+              <app-subtask [(subtasks)]="editedTask.subtasks"> </app-subtask>
             </div>
           </form>
         </div>

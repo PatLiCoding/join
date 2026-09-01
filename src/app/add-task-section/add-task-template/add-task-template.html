@@ -44,14 +44,6 @@
       </div>
 
       <div class="form-group">
-        <app-attachments [(attachments)]="attachments"></app-attachments>
-      </div>
-    </div>
-
-    <div class="devide-section" aria-hidden="true"></div>
-
-    <div class="add-task-right">
-      <div class="form-group">
         <label>Priority</label>
         <div class="priority-buttons">
           <button
@@ -105,14 +97,6 @@
         </div>
       </div>
 
-      <div class="form-group">
-        <label>Assigned To</label>
-        <app-assigned-to-select
-          [contacts]="allContacts"
-          [(selectedContacts)]="assignedToContacts"
-        ></app-assigned-to-select>
-      </div>
-
       <div class="category-select form-group">
         <label>Category<span class="required">*</span></label>
         <div class="category-dropdown-custom" (click)="toggleCategoryDropdown()">
@@ -138,11 +122,32 @@
         </div>
         <p class="error-message" *ngIf="categoryInvalid">This field is required</p>
       </div>
+    </div>
+
+    <div class="devide-section" aria-hidden="true"></div>
+
+    <div class="add-task-right">
+      <div class="form-group">
+        <label>Attachments (images)</label>
+        <app-attachments [(attachments)]="attachments"></app-attachments>
+      </div>
 
       <div class="form-group">
         <label>Subtasks</label>
         <app-subtask [(subtasks)]="subtasks"></app-subtask>
       </div>
+
+      <div class="form-group">
+        <label>Assigned To</label>
+        <app-assigned-to-select
+          [contacts]="allContacts"
+          [(selectedContacts)]="assignedToContacts"
+        ></app-assigned-to-select>
+      </div>
+
+      
+
+      
     </div>
   </div>
 

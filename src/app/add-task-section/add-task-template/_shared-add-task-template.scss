@@ -125,9 +125,17 @@ label {
   }
 }
 
+textarea,
+.priority-buttons,
+.category-select,
+app-attachments,
+app-subtask,
+app-assigned-to-select {
+  margin-bottom: 20px;
+}
+
 .form-group {
   @include flex-col;
-  margin-bottom: 15px;
 
   input,
   textarea {

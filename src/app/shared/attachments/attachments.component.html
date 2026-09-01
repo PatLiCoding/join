@@ -1,8 +1,7 @@
 <div class="attachments-component">
-  <div class="attachments-header" *ngIf="label">
-    <label class="attachments-label">{{ label }}</label>
+  <div class="attachments-header" >
     <div class="hint-delete-container">
-      <p class="hint-text">Allowed file types are JPEG and PNG</p>
+      <p *ngIf="isEditable" class="hint-text">Allowed file types are JPEG and PNG</p>
       <button
         *ngIf="isEditable && attachments.length"
         type="button"

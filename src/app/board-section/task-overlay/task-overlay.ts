@@ -65,6 +65,8 @@ export class TaskOverlay implements OnInit, OnChanges {
   assignedContacts: Contacts[] = [];
   /** Error message displayed for attachment file validation issues. */
   attachmentError = '';
+  /** Active hovered action icon. */
+  hoveredIcon: string | null = null;
 
   /** Local working copy of task data for edit operations. */
   editedTask: Omit<Task, 'id' | 'createdAt'> = {

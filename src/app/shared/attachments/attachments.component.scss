@@ -29,18 +29,22 @@
     .hint-delete-container {
       display: flex;
       justify-content: space-between;
+      gap: 4px;
       .hint-text {
         font-size: 16px;
         color: #848484;
         display: flex;
+        align-items: center;
       }
       .delete-all-btn {
         display: flex;
         align-items: center;
+        justify-content: center;
         background: none;
         border: none;
         color: #2a3647;
         font-size: 16px;
+        flex-wrap: wrap;
         &:hover {
           cursor: pointer;
           color: #e60026;

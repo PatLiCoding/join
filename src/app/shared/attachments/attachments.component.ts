@@ -32,8 +32,6 @@ export class AttachmentsComponent implements OnDestroy, OnChanges {
   @Output() attachmentsChange = new EventEmitter<Attachment[]>();
   /** Controls whether file uploads and deletions are enabled (e.g. true in edit mode, false in view mode). */
   @Input() isEditable = true;
-  /** Optional header label text displayed above the attachment component. */
-  @Input() label = 'Attachments (images)';
 
   /** Validation or processing error message displayed to the user. */
   fileError = '';

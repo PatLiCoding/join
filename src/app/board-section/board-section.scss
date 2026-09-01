@@ -209,11 +209,13 @@ section {
         }
       }
       .listContainer {
-        @include padding(24px, 0, 24px, 0);
+        @include padding(24px, 8px, 24px, 8px);
         @include flex(row, stretch, flex-start, 0);
         overflow-y: hidden;
         overflow-x: auto;
         scrollbar-width: auto;
+        @include custom-scrollbar-x;
+        padding-bottom: 8px;
         width: 100%;
         .task-card {
           height: auto;
