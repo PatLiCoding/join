@@ -42,9 +42,19 @@
       Drag a file or browse<img src="assets/imgs/add-task/add.png" alt="add" />
     </div>
 
-    <p class="error-message" *ngIf="fileError" aria-live="polite">
-      {{ fileError }}
-    </p>
+    <div class="error-backdrop" *ngIf="fileError" (click)="closeError()"></div>
+    <div class="error-toast" *ngIf="fileError" role="alert" aria-live="assertive">
+      <button
+        type="button"
+        class="error-toast-close"
+        (click)="closeError()"
+        aria-label="Close the error"
+      >
+        <img src="assets/imgs/add-task/close_white.png" alt="Close error" />
+      </button>
+      <p class="error-toast-title">This file format is not allowed!</p>
+      <p class="error-toast-text">{{ fileError }}</p>
+    </div>
   </ng-container>
 
   <ul class="attachment-preview-list" #gallery *ngIf="attachments.length">
@@ -62,15 +72,36 @@
           class="remove-attachment"
           [attr.aria-label]="'Remove ' + att.filename"
         >
-          <img src="assets/imgs/add-task/trash_attachment.png" alt="Delete" />
+          <span class="icon-trigger" [class.is-hovering]="hoveredIconIndex === i" (mouseenter)="onIconEnter(i)" (mouseleave)="onIconLeave()">
+            <img
+              [src]="
+                hoveredIconIndex === i
+                  ? 'assets/imgs/add-task/trash_attachment_hover.png'
+                  : 'assets/imgs/add-task/trash_attachment.png'
+              "
+              alt="Delete"
+              (click)="removeAttachment(i); $event.stopPropagation()"
+            />
+          </span>
         </button>
 
-        <button *ngIf="!isEditable" type="button" class="download-attachment">
-          <img
-            src="assets/imgs/add-task/cloud_download.png"
-            (click)="downloadAttachment(i); $event.stopPropagation()"
-            [attr.aria-label]="'Download ' + att.filename"
-          />
+        <button
+          *ngIf="!isEditable"
+          type="button"
+          class="download-attachment"
+          [attr.aria-label]="'Download ' + att.filename"
+        >
+          <span class="icon-trigger" [class.is-hovering]="hoveredIconIndex === i" (mouseenter)="onIconEnter(i)" (mouseleave)="onIconLeave()">
+            <img
+              [src]="
+                hoveredIconIndex === i
+                  ? 'assets/imgs/add-task/cloud_download_hover.png'
+                  : 'assets/imgs/add-task/cloud_download.png'
+              "
+              alt="Download"
+              (click)="downloadAttachment(i); $event.stopPropagation()"
+            />
+          </span>
         </button>
 
         <span class="attachment-filename" [title]="att.filename">

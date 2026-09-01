@@ -1,5 +1,16 @@
 @use 'mixins' as *;
 
+@keyframes toast-slide-in {
+  from {
+    opacity: 0;
+    transform: translate(-50%, 100vh);
+  }
+  to {
+    opacity: 1;
+    transform: translate(-50%, -50%);
+  }
+}
+
 .attachments-component {
   @include flex-col(8px);
   width: 100%;
@@ -83,14 +94,51 @@
     }
   }
 
-  .error-message {
-    margin-top: 4px;
-    color: #e60026;
-    font-family: 'Inter', sans-serif;
-    font-weight: 400;
-    font-size: 16px;
-    line-height: 120%;
-    min-height: 20px;
+  .error-backdrop {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.15);
+    z-index: 999;
+  }
+
+  .error-toast {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 1000;
+    width: min(90vw, 420px);
+    background-color: #ff3e3e;
+    color: #ffffff;
+    border-radius: 20px;
+    padding: 24px 32px;
+    text-align: center;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.25);
+    animation: toast-slide-in 0.35s ease-out forwards;
+
+    .error-toast-close {
+      position: absolute;
+      top: 8px;
+      right: 12px;
+      background: none;
+      border: none;
+      color: #fff;
+      font-size: 18px;
+      cursor: pointer;
+      line-height: 1;
+    }
+
+    .error-toast-title {
+      font-size: 20px;
+      font-weight: 400;
+      margin: 0 0 4px;
+    }
+
+    .error-toast-text {
+      font-size: 14px;
+      font-weight: 400;
+      margin: 0;
+    }
   }
 
   .attachment-preview-list {
@@ -142,10 +190,38 @@
           opacity 0.2s ease,
           visibility 0.2s ease;
         z-index: 2;
+      }
+
+      .icon-trigger {
+        display: inline-flex;
+        justify-content: center;
+        align-items: center;
+        img {
+          object-fit: contain;
+          display: block;
+          transform: scale(0.75);
+          transition: transform 125ms;
+        }
+        &.is-hovering img {
+          transform: scale(1);
+        }
+      }
+
+      .remove-attachment .icon-trigger {
+        width: 24px;
+        height: 24px;
         img {
           width: 24px;
           height: 24px;
-          object-fit: contain;
+        }
+      }
+
+      .download-attachment .icon-trigger {
+        width: 32px;
+        height: 32px;
+        img {
+          width: 32px;
+          height: 32px;
         }
       }
 

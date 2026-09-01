@@ -38,6 +38,9 @@ export class AttachmentsComponent implements OnDestroy, OnChanges {
   /** Validation or processing error message displayed to the user. */
   fileError = '';
 
+  /** Index of the attachment currently hovered on its action icon, or null. */
+  hoveredIconIndex: number | null = null;
+
   /** Reference to the gallery container DOM element used by Viewer.js. */
   @ViewChild('gallery') galleryRef?: ElementRef<HTMLDivElement>;
 
@@ -46,6 +49,8 @@ export class AttachmentsComponent implements OnDestroy, OnChanges {
 
   /** Index of the attachment currently shown in the viewer, kept in sync via the 'viewed' event. */
   private currentViewerIndex = 0;
+
+  private errorTimeoutId?: ReturnType<typeof setTimeout>;
 
   /** True while a file is being dragged over the dropzone (controls hover styling). */
   isDragOver = false;
@@ -86,11 +91,11 @@ export class AttachmentsComponent implements OnDestroy, OnChanges {
    */
   private async processFile(file: File, targetList: Attachment[]): Promise<void> {
     if (!this.imageCompression.isTypeAllowed(file)) {
-      this.fileError = 'Only PNG, JPG, or WEBP files are allowed.';
+      this.showError('You can only upload JPEG and PNG.');
       return;
     }
     if (!this.imageCompression.isSizeAllowed(file)) {
-      this.fileError = 'File is too large (max. 5 MB).';
+      this.showError('File is too large (max. 5 MB).');
       return;
     }
     await this.compressAndAppend(file, targetList);
@@ -108,26 +113,22 @@ export class AttachmentsComponent implements OnDestroy, OnChanges {
       const fileSize = this.imageCompression.getBase64SizeInBytes(base64);
       const candidate: Attachment = { filename: file.name, fileType: file.type, fileSize, base64 };
       if (!this.imageCompression.isTotalSizeAllowed([...targetList, candidate])) {
-        this.fileError = 'Attachments exceed the 900 KB storage limit for this task.';
+        this.showError('Attachments exceed the 900 KB storage limit for this task.');
         return;
       }
       targetList.push(candidate);
     } catch {
-      this.fileError = 'The file could not be processed.';
+      this.showError('The file could not be processed.');
     }
   }
 
   /**
-   * Handles a click on the entire attachment thumbnail.
-   * In edit mode, removes the attachment. In view mode, opens the viewer.
+   * Handles a click on the attachment thumbnail (outside the action icons)
+   * by opening the full-screen viewer.
    * @param index Zero-based index of the clicked attachment.
    */
   onThumbClick(index: number): void {
-    if (this.isEditable) {
-      this.removeAttachment(index);
-    } else {
-      this.openViewer(index);
-    }
+    this.openViewer(index);
   }
 
   /**
@@ -238,8 +239,8 @@ export class AttachmentsComponent implements OnDestroy, OnChanges {
    */
   ngOnDestroy(): void {
     this.viewerInstance?.destroy();
+    clearTimeout(this.errorTimeoutId);
   }
-
   /**
    * Handles dragover events on the dropzone, preventing the browser's default behavior.
    * @param event The drag event.
@@ -286,6 +287,7 @@ export class AttachmentsComponent implements OnDestroy, OnChanges {
    */
   private async handleFileList(files: FileList): Promise<void> {
     this.fileError = '';
+    clearTimeout(this.errorTimeoutId);
     const currentList = [...(this.attachments ?? [])];
     for (const file of Array.from(files)) {
       await this.processFile(file, currentList);
@@ -293,5 +295,38 @@ export class AttachmentsComponent implements OnDestroy, OnChanges {
     this.attachments = currentList;
     this.attachmentsChange.emit(this.attachments);
     this.refreshViewer();
+  }
+
+  /**
+   * Displays an error message as a toast and auto-dismisses it after a delay.
+   * @param message The error message to display.
+   */
+  private showError(message: string): void {
+    this.fileError = message;
+    clearTimeout(this.errorTimeoutId);
+    this.errorTimeoutId = setTimeout(() => this.closeError(), 4000);
+  }
+
+  /**
+   * Closes the currently displayed error toast.
+   */
+  closeError(): void {
+    this.fileError = '';
+    clearTimeout(this.errorTimeoutId);
+  }
+
+  /**
+   * Marks the icon at the given index as hovered.
+   * @param index Zero-based index of the attachment.
+   */
+  onIconEnter(index: number): void {
+    this.hoveredIconIndex = index;
+  }
+
+  /**
+   * Clears the hovered icon state.
+   */
+  onIconLeave(): void {
+    this.hoveredIconIndex = null;
   }
 }
