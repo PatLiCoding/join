@@ -12,6 +12,7 @@ import {
 import { FormsModule, NgForm } from '@angular/forms';
 import { ContactService } from '../../firebase-service/contact-service';
 import { Contacts } from '../../interfaces/contacts';
+import { ContactAvatar } from '../../shared/contact-avatar/contact-avatar';
 
 type DialogMode = 'open' | 'change';
 type DialogTextKey = 'title' | 'subtitle' | 'primaryAction' | 'secondaryAction';
@@ -23,7 +24,7 @@ type DialogTextKey = 'title' | 'subtitle' | 'primaryAction' | 'secondaryAction';
 @Component({
   selector: 'app-contact-dialog-template',
   standalone: true,
-  imports: [FormsModule],
+  imports: [FormsModule, ContactAvatar],
   templateUrl: './contact-dialog-template.html',
   styleUrl: './contact-dialog-template.scss',
 })
@@ -47,6 +48,8 @@ export class ContactDialogTemplate implements AfterViewInit, OnDestroy {
 
   /** Flag to display success toast feedback. */
   showSuccessToast = false;
+  /** Active hovered action icon. */
+  hoveredIcon: string | null = null;
   /** Configurable UI text dictionary indexed by mode and key. */
   dialogText: Record<DialogMode, Record<DialogTextKey, string>> = {
     open: {
@@ -62,8 +65,9 @@ export class ContactDialogTemplate implements AfterViewInit, OnDestroy {
       secondaryAction: 'Delete',
     },
   };
+
   /** Form model object for contact binding. */
-  contact = {
+  contact: { name: string; email: string; phone: string; photoUrl?: string } = {
     name: '',
     email: '',
     phone: '',
@@ -125,6 +129,7 @@ export class ContactDialogTemplate implements AfterViewInit, OnDestroy {
         this.contact.name = selected.name ?? '';
         this.contact.email = selected.email ?? '';
         this.contact.phone = selected.phone?.toString() ?? '';
+        this.contact.photoUrl = selected.photoUrl;
       }
     } else {
       this.clearInputFields();
@@ -243,6 +248,7 @@ export class ContactDialogTemplate implements AfterViewInit, OnDestroy {
       name: this.contact.name,
       email: this.contact.email,
       phone: this.contact.phone,
+      photoUrl: this.contact.photoUrl,
     });
     this.close();
   }
@@ -281,6 +287,7 @@ export class ContactDialogTemplate implements AfterViewInit, OnDestroy {
     this.contact.name = '';
     this.contact.email = '';
     this.contact.phone = '';
+    this.contact.photoUrl = undefined;
   }
 
   /**

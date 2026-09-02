@@ -17,6 +17,7 @@ import { AssignedToSelectComponent } from '../../shared/assigned-to-select/assig
 import { TaskService } from '../../firebase-service/task.service';
 import { AttachmentsComponent } from '../../shared/attachments/attachments.component';
 import { SubtaskComponent } from '../../shared/subtask/subtask.component';
+import { ContactAvatar } from '../../shared/contact-avatar/contact-avatar';
 
 /**
  * Overlay component for viewing and editing task details, including assignment,
@@ -31,6 +32,7 @@ import { SubtaskComponent } from '../../shared/subtask/subtask.component';
     AssignedToSelectComponent,
     AttachmentsComponent,
     SubtaskComponent,
+    ContactAvatar,
   ],
   templateUrl: './task-overlay.html',
   styleUrls: ['./task-overlay.scss'],

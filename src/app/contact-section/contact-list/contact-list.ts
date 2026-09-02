@@ -14,6 +14,7 @@ import { Subscription } from 'rxjs';
 import { ContactDialogTemplate } from '../contact-dialog-template/contact-dialog-template';
 import { ContactService } from '../../firebase-service/contact-service';
 import { Contacts } from '../../interfaces/contacts';
+import { ContactAvatar } from '../../shared/contact-avatar/contact-avatar';
 
 type ContactGroup = {
   letter: string;
@@ -25,7 +26,7 @@ type ContactGroup = {
  */
 @Component({
   selector: 'app-contact-list',
-  imports: [ContactDialogTemplate],
+  imports: [ContactDialogTemplate, ContactAvatar],
   templateUrl: './contact-list.html',
   styleUrl: './contact-list.scss',
 })

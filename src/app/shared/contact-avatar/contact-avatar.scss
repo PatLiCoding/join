@@ -1,0 +1,149 @@
+@use 'mixins' as *;
+
+@keyframes toast-slide-in {
+  from {
+    opacity: 0;
+    transform: translate(-50%, 100vh);
+  }
+  to {
+    opacity: 1;
+    transform: translate(-50%, -50%);
+  }
+}
+
+
+  .error-backdrop {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.15);
+    z-index: 999;
+  }
+
+  .error-toast {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 1000;
+    width: min(90vw, 420px);
+    background-color: #ff3e3e;
+    color: #ffffff;
+    border-radius: 20px;
+    padding: 24px 32px;
+    text-align: center;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.25);
+    animation: toast-slide-in 0.35s ease-out forwards;
+
+    .error-toast-close {
+      position: absolute;
+      top: 8px;
+      right: 12px;
+      background: none;
+      border: none;
+      color: #fff;
+      font-size: 18px;
+      cursor: pointer;
+      line-height: 1;
+    }
+
+    .error-toast-title {
+      font-size: 20px;
+      font-weight: 400;
+      margin: 0 0 4px;
+    }
+
+    .error-toast-text {
+      font-size: 14px;
+      font-weight: 400;
+      margin: 0;
+    }
+  }
+
+.avatar {
+  @include flex-center;
+  position: relative;
+  border-radius: 50%;
+  border: 3px solid white;
+  box-shadow: 0 0 12px #0000001a;
+  width: var(--avatar-size);
+  height: var(--avatar-size);
+  flex-shrink: 0;
+  overflow: visible;
+}
+
+.avatar-photo {
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+.avatar-initials {
+  font-size: max(16px, calc(var(--avatar-size) * 0.4));
+  line-height: 120%;
+  letter-spacing: 0%;
+  color: white;
+  margin: 0;
+}
+
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+.avatar-edit-icon {
+  position: absolute;
+  bottom: -8%;
+  right: -4%;
+  width: 38%;
+  height: 38%;
+  border-radius: 50%;
+  filter: drop-shadow(0px 8px 12px rgba(0, 0, 0, 0.1));
+  cursor: pointer;
+}
+
+.avatar-default {
+  width: 60%;
+  height: 60%;
+  object-fit: contain;
+  
+}
+
+.remove-photo {
+  position: absolute;
+  top: -6px;
+  right: -6px;
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  border: none;
+  background-color: #e60026;
+  color: white;
+  font-size: 14px;
+  line-height: 1;
+  cursor: pointer;
+  @include flex-center;
+}
+
+.photo-error {
+  margin-top: 8px;
+  font-size: 14px;
+}
+
+@media (max-width: 1200px) {
+  .avatar {
+    width: var(--avatar-size-mobile);
+    height: var(--avatar-size-mobile);
+  }
+
+  .avatar-initials {
+    font-size: max(16px, calc(var(--avatar-size-mobile) * 0.4));
+  }
+}

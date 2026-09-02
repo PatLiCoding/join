@@ -51,9 +51,7 @@
                   *ngFor="let contact of assignedContacts; trackBy: trackByContactId"
                   class="assigned-item"
                 >
-                  <div class="avatar" [style.background-color]="getContactColor(contact)">
-                    {{ getInitials(contact.name) }}
-                  </div>
+                  <app-contact-avatar [contact]="contact" [size]="42" [mobileSize]="42"/>
                 </div>
               </div>
 

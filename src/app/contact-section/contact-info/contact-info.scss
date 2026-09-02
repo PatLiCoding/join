@@ -47,17 +47,9 @@ section {
     padding-top: 24px;
     width: 520px;
     padding-right: 24px;
-    .avatarLetterBox {
-      width: 100px;
-      height: 100px;
-      border: 3px solid white;
-      border-radius: 80px;
-      @include flex-center;
-      p {
-        font-size: 36px;
-        color: #ffffff;
+    app-contact-avatar {
+        font-weight: 500;
       }
-    }
     .nameEditContant {
       @include flex-col(8px);
       h2 {
@@ -151,6 +143,9 @@ section {
       gap: 20px;
       flex-wrap: wrap;
       width: 380px;
+      app-contact-avatar {
+        font-weight: 400;
+      }
       .nameEditContant {
         h2 {
           font-size: 28px;

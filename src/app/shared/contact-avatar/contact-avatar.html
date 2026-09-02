@@ -1,0 +1,58 @@
+<div
+  class="avatar"
+  [style.--avatar-size.px]="size"
+  [style.--avatar-size-mobile.px]="mobileSize ?? size"
+  [style.backgroundColor]="backgroundColor"
+>
+  @if (displayPhoto) {
+  <img class="avatar-photo" [src]="displayPhoto" [alt]="contact?.name ?? 'Profile photo'" />
+} @else if (hasContact) {
+  <span class="avatar-initials">{{ initials }}</span>
+} @else {
+  <img class="avatar-default" [src]="defaultIconUrl" alt="Person" />
+}
+
+  @if (editable) {
+    <input
+      #photoInput
+      type="file"
+      accept="image/png, image/jpeg, image/webp"
+      class="visually-hidden"
+      (change)="onPhotoSelected($event)"
+    />
+    <img
+      class="avatar-edit-icon"
+      tabindex="0"
+      role="button"
+      aria-label="Upload profile picture"
+      (click)="photoInput.click()"
+      (keydown.enter)="photoInput.click()"
+      (mouseenter)="hoveredIcon = true"
+      (mouseleave)="hoveredIcon = false"
+      [src]="
+        hoveredIcon
+          ? 'assets/icon/contact-info/photo_hover.png'
+          : 'assets/icon/contact-info/photo.png'
+      "
+      alt="Change profile picture"
+    />
+    @if (displayPhoto) {
+      <button type="button" class="remove-photo" (click)="removePhoto()" aria-label="Remove profile picture">x</button>
+    }
+  }
+</div>
+@if (editable && photoError) {
+  <div class="error-backdrop" (click)="closeError()"></div>
+  <div class="error-toast" role="alert" aria-live="assertive">
+    <button
+      type="button"
+      class="error-toast-close"
+      (click)="closeError()"
+      aria-label="Close the error"
+    >
+      <img src="assets/imgs/add-task/close_white.png" alt="Close error" />
+    </button>
+    <p class="error-toast-title">This file format is not allowed!</p>
+    <p class="error-toast-text">{{ photoError }}</p>
+  </div>
+}

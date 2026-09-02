@@ -11,6 +11,7 @@ export function mapToContact(raw: any): Contacts {
     name: raw.name || '',
     email: raw.email || '',
     phone: raw.phone || '',
+    photoUrl: raw.photoUrl || undefined,
     selected: false,
   };
 }

@@ -103,6 +103,7 @@ export class ContactService implements OnDestroy {
         name: contact.name,
         email: contact.email,
         phone: contact.phone,
+        photoUrl: contact.photoUrl,
       };
       this.selectedContact = createdContact;
       return createdContact;
@@ -192,6 +193,7 @@ export class ContactService implements OnDestroy {
       name: contact.name,
       email: contact.email,
       phone: contact.phone,
+      photoUrl: contact.photoUrl ?? null,
     };
   }
 
@@ -279,6 +281,7 @@ export class ContactService implements OnDestroy {
       name: obj.name,
       email: obj.email,
       phone: obj.phone,
+      photoUrl: obj.photoUrl,
     };
   }
 

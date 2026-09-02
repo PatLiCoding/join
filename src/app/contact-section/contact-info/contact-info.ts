@@ -18,6 +18,7 @@ import {
 import { ContactService } from '../../firebase-service/contact-service';
 import { Contacts } from '../../interfaces/contacts';
 import { ContactDialogTemplate } from '../contact-dialog-template/contact-dialog-template';
+import { ContactAvatar } from '../../shared/contact-avatar/contact-avatar';
 
 /**
  * ContactInfo Component
@@ -29,7 +30,7 @@ import { ContactDialogTemplate } from '../contact-dialog-template/contact-dialog
  */
 @Component({
   selector: 'app-contact-info',
-  imports: [ContactDialogTemplate],
+  imports: [ContactDialogTemplate, ContactAvatar],
   templateUrl: './contact-info.html',
   styleUrl: './contact-info.scss',
 })

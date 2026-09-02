@@ -13,6 +13,7 @@ import {
 import { CommonModule } from '@angular/common';
 import { Contacts } from '../../interfaces/contacts';
 import { ContactService } from '../../firebase-service/contact-service';
+import { ContactAvatar } from '../contact-avatar/contact-avatar';
 
 /**
  * Dropdown component for selecting multiple contacts from a searchable list.
@@ -20,7 +21,7 @@ import { ContactService } from '../../firebase-service/contact-service';
 @Component({
   selector: 'app-assigned-to-select',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, ContactAvatar],
   templateUrl: './assigned-to-select.html',
   styleUrls: ['./assigned-to-select.scss'],
 })

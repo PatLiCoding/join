@@ -19,6 +19,7 @@ import { ContactService } from '../../firebase-service/contact-service';
 import { CommonModule, SlicePipe } from '@angular/common';
 import { TaskService } from '../../firebase-service/task.service';
 import { BurgermenuStateService } from '../../firebase-service/burgermenu-state.service';
+import { ContactAvatar } from '../../shared/contact-avatar/contact-avatar';
 
 /**
  * Taskcard Component
@@ -30,7 +31,7 @@ import { BurgermenuStateService } from '../../firebase-service/burgermenu-state.
 @Component({
   selector: 'app-taskcard',
   standalone: true,
-  imports: [SlicePipe, CommonModule],
+  imports: [SlicePipe, CommonModule, ContactAvatar],
   templateUrl: './taskcard.html',
   styleUrls: ['./taskcard.scss'],
 })

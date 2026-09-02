@@ -52,12 +52,7 @@
     @if (task.assignedTo; as assigned) {
       <div class="teamContainer">
         <div class="workingTeam" *ngFor="let member of assigned | slice: 0 : 3">
-          <div
-            class="avatarLetterBox"
-            [style.background-color]="contactService.getContactColor(getContactByName(member))"
-          >
-            <p>{{ contactService.getInitials(member) }}</p>
-          </div>
+          <app-contact-avatar [contact]="getContactByName(member)" [size]="32" [mobileSize]="32"/>
         </div>
         @if (assigned.length > 3) {
           <p>

@@ -1,6 +1,6 @@
 @use 'mixins' as *;
 
-dialog{
+dialog {
   display: none;
 }
 
@@ -78,7 +78,7 @@ dialog{
   }
 }
 
-dialog[open]{
+dialog[open] {
   @include flex(row, stretch, flex-start);
   position: fixed;
   top: 50%;
@@ -98,24 +98,25 @@ dialog[open]{
   &[data-dialog-state='closing'] {
     animation: dialog-exit-right 0.35s ease-in forwards;
   }
-  &::backdrop{
+  &::backdrop {
     background-color: rgba(0, 0, 0, 0.6);
   }
-  .dialog-content{
+  .dialog-content {
     display: flex;
     width: 100%;
     height: 100%;
     overflow: auto;
     position: relative;
+    @include custom-scrollbar;
   }
-  .dialog-left{
+  .dialog-left {
     @include flex(column, stretch, center);
     @include padding(48px);
-    background-color: #2A3647;
+    background-color: #2a3647;
     color: white;
     width: 100%;
     max-width: 470px;
-    .join-logo{
+    .join-logo {
       height: 66px;
       width: 55px;
       margin-bottom: 16px;
@@ -136,40 +137,32 @@ dialog[open]{
     .stripe-div {
       height: 3px;
       width: 90px;
-      background-color: #29ABE2;
+      background-color: #29abe2;
       margin: 0;
     }
   }
-  .dialog-right{
+  .dialog-right {
     @include flex(row, center, flex-start, 80px);
     @include padding(48px, 48px, 48px, 98px);
     width: 100%;
     background-color: #ffffff;
-    .profile-image-div{
+
+    profile-image-div {
       @include flex-center;
+      position: relative;
       border-radius: 50%;
+      border: 3px solid white;
       height: 120px;
       width: 120px;
-      .profile-letters {
-        font-size: 47px;
-        font-weight: 500;
-        line-height: 120%;
-        letter-spacing: 0%;
-        color: white;
-        margin: 0;
-      }
-      img{
-        height: 42px;
-        width: 42px;
-      }
+      box-shadow: 0 0 12px #0000001a;
     }
   }
-  .dialog-right-content{
+  .dialog-right-content {
     @include flex-col(16px);
     flex: 1;
     min-width: 0;
   }
-  .dialog-close{
+  .dialog-close {
     position: absolute;
     top: 24px;
     right: 24px;
@@ -184,13 +177,13 @@ dialog[open]{
     cursor: pointer;
     transition: background-color 0.2s ease;
     z-index: 5;
-    img{
+    img {
       width: 32px;
       height: 32px;
       display: block;
     }
     &:hover {
-      background-color: #29ABE2;
+      background-color: #29abe2;
     }
   }
 }
@@ -202,7 +195,7 @@ dialog[open]{
   transform: translate3d(-50%, 0, 0) translateX(120vw);
   @include padding(12px, 22px);
   border-radius: 12px;
-  background-color: #2A3647;
+  background-color: #2a3647;
   color: #ffffff;
   font-size: 16px;
   font-weight: 500;
@@ -218,7 +211,7 @@ dialog[open]{
 form {
   flex: 1;
 }
-.form-div{
+.form-div {
   @include flex-col(12px);
   width: 100%;
   > div {
@@ -227,20 +220,27 @@ form {
     input {
       height: 50px;
       border-radius: 10px;
-      border: 1px solid #D1D1D1;
+      border: 1px solid #d1d1d1;
       @include padding(0, 40px, 0, 12px);
       width: 100%;
       box-sizing: border-box;
-      font-family: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      font-family:
+        'Inter',
+        system-ui,
+        -apple-system,
+        BlinkMacSystemFont,
+        'Segoe UI',
+        Roboto,
+        sans-serif;
       font-weight: 400;
       font-size: 20px;
       line-height: 120%;
     }
     input.ng-invalid.ng-touched {
-      border-color: #E60026;
+      border-color: #e60026;
     }
     .error-message {
-      color: #E60026;
+      color: #e60026;
       font-size: 14px;
       position: absolute;
       left: 0;
@@ -266,12 +266,12 @@ form {
   @include padding(8px, 0);
 }
 
-.cancelDelete{
+.cancelDelete {
   height: 56px;
   border-radius: 10px;
-  border: 1px solid #2A3647;
+  border: 1px solid #2a3647;
   background-color: white;
-  color: #2A3647;
+  color: #2a3647;
   font-family: 'Inter';
   font-weight: 400;
   font-size: 20px;
@@ -281,13 +281,15 @@ form {
   @include flex(row, center, center, 8px);
   position: relative;
   cursor: pointer;
-  transition: border-color 0.2s ease, color 0.2s ease;
+  transition:
+    border-color 0.2s ease,
+    color 0.2s ease;
   img {
     display: none;
   }
   &::after {
     content: '×';
-    color: #2A3647;
+    color: #2a3647;
     font-size: 24px;
     transition: color 0.2s ease;
   }
@@ -295,19 +297,19 @@ form {
     display: none;
   }
   &:hover {
-    border-color: #29ABE2;
-    color: #29ABE2;
+    border-color: #29abe2;
+    color: #29abe2;
   }
   &:hover::after {
-    color: #29ABE2;
+    color: #29abe2;
   }
 }
 
-.createSave{
+.createSave {
   height: 56px;
   border-radius: 10px;
-  background-color: #2A3647;
-  border: 1px solid #2A3647;
+  background-color: #2a3647;
+  border: 1px solid #2a3647;
   color: white;
   font-family: 'Inter';
   font-weight: 700;
@@ -319,7 +321,10 @@ form {
   white-space: nowrap;
   position: relative;
   cursor: pointer;
-  transition: background-color 0.2s ease, border-color 0.2s ease, color 0.2s ease;
+  transition:
+    background-color 0.2s ease,
+    border-color 0.2s ease,
+    color 0.2s ease;
   img {
     display: none;
   }
@@ -330,8 +335,8 @@ form {
     transition: color 0.2s ease;
   }
   &:hover {
-    background-color: #29ABE2;
-    border-color: #29ABE2;
+    background-color: #29abe2;
+    border-color: #29abe2;
   }
 }
 
@@ -343,15 +348,14 @@ form {
 }
 
 @media (max-width: 1100px) {
-  dialog[open]{
-    .dialog-left{
+  dialog[open] {
+    .dialog-left {
       @include padding(20px);
     }
-    .dialog-right{
+    .dialog-right {
       @include padding(24px);
     }
   }
-  
 }
 
 @media (max-width: 1000px) {
@@ -387,7 +391,7 @@ form {
     margin-top: 0;
     margin-bottom: -40px;
     z-index: 6;
-    background-color: #2A3647;
+    background-color: #2a3647;
   }
   dialog[open] .dialog-left {
     min-width: unset;
@@ -412,7 +416,7 @@ form {
   .join-logo {
     display: none;
   }
-  .profile-image-div {
+  profile-image-div {
     position: absolute;
     top: 40%;
     left: 50%;
@@ -420,7 +424,7 @@ form {
     z-index: 10;
   }
   .form-div {
-    margin-top: 60px;
+    margin-top: 0;
   }
   .dialog-buttons {
     justify-content: center;
@@ -462,17 +466,14 @@ form {
     transform: none;
     margin: -80px auto 16px;
   }
-
-  .form-div {
-    margin-top: 0;
-  }
 }
 
 @media (max-width: 350px) {
   .dialog-buttons {
     gap: 16px !important;
   }
-  .cancelDelete, .createSave {
+  .cancelDelete,
+  .createSave {
     height: 48px !important;
     font-size: 18px !important;
   }

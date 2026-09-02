@@ -2,24 +2,25 @@
   <div class="dialog-content">
     <button type="button" class="dialog-close" (click)="close()">
       <picture>
-        <source media="(max-width: 1000px)" srcset="assets/imgs/contact-list/close.png">
-        <img src="assets/imgs/contact-list/close_default.png" alt="Close dialog">
+        <source media="(max-width: 1000px)" srcset="assets/imgs/contact-list/close.png" />
+        <img src="assets/imgs/contact-list/close_default.png" alt="Close dialog" />
       </picture>
     </button>
     <section class="dialog-left">
-      <img src="assets/imgs/contact-list/logo.png" alt="Join Logo" class="join-logo">
+      <img src="assets/imgs/contact-list/logo.png" alt="Join Logo" class="join-logo" />
       <h2>{{ getText('title') }}</h2>
       <p>{{ getText('subtitle') }}</p>
       <div class="stripe-div"></div>
     </section>
     <section class="dialog-right">
-      <div class="profile-image-div" [style.backgroundColor]="mode === 'change' ? getContactColor(contactsService.selectedContact) : '#D1D1D1'">
-        @if (mode === 'change') {
-          <p class="profile-letters">{{ contactsService.getInitials(contactsService.selectedContact?.name) }}</p>
-        } @else {
-          <img src="assets/imgs/contact-list/person.png" alt="Person">
-        }
-      </div>
+      <div class="profile-image-div">
+      <app-contact-avatar
+        [size]="120"
+        [editable]="true"
+        [contact]="mode === 'change' ? contactsService.selectedContact : null"
+        [photoUrl]="contact.photoUrl"
+        (photoUrlChange)="contact.photoUrl = $event"
+      /></div>
       <div class="dialog-right-content">
         <form #f="ngForm" (ngSubmit)="handlePrimaryAction(f)">
           <div class="form-div">
@@ -33,15 +34,23 @@
                 minlength="2"
                 pattern="(?=.*[A-Za-z]).{2,}"
                 required
-              >
-              <img src="assets/imgs/contact-list/personGrey.png" alt="Person grey">
+              />
+              <img src="assets/imgs/contact-list/personGrey.png" alt="Person grey" />
               @if (name.invalid && name.touched) {
                 <div class="error-message">Name must be at least 2 letters.</div>
               }
             </div>
             <div>
-              <input type="email" [(ngModel)]="contact.email" #email="ngModel" name="email" placeholder="Email" pattern="[a-zA-Z0-9._%+\-]+@[a-zA-Z0-9.\-]+\.[a-zA-Z]{2,}" required>
-              <img src="assets/imgs/contact-list/mail.png" alt="MAILICON">
+              <input
+                type="email"
+                [(ngModel)]="contact.email"
+                #email="ngModel"
+                name="email"
+                placeholder="Email"
+                pattern="[a-zA-Z0-9._%+\-]+@[a-zA-Z0-9.\-]+\.[a-zA-Z]{2,}"
+                required
+              />
+              <img src="assets/imgs/contact-list/mail.png" alt="MAILICON" />
               @if (email.invalid && email.touched) {
                 <div class="error-message">Enter an valid email.</div>
               }
@@ -57,8 +66,8 @@
                 inputmode="tel"
                 minlength="8"
                 maxlength="15"
-              >
-              <img src="assets/imgs/contact-list/call.png" alt="PHONEICON">
+              />
+              <img src="assets/imgs/contact-list/call.png" alt="PHONEICON" />
               @if (phone.invalid && phone.touched) {
                 <div class="error-message">Phone must contain 8 to 15 digits.</div>
               }
@@ -66,7 +75,12 @@
           </div>
         </form>
         <div class="dialog-buttons">
-          <button type="button" class="cancelDelete" [class.edit-mode]="mode === 'change'" (click)="handleSecondaryAction()">
+          <button
+            type="button"
+            class="cancelDelete"
+            [class.edit-mode]="mode === 'change'"
+            (click)="handleSecondaryAction()"
+          >
             {{ getText('secondaryAction') }}
           </button>
           <button type="submit" class="createSave" (click)="handlePrimaryAction(f)">
@@ -78,7 +92,5 @@
   </div>
 </dialog>
 @if (showSuccessToast) {
-  <div class="contact-toast" role="status" aria-live="polite">
-    Contact successfully created
-  </div>
+  <div class="contact-toast" role="status" aria-live="polite">Contact successfully created</div>
 }
