@@ -20,7 +20,9 @@
 
   @if (showPopup && !isMobile) {
     <div #desktopPopup class="header-popup desktop-popup" (click)="$event.stopPropagation()">
+      @if (!auth.isGuestUser()) {
       <a (click)="contactDialog?.openWithMode('account')">Account</a>
+    }
       <a [routerLink]="legalNoticeRoute">Legal Notice</a>
       <a [routerLink]="privacyPolicyRoute">Privacy Policy</a>
       <a (click)="logout()">Logout</a>
@@ -30,7 +32,9 @@
   @if (showPopup && isMobile) {
     <div #mobilePopup class="header-popup mobile-popup" (click)="$event.stopPropagation()">
       <a class="help-in-popup" [routerLink]="helpRoute">Help</a>
+      @if (!auth.isGuestUser()) {
       <a (click)="contactDialog?.openWithMode('account')">Account</a>
+    }
       <a [routerLink]="legalNoticeRoute">Legal Notice</a>
       <a [routerLink]="privacyPolicyRoute">Privacy Policy</a>
       <a (click)="logout()">Logout</a>

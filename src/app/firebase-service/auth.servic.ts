@@ -4,6 +4,7 @@ import {
   updateProfile,
   signInWithEmailAndPassword,
   User,
+  signOut,
   deleteUser,
 } from '@angular/fire/auth';
 import { Injectable, Injector, inject, runInInjectionContext } from '@angular/core';
@@ -22,6 +23,10 @@ export class AuthService {
 
   /** Tracks whether a user is currently logged in. */
   private loggedInSubject = new BehaviorSubject<boolean>(false);
+  /** True while the current session is the guest test login (no real Firebase user). */
+  private isGuestSubject = new BehaviorSubject<boolean>(false);
+  /** Observable stream of the guest-login state. */
+  isGuest$ = this.isGuestSubject.asObservable();
   /** Observable stream of the current login state. */
   isLoggedIn$ = this.loggedInSubject.asObservable();
 
@@ -63,6 +68,7 @@ export class AuthService {
       await runInInjectionContext(this.injector, () =>
         signInWithEmailAndPassword(this.auth, email, password),
       );
+      this.isGuestSubject.next(false);
       this.loggedInSubject.next(true);
       return { success: true };
     } catch (error: any) {
@@ -72,20 +78,21 @@ export class AuthService {
   }
 
   /**
-   * Simulates a guest login by setting the logged-in state to true.
+   * Simulates a guest login: signs out any real Firebase user first,
+   * then marks the session as a guest login.
    * @returns Promise that resolves when login is simulated.
    */
-  guestLogin(): Promise<void> {
-    return new Promise((resolve) => {
-      this.loggedInSubject.next(true);
-      resolve();
-    });
+  async guestLogin(): Promise<void> {
+    await runInInjectionContext(this.injector, () => signOut(this.auth));
+    this.isGuestSubject.next(true);
+    this.loggedInSubject.next(true);
   }
 
   /**
    * Logs out the user by setting the logged-in state to false.
    */
   logout() {
+    this.isGuestSubject.next(false);
     this.loggedInSubject.next(false);
   }
 
@@ -103,6 +110,15 @@ export class AuthService {
    */
   getCurrentUser(): User | null {
     return this.auth.currentUser;
+  }
+
+  /**
+   * Checks whether the current session is the guest test login, which
+   * must not be edited or deleted.
+   * @returns True if the current session is a guest login.
+   */
+  isGuestUser(): boolean {
+    return this.isGuestSubject.value;
   }
 
   /**

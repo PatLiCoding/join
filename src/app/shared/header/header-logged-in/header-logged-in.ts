@@ -61,7 +61,7 @@ export class HeaderLoggedIn implements OnInit, AfterViewInit {
    */
   constructor(
     private router: Router,
-    private auth: AuthService,
+    public auth: AuthService,
     private contactService: ContactService,
   ) {
     this.checkScreenSize();
@@ -134,6 +134,17 @@ export class HeaderLoggedIn implements OnInit, AfterViewInit {
         });
       });
     }
+  }
+
+  /**
+   * Opens the account dialog, blocking access for the guest test account.
+   */
+  onViewAccount(): void {
+    if (this.auth.isGuestUser()) {
+      alert('The guest account cannot be edited or deleted.');
+      return;
+    }
+    this.contactDialog?.openWithMode('account');
   }
 
   /**

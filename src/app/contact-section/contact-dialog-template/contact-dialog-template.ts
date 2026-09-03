@@ -314,6 +314,10 @@ export class ContactDialogTemplate implements AfterViewInit, OnDestroy {
    * Firebase Auth user, closes everything, and redirects to login.
    */
   async confirmDeleteAccount(): Promise<void> {
+    if (this.authService.isGuestUser()) {
+      this.showDeleteAccountConfirm = false;
+      return;
+    }
     this.contactsService.deleteSelectedContact();
     const result = await this.authService.deleteAccount();
     this.showDeleteAccountConfirm = false;
