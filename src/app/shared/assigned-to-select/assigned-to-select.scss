@@ -127,10 +127,6 @@
     left: 0;
     @include flex-row(6px);
     z-index: 10;
-
-    .avatar.more {
-      background-color: #888;
-    }
   }
 }
 

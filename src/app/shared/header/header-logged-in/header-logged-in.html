@@ -13,9 +13,13 @@
       </a>
     }
 
-    <span class="initials" (click)="toggleHeaderPopup()">
-      {{ userInitials }}
-    </span>
+    <span class="user-avatar" (click)="toggleHeaderPopup()">
+  @if (userPhotoUrl) {
+    <img [src]="userPhotoUrl" alt="Profile picture" class="initials" />
+  } @else {
+    <span class="initials">{{ userInitials }}</span>
+  }
+</span>
   </div>
 
   @if (showPopup && !isMobile) {

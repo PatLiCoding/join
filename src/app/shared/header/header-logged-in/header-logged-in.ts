@@ -48,6 +48,9 @@ export class HeaderLoggedIn implements OnInit, AfterViewInit {
   logoPath: string = 'assets/icon/header/logo_grey.png';
   helpIconPath: string = 'assets/icon/header/help.png';
 
+  /** Photo URL of the current user, if available */
+  userPhotoUrl: string | null = null;
+
   /** Reference to the contact/account dialog rendered in this template. */
   @ViewChild(ContactDialogTemplate) contactDialog?: ContactDialogTemplate;
   @ViewChild('desktopPopup') desktopPopup?: ElementRef;
@@ -83,6 +86,7 @@ export class HeaderLoggedIn implements OnInit, AfterViewInit {
    */
   private setUserInitials() {
     const name = this.contactService.currentUserName;
+    this.userPhotoUrl = this.contactService.currentUserPhotoUrl;
     if (!name) {
       this.userInitials = 'G';
       return;
@@ -96,6 +100,7 @@ export class HeaderLoggedIn implements OnInit, AfterViewInit {
   logout() {
     this.contactService.clearCurrentUser();
     this.userInitials = 'G';
+    this.userPhotoUrl = null;
     this.showPopup = false;
     this.auth.logout();
     this.router.navigate(['/login']);

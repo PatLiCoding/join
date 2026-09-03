@@ -29,6 +29,7 @@ export class ContactService implements OnDestroy {
 
   currentUserName: string | null = null;
   currentUserEmail: string | null = null;
+  currentUserPhotoUrl: string | null = null;
 
   editRequest$ = new Subject<void>();
 
@@ -71,21 +72,24 @@ export class ContactService implements OnDestroy {
   }
 
   /**
-   * Sets the current user's name and email globally.
+   * Sets the current user's name, email, and photo URL globally.
    * @param name The user's name.
    * @param email The user's email address.
+   * @param photoUrl The user's profile photo URL, if any.
    */
-  setCurrentUser(name: string, email: string) {
+  setCurrentUser(name: string, email: string, photoUrl?: string | null) {
     this.currentUserName = name;
     this.currentUserEmail = email;
+    this.currentUserPhotoUrl = photoUrl ?? null;
   }
 
   /**
-   * Clears the current user's name and email (logout).
+   * Clears the current user's name, email, and photo URL (logout).
    */
   clearCurrentUser() {
     this.currentUserName = null;
     this.currentUserEmail = null;
+    this.currentUserPhotoUrl = null;
   }
 
   /**
@@ -151,12 +155,12 @@ export class ContactService implements OnDestroy {
   }
 
   /**
-   * Syncs local state (selected contact and current user name) after a successful update.
+   * Syncs local state (selected contact and current user) after a successful update.
    * @param contact The contact that was updated.
    */
   private syncLocalStateAfterUpdate(contact: Contacts) {
     this.updateSelectedContactIfMatching(contact);
-    this.updateCurrentUserNameIfMatching(contact);
+    this.updateCurrentUserIfMatching(contact);
   }
 
   /**
@@ -170,23 +174,25 @@ export class ContactService implements OnDestroy {
       name: contact.name,
       email: contact.email,
       phone: contact.phone,
+      photoUrl: contact.photoUrl,
     };
   }
 
   /**
-   * Updates the current user's display name if the given contact matches the current user's email.
+   * Updates the current user's name and photo if the given contact matches the current user's email.
    * @param contact The contact that was updated.
    */
-  private updateCurrentUserNameIfMatching(contact: Contacts) {
+  private updateCurrentUserIfMatching(contact: Contacts) {
     if (this.currentUserEmail && contact.email === this.currentUserEmail) {
       this.currentUserName = contact.name;
+      this.currentUserPhotoUrl = contact.photoUrl ?? null;
     }
   }
 
   /**
-   * Returns a plain object with only the contact's name, email, and phone.
+   * Returns a plain object with only the contact's name, email, phone, and photo URL.
    * @param contact The contact to clean.
-   * @returns An object with name, email, and phone.
+   * @returns An object with name, email, phone, and photoUrl.
    */
   getCleanJson(contact: Contacts): {} {
     return {

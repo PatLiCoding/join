@@ -63,7 +63,7 @@ export class LoginComponent {
     const firebaseUser = this.auth.getCurrentUser();
     const resolvedName = this.resolveUserName(foundContact, firebaseUser, trimmedEmail);
     const resolvedEmail = foundContact?.email || firebaseUser?.email || trimmedEmail;
-    this.contactService.setCurrentUser(resolvedName, resolvedEmail);
+    this.contactService.setCurrentUser(resolvedName, resolvedEmail, foundContact?.photoUrl);
   }
 
   /**
