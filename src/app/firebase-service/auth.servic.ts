@@ -4,6 +4,7 @@ import {
   updateProfile,
   signInWithEmailAndPassword,
   User,
+  deleteUser,
 } from '@angular/fire/auth';
 import { Injectable, Injector, inject, runInInjectionContext } from '@angular/core';
 import { BehaviorSubject } from 'rxjs';
@@ -102,5 +103,24 @@ export class AuthService {
    */
   getCurrentUser(): User | null {
     return this.auth.currentUser;
+  }
+
+  /**
+   * Deletes the currently authenticated Firebase user permanently.
+   * Requires a recent login; throws 'auth/requires-recent-login' otherwise.
+   * @returns Promise resolving to success or an error message.
+   */
+  async deleteAccount(): Promise<{ success: boolean; error?: string }> {
+    const user = this.auth.currentUser;
+    if (!user) {
+      return { success: false, error: 'No user is currently logged in.' };
+    }
+    try {
+      await runInInjectionContext(this.injector, () => deleteUser(user));
+      this.loggedInSubject.next(false);
+      return { success: true };
+    } catch (error: any) {
+      return { success: false, error: error.message };
+    }
   }
 }

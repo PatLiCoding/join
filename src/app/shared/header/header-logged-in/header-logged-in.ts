@@ -10,6 +10,7 @@ import { Router, RouterModule, NavigationEnd } from '@angular/router';
 import { filter } from 'rxjs/operators';
 import { AuthService } from '../../../firebase-service/auth.servic';
 import { ContactService } from '../../../firebase-service/contact-service';
+import { ContactDialogTemplate } from '../../../contact-section/contact-dialog-template/contact-dialog-template';
 
 /** 
  * Header component displayed for authenticated users. 
@@ -18,7 +19,7 @@ import { ContactService } from '../../../firebase-service/contact-service';
  */
 @Component({
   selector: 'app-header-logged-in',
-  imports: [RouterModule],
+  imports: [RouterModule, ContactDialogTemplate],
   templateUrl: './header-logged-in.html',
   styleUrl: './header-logged-in.scss',
 })
@@ -47,6 +48,8 @@ export class HeaderLoggedIn implements OnInit, AfterViewInit {
   logoPath: string = 'assets/icon/header/logo_grey.png';
   helpIconPath: string = 'assets/icon/header/help.png';
 
+  /** Reference to the contact/account dialog rendered in this template. */
+  @ViewChild(ContactDialogTemplate) contactDialog?: ContactDialogTemplate;
   @ViewChild('desktopPopup') desktopPopup?: ElementRef;
   @ViewChild('mobilePopup') mobilePopup?: ElementRef;
 

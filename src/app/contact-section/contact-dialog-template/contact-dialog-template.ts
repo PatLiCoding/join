@@ -9,12 +9,15 @@ import {
   Output,
   ViewChild,
 } from '@angular/core';
+import { Router } from '@angular/router';
 import { FormsModule, NgForm } from '@angular/forms';
 import { ContactService } from '../../firebase-service/contact-service';
 import { Contacts } from '../../interfaces/contacts';
 import { ContactAvatar } from '../../shared/contact-avatar/contact-avatar';
+import { ConfirmDialog } from './confirm-dialog/confirm-dialog';
+import { AuthService } from '../../firebase-service/auth.servic';
 
-type DialogMode = 'open' | 'change';
+type DialogMode = 'open' | 'change' | 'account';
 type DialogTextKey = 'title' | 'subtitle' | 'primaryAction' | 'secondaryAction';
 
 /**
@@ -24,13 +27,15 @@ type DialogTextKey = 'title' | 'subtitle' | 'primaryAction' | 'secondaryAction';
 @Component({
   selector: 'app-contact-dialog-template',
   standalone: true,
-  imports: [FormsModule, ContactAvatar],
+  imports: [FormsModule, ContactAvatar, ConfirmDialog],
   templateUrl: './contact-dialog-template.html',
   styleUrl: './contact-dialog-template.scss',
 })
 export class ContactDialogTemplate implements AfterViewInit, OnDestroy {
   /** Injected contact service. */
   contactsService = inject(ContactService);
+  private authService = inject(AuthService);
+  private router = inject(Router);
   /** Mode of the dialog: 'open' for creating a contact, 'change' for editing. */
   @Input() mode: DialogMode = 'open';
   /** Event emitted when a contact is successfully created. */
@@ -45,11 +50,14 @@ export class ContactDialogTemplate implements AfterViewInit, OnDestroy {
   private isScrollLocked = false;
   private toastShowTimeoutId?: number;
   private toastHideTimeoutId?: number;
+  private editedFromAccount = false;
 
   /** Flag to display success toast feedback. */
   showSuccessToast = false;
   /** Active hovered action icon. */
   hoveredIcon: string | null = null;
+  /** Flag to display the delete-account confirmation popup. */
+  showDeleteAccountConfirm = false;
   /** Configurable UI text dictionary indexed by mode and key. */
   dialogText: Record<DialogMode, Record<DialogTextKey, string>> = {
     open: {
@@ -61,8 +69,14 @@ export class ContactDialogTemplate implements AfterViewInit, OnDestroy {
     change: {
       title: 'Edit contact',
       subtitle: '',
-      primaryAction: 'Save',
+      primaryAction: 'Save ✓',
       secondaryAction: 'Delete',
+    },
+    account: {
+      title: 'My account',
+      subtitle: '',
+      primaryAction: 'Edit',
+      secondaryAction: 'Delete my account',
     },
   };
 
@@ -79,6 +93,7 @@ export class ContactDialogTemplate implements AfterViewInit, OnDestroy {
    */
   openWithMode(mode: DialogMode): void {
     this.mode = mode;
+    this.editedFromAccount = false;
     this.open();
   }
 
@@ -123,17 +138,35 @@ export class ContactDialogTemplate implements AfterViewInit, OnDestroy {
    * Prepares the contact fields for the dialog depending on mode.
    */
   private prepareContactFields(): void {
-    if (this.mode === 'change') {
-      const selected = this.contactsService.selectedContact;
-      if (selected) {
-        this.contact.name = selected.name ?? '';
-        this.contact.email = selected.email ?? '';
-        this.contact.phone = selected.phone?.toString() ?? '';
-        this.contact.photoUrl = selected.photoUrl;
-      }
-    } else {
+    if (this.mode === 'open') {
       this.clearInputFields();
+      return;
     }
+    this.loadContactFieldsForMode();
+  }
+
+  /**
+   * Loads name/email/phone/photo into the form for 'change' and 'account' mode.
+   */
+  private loadContactFieldsForMode(): void {
+    const selected =
+      this.mode === 'account' ? this.resolveOwnContact() : this.contactsService.selectedContact;
+    if (!selected) return;
+    this.contact.name = selected.name ?? '';
+    this.contact.email = selected.email ?? '';
+    this.contact.phone = selected.phone?.toString() ?? '';
+    this.contact.photoUrl = selected.photoUrl;
+  }
+
+  /**
+   * Finds the contact record matching the currently logged-in user's email
+   * and marks it as selected so the reused 'change' mode can edit it.
+   */
+  private resolveOwnContact(): Contacts | null {
+    const email = this.contactsService.currentUserEmail;
+    const own = this.contactsService.contactList.find((c) => c.email === email) ?? null;
+    if (own) this.contactsService.selectedContact = own;
+    return own;
   }
 
   /**
@@ -166,6 +199,7 @@ export class ContactDialogTemplate implements AfterViewInit, OnDestroy {
     dialogEl.close();
     this.unlockBodyScroll();
     this.contactForm?.resetForm();
+    this.editedFromAccount = false;
   }
 
   /**
@@ -206,6 +240,9 @@ export class ContactDialogTemplate implements AfterViewInit, OnDestroy {
    * @param key The dialog text key.
    */
   getText(key: DialogTextKey): string {
+    if (key === 'secondaryAction' && this.editedFromAccount) {
+      return this.dialogText['account'].secondaryAction;
+    }
     return this.dialogText[this.mode][key];
   }
 
@@ -222,10 +259,13 @@ export class ContactDialogTemplate implements AfterViewInit, OnDestroy {
    * @param form The NgForm instance.
    */
   handlePrimaryAction(form: NgForm): void {
+    if (this.mode === 'account') {
+      this.mode = 'change';
+      this.editedFromAccount = true;
+      return;
+    }
     if (!form.valid) {
-      Object.keys(form.controls).forEach((key) => {
-        form.controls[key].markAsTouched();
-      });
+      Object.keys(form.controls).forEach((key) => form.controls[key].markAsTouched());
       return;
     }
     if (this.mode === 'open') {
@@ -261,8 +301,35 @@ export class ContactDialogTemplate implements AfterViewInit, OnDestroy {
       this.close();
       return;
     }
+    if (this.mode === 'account' || this.editedFromAccount) {
+      this.showDeleteAccountConfirm = true;
+      return;
+    }
     this.contactsService.deleteSelectedContact();
     this.close();
+  }
+
+  /**
+   * Confirms account deletion: removes the contact record, deletes the
+   * Firebase Auth user, closes everything, and redirects to login.
+   */
+  async confirmDeleteAccount(): Promise<void> {
+    this.contactsService.deleteSelectedContact();
+    const result = await this.authService.deleteAccount();
+    this.showDeleteAccountConfirm = false;
+    this.close();
+    if (!result.success) {
+      console.error('Account deletion failed:', result.error);
+    }
+    this.authService.logout();
+    this.router.navigate(['/login']);
+  }
+
+  /**
+   * Cancels the pending account deletion, closing only the confirm popup.
+   */
+  cancelDeleteAccount(): void {
+    this.showDeleteAccountConfirm = false;
   }
 
   /**

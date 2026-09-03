@@ -292,7 +292,7 @@ form {
     display: none;
   }
   &::after {
-    content: '×';
+    content: 'x';
     color: #2a3647;
     font-size: 24px;
     transition: color 0.2s ease;
@@ -333,7 +333,6 @@ form {
     display: none;
   }
   &::after {
-    content: '✓';
     color: white;
     font-size: 24px;
     transition: color 0.2s ease;
@@ -480,6 +479,6 @@ form {
   .cancelDelete,
   .createSave {
     height: 48px !important;
-    font-size: 18px !important;
+    font-size: 16px !important;
   }
 }
