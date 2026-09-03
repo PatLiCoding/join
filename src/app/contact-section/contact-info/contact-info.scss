@@ -49,6 +49,9 @@ section {
     padding-right: 24px;
     app-contact-avatar {
         font-weight: 500;
+        border-radius: 50%;
+        border: 3px solid white;
+        box-shadow: 0 0 12px #0000001a;
       }
     .nameEditContant {
       @include flex-col(8px);

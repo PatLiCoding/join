@@ -71,27 +71,22 @@
     .single-contact {
       @include flex-row(16px);
       padding: 8px 12px;
-      cursor: pointer;
       border-radius: 10px;
       transition: background 0.15s ease;
+      app-contact-avatar {
+        font-weight: 500;
+        border-radius: 50%;
+        border: 2px solid white;
+      }
 
       &:hover {
+        cursor: pointer;
         background-color: #f0f0f0;
       }
 
       &.active {
         background-color: #2a3647;
         color: #fff;
-      }
-
-      .avatar-letter-box {
-        width: 42px;
-        height: 42px;
-        border-radius: 50%;
-        @include flex-center;
-        font-size: 16px;
-        color: #fff;
-        border: 2px solid #fff;
       }
 
       .contact-name-wrapper {
@@ -133,17 +128,6 @@
     left: 0;
     @include flex-row(6px);
     z-index: 10;
-
-    .avatar {
-      width: 42px;
-      height: 42px;
-      border-radius: 50%;
-      @include flex-center;
-      font-size: 14px;
-      font-weight: 600;
-      color: #fff;
-      border: 2px solid #fff;
-    }
 
     .avatar.more {
       background-color: #888;
