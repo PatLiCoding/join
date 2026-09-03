@@ -147,14 +147,20 @@ dialog[open] {
     width: 100%;
     background-color: #ffffff;
 
-    profile-image-div {
+    .profile-image-div {
       @include flex-center;
-      position: relative;
       border-radius: 50%;
-      border: 3px solid white;
       height: 120px;
       width: 120px;
-      box-shadow: 0 0 12px #0000001a;
+      app-contact-avatar {
+        font-weight: 500;
+        border-radius: 50%;
+        border: 3px solid white;
+      }
+      img {
+        height: 42px;
+        width: 42px;
+      }
     }
   }
   .dialog-right-content {
@@ -163,9 +169,7 @@ dialog[open] {
     min-width: 0;
   }
   .dialog-close {
-    position: absolute;
-    top: 24px;
-    right: 24px;
+    @include absolute($top: 24px, $right: 24px);
     border: none;
     background: transparent;
     padding: 0;
@@ -416,15 +420,12 @@ form {
   .join-logo {
     display: none;
   }
-  profile-image-div {
+  .profile-image-div {
     position: absolute;
     top: 40%;
     left: 50%;
     transform: translate(-50%, -50%);
     z-index: 10;
-  }
-  .form-div {
-    margin-top: 0;
   }
   .dialog-buttons {
     justify-content: center;
@@ -465,6 +466,10 @@ form {
     position: static;
     transform: none;
     margin: -80px auto 16px;
+  }
+
+  .form-div {
+    margin-top: 0;
   }
 }
 
