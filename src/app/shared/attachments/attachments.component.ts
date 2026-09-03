@@ -13,6 +13,7 @@ import { CommonModule } from '@angular/common';
 import Viewer from 'viewerjs';
 import { Attachment } from '../../interfaces/task';
 import { ImageCompressionService } from '../../firebase-service/image-compression.service';
+import { UploadErrorToastComponent } from '../upload-error-toast/upload-error-toast.component';
 
 /**
  * Reusable component for displaying, compressing, and managing image attachments.
@@ -21,7 +22,7 @@ import { ImageCompressionService } from '../../firebase-service/image-compressio
 @Component({
   selector: 'app-attachments',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, UploadErrorToastComponent],
   templateUrl: './attachments.component.html',
   styleUrls: ['./attachments.component.scss'],
 })
@@ -301,8 +302,6 @@ export class AttachmentsComponent implements OnDestroy, OnChanges {
    */
   private showError(message: string): void {
     this.fileError = message;
-    clearTimeout(this.errorTimeoutId);
-    this.errorTimeoutId = setTimeout(() => this.closeError(), 4000);
   }
 
   /**
@@ -310,7 +309,6 @@ export class AttachmentsComponent implements OnDestroy, OnChanges {
    */
   closeError(): void {
     this.fileError = '';
-    clearTimeout(this.errorTimeoutId);
   }
 
   /**

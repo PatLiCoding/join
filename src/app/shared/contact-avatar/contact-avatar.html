@@ -41,18 +41,7 @@
     }
   }
 </div>
-@if (editable && photoError) {
-  <div class="error-backdrop" (click)="closeError()"></div>
-  <div class="error-toast" role="alert" aria-live="assertive">
-    <button
-      type="button"
-      class="error-toast-close"
-      (click)="closeError()"
-      aria-label="Close the error"
-    >
-      <img src="assets/imgs/add-task/close_white.png" alt="Close error" />
-    </button>
-    <p class="error-toast-title">This file format is not allowed!</p>
-    <p class="error-toast-text">{{ photoError }}</p>
-  </div>
+@if (editable) {
+  <app-upload-error-toast [errorMessage]="fileError" (close)="closeError()">
+  </app-upload-error-toast>
 }

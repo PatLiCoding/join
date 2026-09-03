@@ -1,5 +1,5 @@
 <div class="attachments-component">
-  <div class="attachments-header" >
+  <div class="attachments-header">
     <div class="hint-delete-container">
       <p *ngIf="isEditable" class="hint-text">Allowed file types are JPEG and PNG</p>
       <button
@@ -41,19 +41,8 @@
       Drag a file or browse<img src="assets/imgs/add-task/add.png" alt="add" />
     </div>
 
-    <div class="error-backdrop" *ngIf="fileError" (click)="closeError()"></div>
-    <div class="error-toast" *ngIf="fileError" role="alert" aria-live="assertive">
-      <button
-        type="button"
-        class="error-toast-close"
-        (click)="closeError()"
-        aria-label="Close the error"
-      >
-        <img src="assets/imgs/add-task/close_white.png" alt="Close error" />
-      </button>
-      <p class="error-toast-title">This file format is not allowed!</p>
-      <p class="error-toast-text">{{ fileError }}</p>
-    </div>
+    <app-upload-error-toast [errorMessage]="fileError" (close)="closeError()">
+    </app-upload-error-toast>
   </ng-container>
 
   <ul class="attachment-preview-list" #gallery *ngIf="attachments.length">
@@ -71,7 +60,12 @@
           class="remove-attachment"
           [attr.aria-label]="'Remove ' + att.filename"
         >
-          <span class="icon-trigger" [class.is-hovering]="hoveredIconIndex === i" (mouseenter)="onIconEnter(i)" (mouseleave)="onIconLeave()">
+          <span
+            class="icon-trigger"
+            [class.is-hovering]="hoveredIconIndex === i"
+            (mouseenter)="onIconEnter(i)"
+            (mouseleave)="onIconLeave()"
+          >
             <img
               [src]="
                 hoveredIconIndex === i
@@ -90,7 +84,12 @@
           class="download-attachment"
           [attr.aria-label]="'Download ' + att.filename"
         >
-          <span class="icon-trigger" [class.is-hovering]="hoveredIconIndex === i" (mouseenter)="onIconEnter(i)" (mouseleave)="onIconLeave()">
+          <span
+            class="icon-trigger"
+            [class.is-hovering]="hoveredIconIndex === i"
+            (mouseenter)="onIconEnter(i)"
+            (mouseleave)="onIconLeave()"
+          >
             <img
               [src]="
                 hoveredIconIndex === i

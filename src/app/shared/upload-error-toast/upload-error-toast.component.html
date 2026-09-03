@@ -1,0 +1,13 @@
+<div class="error-backdrop" *ngIf="errorMessage" (click)="close.emit()"></div>
+<div class="error-toast" *ngIf="errorMessage" role="alert" aria-live="assertive">
+  <button
+    type="button"
+    class="error-toast-close"
+    (click)="close.emit()"
+    aria-label="Close the error"
+  >
+    <img src="assets/imgs/add-task/close_white.png" alt="Close error" />
+  </button>
+  <p class="error-toast-title">This file format is not allowed!</p>
+  <p class="error-toast-text">{{ errorMessage }}</p>
+</div>
