@@ -179,17 +179,6 @@
       border-radius: 8px;
       transition: background 0.1s ease;
 
-      .avatar {
-        width: 42px;
-        height: 42px;
-        border-radius: 50%;
-        @include flex-center;
-        color: white;
-        font-size: 14px;
-        font-weight: 500;
-        flex-shrink: 0;
-      }
-
       .contact-name {
         font-size: 16px;
         color: #000000;
@@ -453,11 +442,6 @@
       min-height: 40px;
       @include padding(4px, 8px);
       border-radius: 8px;
-
-      .avatar {
-        width: 36px;
-        height: 36px;
-      }
 
       .contact-name {
         font-size: 16px;

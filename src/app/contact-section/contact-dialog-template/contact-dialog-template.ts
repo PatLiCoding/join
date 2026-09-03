@@ -247,14 +247,6 @@ export class ContactDialogTemplate implements AfterViewInit, OnDestroy {
   }
 
   /**
-   * Gets the color for a contact.
-   * @param contact The contact object.
-   */
-  getContactColor(contact: any): string {
-    return this.contactsService.getContactColor(contact);
-  }
-
-  /**
    * Handles the primary action (create or save contact) from the dialog.
    * @param form The NgForm instance.
    */

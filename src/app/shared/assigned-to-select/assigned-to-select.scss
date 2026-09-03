@@ -67,6 +67,7 @@
     padding: 6px 0;
     @include flex-col(4px);
     z-index: 30;
+    @include custom-scrollbar;
 
     .single-contact {
       @include flex-row(16px);
@@ -75,8 +76,6 @@
       transition: background 0.15s ease;
       app-contact-avatar {
         font-weight: 500;
-        border-radius: 50%;
-        border: 2px solid white;
       }
 
       &:hover {
@@ -133,19 +132,6 @@
       background-color: #888;
     }
   }
-}
-
-.assigned-to-list::-webkit-scrollbar {
-  width: 4px;
-}
-
-.assigned-to-list::-webkit-scrollbar-thumb {
-  background: #a8a8a8;
-  border-radius: 10px;
-}
-
-.assigned-to-list::-webkit-scrollbar-thumb:hover {
-  background: #2a3647;
 }
 
 @media (max-width: 768px) {

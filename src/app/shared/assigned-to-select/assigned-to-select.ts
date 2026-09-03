@@ -163,18 +163,18 @@ export class AssignedToSelectComponent implements OnInit, OnDestroy, OnChanges {
     return currentUser ? [currentUser, ...others] : others;
   }
 
-  /**
-   * Returns initials for a contact name.
-   * @param name Contact name
-   * @returns Initials string
-   */
-  getInitials(name?: string): string {
-    if (!name) return '';
-    const parts = name.trim().split(/\s+/);
-    const first = parts[0]?.charAt(0) ?? '';
-    const last = parts.length > 1 ? parts[parts.length - 1].charAt(0) : '';
-    return (first + last).toUpperCase();
-  }
+  // /**
+  //  * Returns initials for a contact name.
+  //  * @param name Contact name
+  //  * @returns Initials string
+  //  */
+  // getInitials(name?: string): string {
+  //   if (!name) return '';
+  //   const parts = name.trim().split(/\s+/);
+  //   const first = parts[0]?.charAt(0) ?? '';
+  //   const last = parts.length > 1 ? parts[parts.length - 1].charAt(0) : '';
+  //   return (first + last).toUpperCase();
+  // }
 
   /**
    * Checks if contact is the current user.
@@ -188,13 +188,13 @@ export class AssignedToSelectComponent implements OnInit, OnDestroy, OnChanges {
     );
   }
 
-  /**
-   * Returns color for a contact.
-   * @param contact Contact
-   * @returns color string
-   */
-  getContactColor(contact: Contacts): string {
-    if (this.isCurrentUser(contact)) return '#4caf50';
-    return this.contactService.getContactColor(contact);
-  }
+  // /**
+  //  * Returns color for a contact.
+  //  * @param contact Contact
+  //  * @returns color string
+  //  */
+  // getContactColor(contact: Contacts): string {
+  //   if (this.isCurrentUser(contact)) return '#4caf50';
+  //   return this.contactService.getContactColor(contact);
+  // }
 }

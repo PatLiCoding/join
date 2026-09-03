@@ -63,8 +63,8 @@
   @include flex-center;
   position: relative;
   border-radius: 50%;
-  // border: 3px solid white;
-  box-shadow: 0 0 12px #0000001a;
+  border: 2px solid white;
+  // box-shadow: 0 0 12px #0000001a;
   width: var(--avatar-size);
   height: var(--avatar-size);
   flex-shrink: 0;

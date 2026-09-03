@@ -152,15 +152,9 @@ dialog[open] {
       border-radius: 50%;
       height: 120px;
       width: 120px;
-      app-contact-avatar {
-        font-weight: 500;
+      font-weight: 500;
         border-radius: 50%;
         border: 3px solid white;
-      }
-      img {
-        height: 42px;
-        width: 42px;
-      }
     }
   }
   .dialog-right-content {
@@ -465,6 +459,11 @@ form {
     position: static;
     transform: none;
     margin: -80px auto 16px;
+    app-contact-avatar {
+        font-weight: 500;
+        border-radius: 50%;
+        border: 2px solid white;
+      }
   }
 
   .form-div {

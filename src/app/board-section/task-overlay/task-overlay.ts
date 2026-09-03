@@ -160,30 +160,6 @@ export class TaskOverlay implements OnInit, OnChanges {
   }
 
   /**
-   * Retrieves the assigned theme color for a given contact.
-   * @param contact Target contact instance.
-   * @returns Color code hex or CSS string.
-   */
-  getContactColor(contact: Contacts): string {
-    return this.contactService.getContactColor(contact);
-  }
-
-  /**
-   * Generates uppercase initials (up to two characters) from a full contact name.
-   * @param name Full name string.
-   * @returns Capitalized initials string.
-   */
-  getInitials(name: string): string {
-    if (!name) return '';
-    return name
-      .split(' ')
-      .map((n) => n[0])
-      .join('')
-      .toUpperCase()
-      .substring(0, 2);
-  }
-
-  /**
    * Toggles the completion state of a subtask and updates backend storage.
    * @param subtask Target subtask instance.
    */

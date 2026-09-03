@@ -50,7 +50,7 @@ section {
     app-contact-avatar {
         font-weight: 500;
         border-radius: 50%;
-        border: 3px solid white;
+        border: 1px solid white;
         box-shadow: 0 0 12px #0000001a;
       }
     .nameEditContant {
@@ -138,10 +138,6 @@ section {
   }
 
   .contactContant {
-    .avatarLetterBox {
-      width: 68px;
-      height: 68px;
-    }
     .contactNameContainer {
       gap: 20px;
       flex-wrap: wrap;

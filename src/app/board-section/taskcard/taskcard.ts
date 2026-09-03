@@ -95,19 +95,6 @@ export class Taskcard {
   }
 
   /**
-   * Generates initials from a full name.
-   *
-   * @param name Full name string
-   * @returns Uppercase initials
-   */
-  getInitials(name: string): string {
-    if (!name) return '';
-    const parts = name.split(' ');
-    const initials = parts.length > 1 ? parts[0][0] + parts[1][0] : parts[0][0];
-    return initials.toUpperCase();
-  }
-
-  /**
    * Retrieves a contact by name from the contact service.
    *
    * @param name Contact name

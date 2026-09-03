@@ -86,25 +86,6 @@ export class ContactInfo implements AfterViewInit {
   }
 
   /**
-   * Returns the display color associated with the selected contact.
-   * @returns Hex color string or default color
-   */
-  getSelectedColor(): string {
-    return this.contactService.getContactColor(this.selectedContact);
-  }
-
-  /**
-   * Returns initials for a given name.
-   * Delegates to the contact service.
-   *
-   * @param name Optional full name
-   * @returns Uppercase initials
-   */
-  getInitials(name?: string): string {
-    return this.contactService.getInitials(name);
-  }
-
-  /**
    * Returns a truncated display name if it exceeds 20 characters.
    *
    * @param name Optional name string
