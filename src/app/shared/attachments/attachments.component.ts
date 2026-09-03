@@ -209,6 +209,13 @@ export class AttachmentsComponent implements OnDestroy, OnChanges {
       next: this.attachments.length > 1 ? 1 : 0,
       rotateLeft: 1,
       rotateRight: 1,
+      download: {
+        show: 1,
+        click: (event: Event) => {
+          this.downloadCurrentAttachment();
+          (event.currentTarget as HTMLElement)?.blur();
+        },
+      },
     };
   }
 
@@ -222,7 +229,10 @@ export class AttachmentsComponent implements OnDestroy, OnChanges {
     const link = document.createElement('a');
     link.href = att.base64;
     link.download = att.filename;
+    link.addEventListener('click', (e) => e.stopPropagation());
+    document.body.appendChild(link);
     link.click();
+    document.body.removeChild(link);
   }
 
   /**
