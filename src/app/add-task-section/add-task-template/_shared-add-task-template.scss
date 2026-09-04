@@ -45,19 +45,6 @@ label {
   overflow-y: auto;
   max-height: 100%;
   @include custom-scrollbar;
-
-  @media (min-width: 1250px) and (max-height: 855px) {
-    .add-task-section {
-      padding-bottom: 0 !important;
-    }
-  }
-
-  @media (max-width: 1050px) {
-    .add-task-container.dialog-mode .add-task-section,
-    .add-task-container.dialog-mode .add-task-section[_ngcontent-ng-c1314744142] {
-      align-items: flex-start !important;
-    }
-  }
 }
 
 .add-task-heading {
@@ -472,14 +459,14 @@ input[type='date']::-webkit-calendar-picker-indicator {
 
 @media (min-width: 1250px) and (max-height: 855px) {
   .add-task-container.dialog-mode .add-task-section,
-  .add-task-container.dialog-mode .add-task-section[_ngcontent-ng-c1314744142] {
+  .add-task-container.dialog-mode .add-task-section {
     padding-bottom: 0 !important;
   }
 }
 
 @media (max-width: 1050px), (min-width: 1250px) and (max-height: 855px) {
   .add-task-container.dialog-mode .add-task-section,
-  .add-task-container.dialog-mode .add-task-section[_ngcontent-ng-c1314744142] {
+  .add-task-container.dialog-mode .add-task-section {
     align-items: flex-start !important;
     justify-content: flex-start !important;
   }

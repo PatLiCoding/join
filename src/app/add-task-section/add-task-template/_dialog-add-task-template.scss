@@ -1,7 +1,7 @@
 @use 'mixins' as *;
 
 .add-task-container.dialog-mode .add-task-heading {
-  position: absoluterelative;
+  position: relative;
   z-index: 1;
   width: 100%;
   text-align: left;
@@ -28,7 +28,7 @@
 .add-task-container.dialog-mode {
   @include padding(20px, 20px);
   max-height: 90vh;
-  overflow: hidden;
+  // overflow: hidden;
   @include flex-center;
   flex-direction: column;
 

@@ -21,20 +21,22 @@
 
 .task-overlay {
   position: relative;
-  width: min(525px, 95vw);
+  width: auto;
   max-width: 95vw;
-  height: auto;
-  max-height: 95vh;
-  min-height: 300px;
+  max-height: 90vh;
   background: #ffffff;
   box-shadow: 0px 0px 4px rgba(0, 0, 0, 0.16);
   border-radius: 30px;
-  @include flex(column, stretch, flex-start, 24px);
-  @include padding(48px, 40px);
+  @include flex(column, stretch, flex-start, 0px);
+  @include padding(24px, 24px);
   animation: slideIn 0.3s ease;
   margin: 0;
   overflow: hidden;
   cursor: default;
+
+  ::ng-deep .add-task-container.dialog-mode .add-task-section {
+      padding-bottom: 60px;
+    }
 }
 
 @keyframes slideIn {
@@ -49,27 +51,35 @@
   }
 }
 
+.overlay-header{
+  position: relative;
+  top: 0;
+  width: 100%;
+  height: 40px;
+  background-color: #ffffff;
+  z-index: 20;
+  padding: 16px;
 .close-btn {
   position: absolute;
-  top: 24px;
-  right: 24px;
+  top: 8px;
+  right: 8px;
   width: 32px;
   height: 32px;
   border-radius: 50%;
   border: none;
   background: transparent;
   font-size: 20px;
-  cursor: pointer;
   @include flex-center;
   color: #2a3647;
   transition: all 0.1s ease;
   z-index: 10;
 
   &:hover {
+    cursor: pointer;
     background: #f6f7f8;
     scale: 1.1;
   }
-}
+}}
 
 .scrollable-middle {
   flex: 1 1 auto;
@@ -155,6 +165,7 @@
 
 .assigned-section {
   @include flex(null, center, flex-start, 8px);
+  flex-wrap: wrap;
   .label {
     color: #2a3647;
     font-size: 20px;
@@ -230,7 +241,6 @@
     @include flex-center;
     transition: background-color 0.2s ease;
     gap: 4px;
-
     &:hover {
       background-color: #29abe2;
     }
@@ -238,6 +248,8 @@
 }
 
 .task-container--view {
+  width: min(525px, 90vw);
+  max-width: 100%;
   .subtasks-list-view {
     display: flex;
     flex-direction: column;
@@ -245,10 +257,6 @@
     overflow-y: auto;
     padding-right: 8px;
     @include custom-scrollbar;
-
-    &::-webkit-scrollbar-thumb:hover {
-      background: #2a3647;
-    }
 
     .subtask-item {
       display: flex;
@@ -289,265 +297,75 @@
     margin-bottom: 8px;
     display: block;
   }
-}
+
+  }
 
 .task-container--edit {
-  .overlay-header {
-    position: relative;
+  max-width: 100%;
+  max-height: calc(90vh - 64px);
+  box-sizing: border-box;
+  @include custom-scrollbar;
+  box-sizing: border-box;
 
-    .close-btn {
-      position: absolute;
-      top: -24px;
-      right: 0px;
-      width: 32px;
-      height: 32px;
-      border-radius: 50%;
-      border: none;
-      background: transparent;
-      font-size: 20px;
-      cursor: pointer;
-      @include flex-center;
-      color: #2a3647;
-      transition: all 0.1s ease;
-      z-index: 10;
-
-      &:hover {
-        background: #f6f7f8;
-        scale: 1.1;
-      }
+  app-add-task-template {
+    ::ng-deep .add-task-container.dialog-mode .add-task-section {
+      padding-bottom: 45px !important;
+    }
+    ::ng-deep .add-task-container.dialog-mode .text-button-div {
+      background-color: #ffffff !important;
+      margin-bottom: 40px;
     }
   }
+}
 
-  .form-group {
-    @include flex(column, stretch, flex-start, 10px);
-    margin-top: 32px;
+@media (max-width: 1200px) {
+  .overlay-header{
+.close-btn {
+  top: 16px;
+  right: 16px;}}
 
-    label {
-      font-size: 20px;
-      font-weight: 400;
-      color: #2a3647;
-      margin-bottom: 8px;
-      display: block;
-    }
-
-    input,
-    textarea {
-      border: 1px solid #d1d1d1;
-      border-radius: 10px;
-      @include padding(12px, 16px);
-      font-size: 20px;
-      font-family: 'Inter', sans-serif;
-      color: #2a3647;
-      width: 100%;
-      box-sizing: border-box;
-      transition: border 0.1s ease;
-
-      &:focus {
-        outline: none;
-        border-color: #29abe2;
-      }
-
-      &::placeholder {
-        color: #d1d1d1;
-      }
-    }
-
-    textarea {
-      min-height: 120px;
-      resize: vertical;
-    }
-
-    input[type='date'] {
-      cursor: pointer;
-    }
-
-    .error {
-      color: red;
-      font-size: 14px;
-    }
-  }
-
-  .priority-buttons {
-    @include flex(row, center, flex-start, 10px);
-    margin-top: 8px;
-
-    .priority {
-      width: 136px;
-      height: 56px;
-      @include padding(0, 12px);
-      border: 1px solid #d1d1d1;
-      border-radius: 10px;
-      background-color: #fff;
-      cursor: pointer;
-      font-family: 'Inter', sans-serif;
-      font-weight: 400;
-      font-size: 20px;
-      line-height: 120%;
-      color: #2a3647;
-      transition: 0.2s ease;
-      @include flex-center;
-      gap: 8px;
-      box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.03);
-
-      img {
-        width: 20px;
-        height: auto;
-      }
-
-      &.urgent {
-        &:hover {
-          box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
-        }
-
-        &.active {
-          background-color: #ff3d00;
-          border-color: #ff3d00;
-          color: #fff;
-        }
-      }
-
-      &.medium {
-        &:hover {
-          box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
-        }
-
-        &.active {
-          background-color: #ffa800;
-          border-color: #ffa800;
-          color: #fff;
-        }
-      }
-
-      &.low {
-        &:hover {
-          box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
-        }
-
-        &.active {
-          background-color: #7ae229;
-          border-color: #7ae229;
-          color: #fff;
-        }
-      }
-    }
-  }
-
-  app-assigned-to-select {
-    margin-top: 16px;
-
-    .assigned-item {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      min-height: 40px;
-      @include padding(4px, 8px);
-      border-radius: 8px;
-
-      .contact-name {
-        font-size: 16px;
-        color: #000;
-      }
-    }
-  }
-
-  .overlay-footer {
-    @include flex(row, center, flex-end, 12px);
+  .task-container--edit {
     width: 100%;
-    padding-top: 24px;
-
-    .save-btn {
-      background-color: #2a3647;
-      color: #fff;
-      width: 89px;
-      height: 57px;
-      font-size: 21px;
-      font-weight: 700;
-      border-radius: 10px;
-      @include flex-center;
-      transition: background-color 0.2s ease;
-      cursor: pointer;
-
-      &:hover {
-        background-color: #29abe2;
-      }
-
-      &:disabled {
-        opacity: 0.5;
-        cursor: not-allowed;
-      }
-    }
   }
+  .task-overlay {
+  @include padding(16px, 16px);
+}
 }
 
 @media (max-width: 768px) {
   .task-overlay {
-    border-radius: 24px;
+    max-width: 95vw;
+    padding: 24px 16px;
+    border-radius: 20px;
   }
 
-  .task-container--edit .priority-buttons .priority {
-    @include font(16px, 400);
-    height: 48px;
-    @include padding(0, 8px);
-
-    img {
-      width: 16px;
-    }
+  .task-container--edit {
+    width: 100%;
   }
-}
+  .task-container--view {
+  width: min(400px, 90vw);}
 
-@media (max-width: 550px) {
-  .task-container--edit .priority-buttons .priority {
-    width: 100% !important;
-    justify-content: center;
-  }
-
-  .task-container--edit .priority-buttons {
-    @include flex(column, stretch, flex-start, 8px);
-
-    .priority {
-      width: 100%;
-      height: 44px;
-      @include font(16px, 400);
-    }
-  }
+  .overlay-header{
+.close-btn {
+  top: 16px;
+  right: 16px;}}
+  
 }
 
 @media (max-width: 480px) {
   .task-overlay {
-    border-radius: 20px;
-    padding: 24px 16px;
+    padding: 16px 12px;
   }
 
-  .task-title {
-    font-size: 36px;
-  }
-
-  .close-btn {
-    top: 16px;
-    right: 16px;
-    width: 28px;
-    height: 28px;
-  }
-
-  .assigned-section {
-    @include flex(column, flex-start, flex-start, 8px);
-    .contacts-list {
-      width: 100%;
-    }
-    .assigned-list {
-      padding-bottom: 8px;
-      @include custom-scrollbar-x;
-    }
-  }
+  .overlay-header{
+.close-btn {
+  top: 12px;
+  right: 12px;}}
 }
 
-@media (max-width: 360px) {
-  .task-overlay {
-    padding: 20px 12px;
-  }
-
-  .info-row {
-    flex-direction: column;
-    gap: 8px;
-  }
+@media (max-width: 440px) {
+  .overlay-header{
+.close-btn {
+  top: 0;
+  right: 0;}}
 }
