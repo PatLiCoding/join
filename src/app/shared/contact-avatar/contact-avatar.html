@@ -5,18 +5,33 @@
   [style.backgroundColor]="backgroundColor"
 >
   @if (displayPhoto) {
-  <img class="avatar-photo" [src]="displayPhoto" [alt]="contact?.name ?? 'Profile photo'" />
-} @else if (hasContact) {
-  <span class="avatar-initials">{{ initials }}</span>
-} @else {
-  <img class="avatar-default" [src]="defaultIconUrl" alt="Person" />
-}
+    <div class="avatar-image-container">
+      <img class="avatar-photo" [src]="displayPhoto" [alt]="contact?.name ?? 'Profile photo'" />
+
+      @if (editable) {
+        <button
+          type="button"
+          class="remove-photo"
+          (click)="removePhoto()"
+          aria-label="Remove profile picture"
+        >
+          <span class="icon-trigger">
+            <img src="assets/imgs/add-task/trash_attachment.png" alt="Delete profile picture" />
+          </span>
+        </button>
+      }
+    </div>
+  } @else if (hasContact) {
+    <span class="avatar-initials">{{ initials }}</span>
+  } @else {
+    <img class="avatar-default" [src]="defaultIconUrl" alt="Person" />
+  }
 
   @if (editable) {
     <input
       #photoInput
       type="file"
-      accept="image/png, image/jpeg, image/webp"
+      accept="image/png, image/jpeg"
       class="visually-hidden"
       (change)="onPhotoSelected($event)"
     />
@@ -36,11 +51,9 @@
       "
       alt="Change profile picture"
     />
-    @if (displayPhoto) {
-      <button type="button" class="remove-photo" (click)="removePhoto()" aria-label="Remove profile picture">x</button>
-    }
   }
 </div>
+
 @if (editable) {
   <app-upload-error-toast [errorMessage]="fileError" (close)="closeError()">
   </app-upload-error-toast>

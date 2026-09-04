@@ -23,31 +23,23 @@ export class ContactAvatar {
 
   /** The contact to display an avatar for (view mode). */
   @Input() contact: Contacts | null = null;
-
   /** Avatar diameter in pixels (desktop / default). */
   @Input() size = 40;
-
   /** Avatar diameter in pixels for mobile viewports (≤1000px). Defaults to `size` if not set. */
   @Input() mobileSize?: number;
-
   /** Whether upload/remove controls are shown. Defaults to false (view only). */
   @Input() editable = false;
-
   /** Current photo value, used in editable mode instead of `contact.photoUrl`. */
   @Input() photoUrl?: string;
-
   /** Path to the default placeholder icon shown when no contact/photo is set. */
   @Input() defaultIconUrl = 'assets/imgs/contact-list/person.png';
-
   /** Optional override for the initials background color, bypassing the contact's assigned color. */
   @Input() colorOverride?: string;
-
   /** Emits the new base64 photo (or undefined on removal) in editable mode. */
   @Output() photoUrlChange = new EventEmitter<string | undefined>();
 
   /** Active hover state for the upload icon, used to swap in the hover image asset. */
   hoveredIcon = false;
-
   /** Validation or processing error message displayed to the user via the error toast. */
   fileError = '';
 
