@@ -85,7 +85,7 @@
   flex: 1 1 auto;
   min-height: 0;
   overflow-y: auto;
-  padding: 20px;
+  padding: 20px !important;
   max-height: calc(95vh - 48px * 2 - 57px - 24px);
   @include custom-scrollbar;
 }
@@ -309,11 +309,12 @@
 
   app-add-task-template {
     ::ng-deep .add-task-container.dialog-mode .add-task-section {
-      padding-bottom: 45px !important;
+      margin-bottom: 60px !important;
     }
     ::ng-deep .add-task-container.dialog-mode .text-button-div {
       background-color: #ffffff !important;
       margin-bottom: 40px;
+      z-index: 35;
     }
   }
 }
@@ -327,6 +328,7 @@
   .task-container--edit {
     width: 100%;
   }
+
   .task-overlay {
   @include padding(16px, 16px);
 }
@@ -353,7 +355,7 @@
 }
 
 @media (max-width: 480px) {
-  .task-overlay {
+  .task-overlay{
     padding: 16px 12px;
   }
 

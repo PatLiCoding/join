@@ -1,0 +1,64 @@
+@use 'mixins' as *;
+
+.priority-buttons {
+  @include flex(row, center, flex-start, 10px);
+
+  .priority {
+    width: 136px;
+    height: 56px;
+    @include padding(0, 12px);
+    border: 1px solid #d1d1d1;
+    border-radius: 10px;
+    background-color: #ffffff;
+    cursor: pointer;
+    font-family: 'Inter', sans-serif;
+    font-weight: 400;
+    font-size: 20px;
+    line-height: 120%;
+    transition: 0.2s ease;
+    @include flex-center;
+    gap: 8px;
+    box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.03);
+
+    img {
+      width: 20px;
+      height: auto;
+    }
+
+    &.urgent {
+      &:hover {
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+      }
+
+      &.active {
+        background-color: #ff3d00;
+        border-color: #ff3d00;
+        color: #ffffff;
+      }
+    }
+
+    &.medium {
+      &:hover {
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+      }
+
+      &.active {
+        background-color: #ffa800;
+        border-color: #ffa800;
+        color: #ffffff;
+      }
+    }
+
+    &.low {
+      &:hover {
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+      }
+
+      &.active {
+        background-color: #7ae229;
+        border-color: #7ae229;
+        color: #ffffff;
+      }
+    }
+  }
+}

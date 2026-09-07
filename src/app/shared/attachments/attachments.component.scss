@@ -3,6 +3,8 @@
 .attachments-component {
   @include flex-col(8px);
   width: 100%;
+  min-width: 400px;
+  max-width: 480px;
 
   .attachments-header {
     display: flex;
@@ -198,5 +200,17 @@
     &:hover {
       cursor: pointer;
     }
+  }
+}
+
+@media (max-width: 1100px) {
+  .attachments-component {
+    max-width: 100%;
+  }}
+
+@media (max-width: 768px) {
+  .attachments-component {
+    min-width: 250px;
+    max-width: 525px;
   }
 }
