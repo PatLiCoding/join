@@ -9,31 +9,22 @@ import {
   HostListener,
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { FormsModule } from '@angular/forms';
 import { Task, Subtask } from '../../interfaces/task';
 import { Contacts } from '../../interfaces/contacts';
 import { ContactService } from '../../firebase-service/contact-service';
-import { AssignedToSelectComponent } from '../../shared/assigned-to-select/assigned-to-select';
 import { TaskService } from '../../firebase-service/task.service';
 import { AttachmentsComponent } from '../../shared/attachments/attachments.component';
-import { SubtaskComponent } from '../../shared/subtask/subtask.component';
 import { ContactAvatar } from '../../shared/contact-avatar/contact-avatar';
+import { AddTaskTemplate } from '../../add-task-section/add-task-template/add-task-template';
 
 /**
- * Overlay component for viewing and editing task details, including assignment,
- * subtasks, priority, category, due date, and attachments.
+ * Overlay component for viewing and editing task details. Editing is delegated to
+ * `AddTaskTemplate` in 'edit' mode so task creation and task editing share one form.
  */
 @Component({
   selector: 'app-task-overlay',
   standalone: true,
-  imports: [
-    CommonModule,
-    FormsModule,
-    AssignedToSelectComponent,
-    AttachmentsComponent,
-    SubtaskComponent,
-    ContactAvatar,
-  ],
+  imports: [CommonModule, AttachmentsComponent, ContactAvatar, AddTaskTemplate],
   templateUrl: './task-overlay.html',
   styleUrls: ['./task-overlay.scss'],
 })
@@ -45,44 +36,18 @@ export class TaskOverlay implements OnInit, OnChanges {
   /** Event emitted when the task is deleted, passing the task ID. */
   @Output() delete = new EventEmitter<string>();
   /** Event emitted when the task updates are saved. */
-  @Output() save = new EventEmitter<Omit<Task, 'id' | 'createdAt'>>();
+  @Output() save = new EventEmitter<Omit<Task, 'createdAt'>>();
 
   /** Indicates whether the overlay is in active edit mode. */
   isEditMode = false;
   /** Indicates whether a save operation is currently pending. */
   isSaving = false;
-  /** Today's date in YYYY-MM-DD format, used for date comparisons. */
+  /** Today's date in YYYY-MM-DD format, used as a fallback for missing due dates. */
   today = new Date().toISOString().split('T')[0];
-  /** Zero-based index of the subtask currently being edited, or null if none. */
-  editingSubtaskIndex: number | null = null;
-  /** Zero-based index of the subtask currently hovered by the user cursor. */
-  hoveredSubtaskIndex: number | null = null;
-  /** Title text input for adding a new subtask. */
-  newSubtaskTitle = '';
-  /** Backup copy of a subtask's original title before editing began. */
-  subtaskBackup: string | null = null;
-  /** Original task due date before editing, used to detect modifications. */
-  originalDueDate: string | null = null;
   /** List of contact objects assigned to this task. */
   assignedContacts: Contacts[] = [];
-  /** Error message displayed for attachment file validation issues. */
-  attachmentError = '';
   /** Active hovered action icon. */
   hoveredIcon: string | null = null;
-
-  /** Local working copy of task data for edit operations. */
-  editedTask: Omit<Task, 'id' | 'createdAt'> = {
-    title: '',
-    description: '',
-    dueDate: '',
-    priority: 'medium',
-    category: 'User Story',
-    subtasks: [],
-    status: 'todo',
-    assignedTo: [],
-    position: 0,
-    attachments: [],
-  };
 
   /**
    * Initializes a new instance of the TaskOverlay component.
@@ -96,45 +61,20 @@ export class TaskOverlay implements OnInit, OnChanges {
 
   /**
    * Angular lifecycle hook called on component initialization.
-   * Loads initial task details and assigned contacts.
+   * Loads assigned contacts for the current task.
    */
   ngOnInit(): void {
-    this.loadTaskData();
     this.loadAssignedContacts();
   }
 
   /**
    * Angular lifecycle hook called when bound input properties change.
-   * Reloads task details and assigned contacts.
+   * Leaves edit mode and reloads assigned contacts for the new task.
    * @param _ Changes object containing property change metadata.
    */
   ngOnChanges(_: SimpleChanges): void {
-    this.loadTaskData();
+    this.isEditMode = false;
     this.loadAssignedContacts();
-  }
-
-  /**
-   * Loads and transforms the input task into an editable local format.
-   */
-  private loadTaskData(): void {
-    if (!this.task) return;
-    this.editedTask = this.extractEditableTask(this.task);
-    this.originalDueDate = this.editedTask.dueDate;
-  }
-
-  /**
-   * Extracts editable field properties from a full task object.
-   * @param task Target task instance.
-   * @returns Cleaned editable task object without administrative metadata.
-   */
-  private extractEditableTask(task: Task & { id: string }): Omit<Task, 'id' | 'createdAt'> {
-    const { id, createdAt, ...taskData } = task;
-    return {
-      ...taskData,
-      dueDate: this.formatDateForInput(task.dueDate),
-      assignedTo: task.assignedTo || [],
-      attachments: task.attachments || [],
-    };
   }
 
   /**
@@ -151,15 +91,6 @@ export class TaskOverlay implements OnInit, OnChanges {
   }
 
   /**
-   * Handles selection changes in the assigned contacts picker.
-   * @param selectedContacts Updated array of selected contact objects.
-   */
-  onContactsChange(selectedContacts: Contacts[]): void {
-    this.editedTask.assignedTo = selectedContacts.map((c) => c.name);
-    this.assignedContacts = [...selectedContacts];
-  }
-
-  /**
    * Toggles the completion state of a subtask and updates backend storage.
    * @param subtask Target subtask instance.
    */
@@ -169,48 +100,33 @@ export class TaskOverlay implements OnInit, OnChanges {
   }
 
   /**
-   * Persists subtask state changes to Firestore.
+   * Persists the current subtask list of the displayed task to Firestore.
    */
   private updateSubtasksInTask(): void {
     if (!this.task?.id) return;
     this.taskService
-      .updateTask(this.task.id, { subtasks: this.editedTask.subtasks })
+      .updateTask(this.task.id, { subtasks: this.task.subtasks })
       .catch(console.error);
   }
 
   /**
-   * Switches the overlay panel to edit mode and populates the form controls.
+   * Switches the overlay panel to edit mode.
    */
   enableEdit(): void {
     if (!this.task) return;
-    this.editedTask = this.extractEditableTask(this.task);
     this.isEditMode = true;
   }
 
   /**
-   * Exits edit mode without persisting unsaved modifications.
+   * Persists the edited task payload emitted by the embedded add-task form
+   * and returns the overlay to view mode.
+   * @param updatedTask Edited task payload from `AddTaskTemplate`.
    */
-  cancelEdit(): void {
-    this.isEditMode = false;
-  }
-
-  /**
-   * Validates required form fields for task updating.
-   * @returns True if title and due date inputs are valid; false otherwise.
-   */
-  private isFormValid(): boolean {
-    return !!(this.editedTask.title?.trim() && this.editedTask.dueDate);
-  }
-
-  /**
-   * Emits the updated task payload if validation succeeds and updates local reference.
-   */
-  onSave(): void {
-    if (!this.isFormValid()) return;
-
+  onSave(updatedTask: Omit<Task, 'createdAt'>): void {
+    if (!this.task) return;
     this.isSaving = true;
-    if (this.task) Object.assign(this.task, this.editedTask);
-    this.save.emit(this.editedTask);
+    Object.assign(this.task, updatedTask);
+    this.save.emit(updatedTask);
     this.isEditMode = false;
     this.resetSavingFlag();
   }
@@ -239,16 +155,6 @@ export class TaskOverlay implements OnInit, OnChanges {
   }
 
   /**
-   * Formats a raw date string into YYYY-MM-DD for standard HTML date inputs.
-   * @param date Date input string.
-   * @returns Formatted date string (YYYY-MM-DD) or empty string.
-   */
-  formatDateForInput(date: string): string {
-    if (!date) return '';
-    return new Date(date).toISOString().split('T')[0];
-  }
-
-  /**
    * Returns a safe task representation with fallback default values for missing properties.
    */
   get safeTask() {
@@ -263,19 +169,6 @@ export class TaskOverlay implements OnInit, OnChanges {
       subtasks: t?.subtasks || [],
       attachments: t?.attachments || [],
     };
-  }
-
-  /**
-   * Checks whether the selected due date is in the past relative to today.
-   * @returns True if the newly selected date precedes today's date; false otherwise.
-   */
-  isDateInPast(): boolean {
-    if (!this.editedTask.dueDate) return false;
-    if (this.editedTask.dueDate === this.originalDueDate) return false;
-    const selected = new Date(this.editedTask.dueDate);
-    const today = new Date();
-    today.setHours(0, 0, 0, 0);
-    return selected < today;
   }
 
   /**
@@ -294,16 +187,6 @@ export class TaskOverlay implements OnInit, OnChanges {
    */
   trackByContactId(index: number, contact: Contacts): string {
     return contact.id ?? index.toString();
-  }
-
-  /**
-   * TrackBy function for optimizing subtask rendering in ngFor loops.
-   * @param index Subtask index.
-   * @param subtask Subtask item.
-   * @returns Subtask index.
-   */
-  trackBySubtask(index: number, subtask: Subtask): number {
-    return index;
   }
 
   /**

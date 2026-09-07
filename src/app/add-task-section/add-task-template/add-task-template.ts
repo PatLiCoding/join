@@ -20,13 +20,19 @@ import { Contacts } from '../../interfaces/contacts';
 import { Task, Subtask, Attachment } from '../../interfaces/task';
 import { AssignedToSelectComponent } from '../../shared/assigned-to-select/assigned-to-select';
 import { AttachmentsComponent } from '../../shared/attachments/attachments.component';
-import { mapToContact } from './add-task-form.helpers';
+import {
+  mapToContact,
+  extractEditableFields,
+  filterAssignedContacts,
+  formatDateForInput,
+} from './add-task-form.helpers';
 import { SubtaskComponent } from '../../shared/subtask/subtask.component';
 
 /**
- * Component for creating a new task, including title, description, due date,
+ * Component for creating or editing a task, including title, description, due date,
  * priority, category, assigned contacts, subtasks, and file attachments.
- * Can be rendered inline or as a modal dialog.
+ * Driven by the `mode` input, it is reused both for task creation (inline or as a
+ * modal dialog) and for editing an existing task inside the task overlay.
  */
 @Component({
   selector: 'app-add-task-template',
@@ -46,8 +52,14 @@ export class AddTaskTemplate implements OnInit {
   @Input() column: Task['status'] = 'todo';
   /** Indicates whether the component is rendered inside a modal dialog. */
   @Input() isDialogMode = false;
-  /** Emits when the modal dialog should be closed (dialog mode only). */
+  /** Whether the form creates a new task or edits an existing one. */
+  @Input() mode: 'create' | 'edit' = 'create';
+  /** Existing task to prefill the form with when `mode` is 'edit'. */
+  @Input() taskToEdit: (Task & { id: string }) | null = null;
+  /** Emits when the modal dialog should be closed (create/dialog mode only). */
   @Output() closeDialog = new EventEmitter<void>();
+  /** Emits the edited task payload for the parent to persist (edit mode only). */
+  @Output() taskUpdated = new EventEmitter<Omit<Task, 'createdAt'>>();
 
   /** Injection context reference used to run Firestore reactive queries. */
   private injector = inject(Injector);
@@ -58,6 +70,8 @@ export class AddTaskTemplate implements OnInit {
   description = '';
   /** Due date formatted as YYYY-MM-DD. */
   dueDate = '';
+  /** Due date the form was initialized with, used to allow saving unchanged past dates. */
+  private originalDueDate = '';
   /** Indicates whether the due date currently fails validation. */
   dueDateInvalid = false;
   /** Indicates whether the title currently fails validation. */
@@ -86,10 +100,12 @@ export class AddTaskTemplate implements OnInit {
   today: string;
   /** Indicates whether the category dropdown menu is open. */
   isCategoryDropdownOpen = false;
-  /** File attachments added to the new task. */
+  /** File attachments added to the task. */
   attachments: Attachment[] = [];
   /** Validation or processing error message for attachments. */
   fileError = '';
+  /** Original board position of the task being edited, preserved on save. */
+  private originalPosition = 0;
 
   /**
    * Initializes a new instance of the AddTaskTemplate component.
@@ -104,11 +120,37 @@ export class AddTaskTemplate implements OnInit {
   }
 
   /**
+   * Indicates whether the form currently operates in edit mode.
+   */
+  get isEditMode(): boolean {
+    return this.mode === 'edit';
+  }
+
+  /**
    * Angular lifecycle hook called after component initialization.
-   * Loads the contact list.
+   * Loads the contact list and, in edit mode, prefills the form.
    */
   ngOnInit(): void {
     this.loadContacts();
+    if (this.isEditMode && this.taskToEdit) this.populateFromExistingTask(this.taskToEdit);
+  }
+
+  /**
+   * Prefills all form fields from an existing task for editing.
+   * @param task Task instance to load into the form.
+   */
+  private populateFromExistingTask(task: Task & { id: string }): void {
+    const fields = extractEditableFields(task);
+    this.title = fields.title;
+    this.description = fields.description;
+    this.dueDate = formatDateForInput(fields.dueDate);
+    this.originalDueDate = this.dueDate;
+    this.priority = fields.priority;
+    this.category = fields.category;
+    this.subtasks = fields.subtasks;
+    this.attachments = fields.attachments;
+    this.column = fields.status;
+    this.originalPosition = fields.position;
   }
 
   /**
@@ -121,8 +163,20 @@ export class AddTaskTemplate implements OnInit {
         .pipe(map((contacts: any[]) => contacts.map(mapToContact)))
         .subscribe((contacts: Contacts[]) => {
           this.allContacts = contacts;
+          this.syncAssignedContactsIfEditing();
         });
     });
+  }
+
+  /**
+   * Matches assigned contact names from the edited task against the loaded contact list.
+   */
+  private syncAssignedContactsIfEditing(): void {
+    if (!this.isEditMode || !this.taskToEdit) return;
+    this.assignedToContacts = filterAssignedContacts(
+      this.allContacts,
+      this.taskToEdit.assignedTo || [],
+    );
   }
 
   /**
@@ -175,7 +229,7 @@ export class AddTaskTemplate implements OnInit {
   }
 
   /**
-   * Resets all form fields and validation indicators to initial values.
+   * Resets all form fields and validation indicators to initial values (create mode).
    */
   clearForm(): void {
     this.resetFormFields();
@@ -220,11 +274,14 @@ export class AddTaskTemplate implements OnInit {
   }
 
   /**
-   * Validates the task due date against today's date.
+   * Validates the task due date. An unchanged date is always accepted (relevant when
+   * editing a task whose original due date already lies in the past); a changed date
+   * must not lie before today.
    */
   validateDueDate(): void {
     const todayIso = new Date().toISOString().split('T')[0];
-    this.dueDateInvalid = !this.dueDate || this.dueDate < todayIso;
+    const changed = this.dueDate !== this.originalDueDate;
+    this.dueDateInvalid = !this.dueDate || (changed && this.dueDate < todayIso);
   }
 
   /**
@@ -240,11 +297,13 @@ export class AddTaskTemplate implements OnInit {
    */
   get isFormValid(): boolean {
     const todayIso = new Date().toISOString().split('T')[0];
-    return !!this.title && !!this.dueDate && this.dueDate >= todayIso && !!this.category?.trim();
+    const dateOk =
+      !!this.dueDate && (this.dueDate === this.originalDueDate || this.dueDate >= todayIso);
+    return !!this.title && dateOk && !!this.category?.trim();
   }
 
   /**
-   * Submits and creates a new task in Firestore if validation passes.
+   * Submits and creates a new task in Firestore if validation passes (create mode).
    */
   async createTask(): Promise<void> {
     this.validateTitle();
@@ -257,6 +316,16 @@ export class AddTaskTemplate implements OnInit {
     } catch (error) {
       console.error('Error creating task:', error);
     }
+  }
+
+  /**
+   * Validates the form and emits the edited task payload for the parent to persist (edit mode).
+   */
+  saveEdit(): void {
+    this.validateTitle();
+    this.validateCategory();
+    if (this.titleInvalid || !this.isFormValid || this.categoryInvalid) return;
+    this.taskUpdated.emit(this.buildTaskPayload());
   }
 
   /**
@@ -273,7 +342,7 @@ export class AddTaskTemplate implements OnInit {
       category: this.category,
       subtasks: this.subtasks,
       status: this.column,
-      position: 0,
+      position: this.isEditMode ? this.originalPosition : 0,
       attachments: this.attachments,
     };
   }

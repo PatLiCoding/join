@@ -1,0 +1,55 @@
+@use 'mixins' as *;
+
+.category-dropdown-custom {
+  position: relative;
+  margin-top: 6px;
+  display: flex;
+  align-items: center;
+  min-height: 40px;
+  border: 1px solid #d1d1d1;
+  border-radius: 8px;
+  background: #fff;
+  cursor: pointer;
+  @include padding(8px, 12px);
+
+  .category-selected {
+    flex: 1;
+    font-family: 'Inter', sans-serif;
+    font-weight: 400;
+    font-size: 20px;
+    line-height: 120%;
+    letter-spacing: 0;
+    color: #2a3647;
+  }
+
+  .dropdown-arrow {
+    width: 24px;
+    height: 24px;
+    margin-left: auto;
+    cursor: pointer;
+  }
+
+  .category-options {
+    position: absolute;
+    left: 0;
+    top: calc(100% + 4px);
+    width: 100%;
+    background: #fff;
+    border: 1px solid #d1d1d1;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+    z-index: 10;
+
+    .category-option {
+      @include padding(10px, 12px);
+      font-size: 16px;
+      color: #2a3647;
+      font-family: 'Inter', sans-serif;
+
+      &:hover {
+        cursor: pointer;
+        background: #f0f0f0;
+      }
+    }
+  }
+}

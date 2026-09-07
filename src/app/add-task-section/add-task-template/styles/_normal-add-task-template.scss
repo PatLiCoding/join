@@ -109,15 +109,15 @@
 	}
 }
 
-@media (max-width: 900px) {
-	.add-task-container:not(.dialog-mode) .inline-required-hint {
-		display: none;
-	}
-}
+// @media (max-width: 900px) {
+// 	.add-task-container:not(.dialog-mode) .inline-required-hint {
+// 		display: none;
+// 	}
+// }
 
-.add-task-container:not(.dialog-mode) .inline-required-hint-right {
-	display: none;
-}
+// .add-task-container:not(.dialog-mode) .inline-required-hint-right {
+// 	display: none;
+// }
 
 @media (max-width: 900px) {
 	.add-task-container:not(.dialog-mode) .inline-required-hint-right {

@@ -1,5 +1,5 @@
-<div class="add-task-container" [ngClass]="{ 'dialog-mode': isDialogMode }">
-  <h2 class="add-task-heading">Add Task</h2>
+<div class="add-task-container" [ngClass]="{ 'dialog-mode': isDialogMode || isEditMode, 'edit-mode': isEditMode }">
+  <h2 class="add-task-heading" *ngIf="!isEditMode">Add Task</h2>
   <div class="add-task-section">
     <div class="add-task-left">
       <div class="form-group">
@@ -144,19 +144,22 @@
           [(selectedContacts)]="assignedToContacts"
         ></app-assigned-to-select>
       </div>
-
-      
-
-      
     </div>
   </div>
 
   <div class="text-button-div">
-    <p class="inline-required-hint"><span class="required">*</span>This field is required</p>
-    <div class="action-buttons">
+    <p class="inline-required-hint">
+      <span class="required">*</span>This field is required
+    </p>
+    <div class="action-buttons" *ngIf="!isEditMode">
       <button type="button" class="clear-btn" (click)="clearForm()">Clear ✕</button>
       <button type="button" class="create-btn" [disabled]="!isFormValid" (click)="createTask()">
         Create Task ✓
+      </button>
+    </div>
+    <div class="action-buttons edit-actions" *ngIf="isEditMode">
+      <button type="button" class="create-btn" [disabled]="!isFormValid" (click)="saveEdit()">
+        Ok ✓
       </button>
     </div>
   </div>
