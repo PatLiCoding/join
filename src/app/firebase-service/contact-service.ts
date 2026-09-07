@@ -105,9 +105,9 @@ export class ContactService implements OnDestroy {
   async addContactToDataBase(contact: Contacts): Promise<Contacts | null> {
     try {
       const docRef = await runInInjectionContext(this.injector, () =>
-        addDoc(collection(this.firebaseDB, 'contacts'), contact),
+        addDoc(collection(this.firebaseDB, 'contacts'), this.getCleanJson(contact)),
       );
-      const createdContact = {
+      const createdContact: Contacts = {
         id: docRef.id,
         name: contact.name,
         email: contact.email,

@@ -16,9 +16,10 @@ import { Contacts } from '../../interfaces/contacts';
 import { ContactAvatar } from '../../shared/contact-avatar/contact-avatar';
 import { ConfirmDialog } from './confirm-dialog/confirm-dialog';
 import { AuthService } from '../../firebase-service/auth.servic';
-
-type DialogMode = 'open' | 'change' | 'account';
-type DialogTextKey = 'title' | 'subtitle' | 'primaryAction' | 'secondaryAction';
+import { ScrollLockService } from './utils/scroll-lock.service';
+import { DelayedToast } from './utils/delayed-toast';
+import { runOnAnimationEndOrTimeout } from './utils/animation-end';
+import { DIALOG_TEXT, DialogMode, DialogTextKey } from './contact-dialog-text';
 
 /**
  * Dialog component for adding or editing a contact.
@@ -32,10 +33,9 @@ type DialogTextKey = 'title' | 'subtitle' | 'primaryAction' | 'secondaryAction';
   styleUrl: './contact-dialog-template.scss',
 })
 export class ContactDialogTemplate implements AfterViewInit, OnDestroy {
-  /** Injected contact service. */
+  /** Instance of ContactService used for contact data operations and state management. */
   contactsService = inject(ContactService);
-  private authService = inject(AuthService);
-  private router = inject(Router);
+
   /** Mode of the dialog: 'open' for creating a contact, 'change' for editing. */
   @Input() mode: DialogMode = 'open';
   /** Event emitted when a contact is successfully created. */
@@ -45,12 +45,19 @@ export class ContactDialogTemplate implements AfterViewInit, OnDestroy {
   /** NgForm template reference. */
   @ViewChild('f') contactForm?: NgForm;
   private cancelListener?: (event: Event) => void;
-  private readonly bodyScrollLockClass = 'dialog-scroll-lock';
-  private readonly mobileBreakpoint = 1000;
-  private isScrollLocked = false;
-  private toastShowTimeoutId?: number;
-  private toastHideTimeoutId?: number;
   private editedFromAccount = false;
+  /** Instance of AuthService used for authentication and session handling. */
+  private authService = inject(AuthService);
+  /** Instance of Angular Router used for programmatic navigation. */
+  private router = inject(Router);
+  /** Instance of ScrollLockService used to manage background scrolling when overlays or dialogs are active. */
+  private scrollLock = inject(ScrollLockService);
+  /** Handles the delayed show/hide timing of the "contact created" toast. */
+  private readonly successToast = new DelayedToast(
+    (visible) => (this.showSuccessToast = visible),
+    2400,
+    1800,
+  );
 
   /** Flag to display success toast feedback. */
   showSuccessToast = false;
@@ -59,26 +66,7 @@ export class ContactDialogTemplate implements AfterViewInit, OnDestroy {
   /** Flag to display the delete-account confirmation popup. */
   showDeleteAccountConfirm = false;
   /** Configurable UI text dictionary indexed by mode and key. */
-  dialogText: Record<DialogMode, Record<DialogTextKey, string>> = {
-    open: {
-      title: 'Add contact',
-      subtitle: 'Tasks are better with a team!',
-      primaryAction: 'Create Contact',
-      secondaryAction: 'Cancel',
-    },
-    change: {
-      title: 'Edit contact',
-      subtitle: '',
-      primaryAction: 'Save ✓',
-      secondaryAction: 'Delete',
-    },
-    account: {
-      title: 'My account',
-      subtitle: '',
-      primaryAction: 'Edit',
-      secondaryAction: 'Delete my account',
-    },
-  };
+  readonly dialogText = DIALOG_TEXT;
 
   /** Form model object for contact binding. */
   contact: { name: string; email: string; phone: string; photoUrl?: string } = {
@@ -120,8 +108,8 @@ export class ContactDialogTemplate implements AfterViewInit, OnDestroy {
     if (dialogEl && this.cancelListener) {
       dialogEl.removeEventListener('cancel', this.cancelListener);
     }
-    this.unlockBodyScroll();
-    this.clearToastTimeouts();
+    this.scrollLock.unlock();
+    this.successToast.clear();
   }
 
   /**
@@ -175,7 +163,7 @@ export class ContactDialogTemplate implements AfterViewInit, OnDestroy {
    */
   private openDialogElement(dialogEl: HTMLDialogElement): void {
     dialogEl.removeAttribute('data-dialog-state');
-    this.lockBodyScroll();
+    this.scrollLock.lock();
     dialogEl.showModal();
   }
 
@@ -197,7 +185,7 @@ export class ContactDialogTemplate implements AfterViewInit, OnDestroy {
   private finishClose(dialogEl: HTMLDialogElement): void {
     dialogEl.removeAttribute('data-dialog-state');
     dialogEl.close();
-    this.unlockBodyScroll();
+    this.scrollLock.unlock();
     this.contactForm?.resetForm();
     this.editedFromAccount = false;
   }
@@ -208,20 +196,10 @@ export class ContactDialogTemplate implements AfterViewInit, OnDestroy {
    */
   private setupDialogCloseAnimation(dialogEl: HTMLDialogElement): void {
     const animationDuration = 400;
-    let fallbackId: number | undefined;
-    const handleAnimationEnd = (event: AnimationEvent) => {
-      if (event.target !== dialogEl) return;
-      if (event.animationName !== 'dialog-exit-right' && event.animationName !== 'dialog-exit-up')
-        return;
-      if (fallbackId !== undefined) window.clearTimeout(fallbackId);
-      dialogEl.removeEventListener('animationend', handleAnimationEnd);
-      this.finishClose(dialogEl);
-    };
-    fallbackId = window.setTimeout(() => {
-      dialogEl.removeEventListener('animationend', handleAnimationEnd);
-      this.finishClose(dialogEl);
-    }, animationDuration);
-    dialogEl.addEventListener('animationend', handleAnimationEnd);
+    const closeAnimations = ['dialog-exit-right', 'dialog-exit-up'];
+    runOnAnimationEndOrTimeout(dialogEl, closeAnimations, animationDuration, () =>
+      this.finishClose(dialogEl),
+    );
     dialogEl.setAttribute('data-dialog-state', 'closing');
   }
 
@@ -337,7 +315,7 @@ export class ContactDialogTemplate implements AfterViewInit, OnDestroy {
     form.resetForm();
     this.clearInputFields();
     this.close();
-    this.scheduleSuccessToast();
+    this.successToast.schedule();
     if (createdContact) {
       this.contactCreated.emit(createdContact);
     }
@@ -351,77 +329,5 @@ export class ContactDialogTemplate implements AfterViewInit, OnDestroy {
     this.contact.email = '';
     this.contact.phone = '';
     this.contact.photoUrl = undefined;
-  }
-
-  /**
-   * Schedules the success toast after closing the dialog.
-   */
-  private scheduleSuccessToast(): void {
-    if (typeof window === 'undefined') {
-      return;
-    }
-    this.clearToastTimeouts();
-    const closeAnimationDuration = 400;
-    const delayBeforeShow = closeAnimationDuration + 2000;
-    const animationDuration = 1800;
-    this.toastShowTimeoutId = window.setTimeout(() => {
-      this.showSuccessToast = true;
-      this.toastHideTimeoutId = window.setTimeout(() => {
-        this.showSuccessToast = false;
-      }, animationDuration);
-    }, delayBeforeShow);
-  }
-
-  /**
-   * Clears any toast timeouts.
-   */
-  private clearToastTimeouts(): void {
-    if (this.toastShowTimeoutId !== undefined) {
-      window.clearTimeout(this.toastShowTimeoutId);
-    }
-    if (this.toastHideTimeoutId !== undefined) {
-      window.clearTimeout(this.toastHideTimeoutId);
-    }
-    this.toastShowTimeoutId = undefined;
-    this.toastHideTimeoutId = undefined;
-  }
-
-  /**
-   * Locks body scroll for mobile viewports.
-   */
-  private lockBodyScroll(): void {
-    if (typeof document === 'undefined') {
-      return;
-    }
-    if (!this.isMobileViewport()) {
-      return;
-    }
-    document.body.classList.add(this.bodyScrollLockClass);
-    this.isScrollLocked = true;
-  }
-
-  /**
-   * Unlocks body scroll if it was locked.
-   */
-  private unlockBodyScroll(): void {
-    if (typeof document === 'undefined') {
-      return;
-    }
-    if (!this.isScrollLocked) {
-      return;
-    }
-    document.body.classList.remove(this.bodyScrollLockClass);
-    this.isScrollLocked = false;
-  }
-
-  /**
-   * Checks if the viewport is mobile size.
-   * @returns True if mobile viewport.
-   */
-  private isMobileViewport(): boolean {
-    if (typeof window === 'undefined') {
-      return false;
-    }
-    return window.innerWidth <= this.mobileBreakpoint;
   }
 }
