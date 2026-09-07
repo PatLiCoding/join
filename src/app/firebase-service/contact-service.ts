@@ -21,16 +21,21 @@ import { Contacts } from '../interfaces/contacts';
 })
 export class ContactService implements OnDestroy {
   unsubscribe;
+  /** Reference to the Firebase Firestore database instance. */
   firebaseDB: Firestore = inject(Firestore);
   private injector = inject(Injector);
 
+  /** List of all retrieved contacts. */
   contactList: Contacts[] = [];
+  /** Currently selected contact for details or editing, or null if none selected. */
   selectedContact: Contacts | null = null;
-
+  /** Display name of the currently authenticated user. */
   currentUserName: string | null = null;
+  /** Email address of the currently authenticated user. */
   currentUserEmail: string | null = null;
+  /** Profile photo URL of the currently authenticated user. */
   currentUserPhotoUrl: string | null = null;
-
+  /** Subject that triggers or notifies subscribers of contact edit requests. */
   editRequest$ = new Subject<void>();
 
   /** Fixed palette of colors used to assign a consistent color per contact. */

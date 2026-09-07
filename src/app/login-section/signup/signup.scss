@@ -33,6 +33,14 @@
     margin-bottom: 16px;
     @include flex-col(8px);
     @include custom-scrollbar;
+    
+  }
+
+   .input-group-wrapper {
+    cursor: default;
+    .password-visibility {
+    cursor: pointer;
+  }
   }
 
   .signup-header {
@@ -51,7 +59,7 @@
       background-color: #29ABE2;
       border-radius: 2px;
     }
-  }
+  }}
 
   @media (max-width: 600px) {
     .signup-header h1 {
@@ -60,6 +68,7 @@
   }
 
   .input-group-wrapper {
+    cursor: pointer;
     @include flex-col(2px);
     min-height: 55px;
     width: 100%;
@@ -192,7 +201,7 @@
       cursor: not-allowed;
     }
   }
-}
+
 
 .success-overlay {
   @include absolute($bottom: 0, $left: 50%);

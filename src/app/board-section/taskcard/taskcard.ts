@@ -1,10 +1,3 @@
-/**
- * Taskcard Component
- *
- * Represents a single task card within the board.
- * Displays task details, progress, assigned contacts,
- * and allows status changes via a context menu.
- */
 import {
   Component,
   inject,

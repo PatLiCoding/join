@@ -68,7 +68,6 @@
   max-height: calc(3 * 40px);
   overflow-y: auto;
   @include flex-col(4px);
-
   @include custom-scrollbar;
 
   &::-webkit-scrollbar-thumb:hover {

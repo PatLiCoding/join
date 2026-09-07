@@ -26,16 +26,12 @@ import { ContactDialogTemplate } from '../../../contact-section/contact-dialog-t
 export class HeaderLoggedIn implements OnInit, AfterViewInit {
   /** Initials of the current user */
   userInitials: string = 'G';
-
   /** Flag indicating if the device is mobile */
   isMobile = false;
-
   /** Flag indicating if the help section is open */
   isHelpOpen = false;
-
   /** Flag for showing the header popup */
   showPopup: boolean = false;
-
   /** Application title */
   appTitle: string = 'Kanban Project Management Tool';
 

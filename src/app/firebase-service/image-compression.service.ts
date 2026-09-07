@@ -11,10 +11,8 @@ import { Attachment } from '../interfaces/task';
 export class ImageCompressionService {
   /** MIME types accepted by the file picker / validation. */
   readonly allowedTypes = ['image/png', 'image/jpeg', 'image/webp'];
-
   /** Maximum accepted file size in bytes, checked before compression (5 MB). */
   readonly maxOriginalSizeBytes = 5 * 1024 * 1024;
-
   /** Safety-margin limit for the combined size of all attachments in one Firestore document (~1 MiB max). */
   readonly maxTotalAttachmentsSizeBytes = 900 * 1024;
 
@@ -107,7 +105,6 @@ export class ImageCompressionService {
     let width = img.width;
     let height = img.height;
     if (width <= maxWidth && height <= maxHeight) return { width, height };
-
     if (width > height) {
       height = (height * maxWidth) / width;
       width = maxWidth;

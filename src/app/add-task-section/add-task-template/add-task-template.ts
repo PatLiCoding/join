@@ -63,6 +63,8 @@ export class AddTaskTemplate implements OnInit {
 
   /** Injection context reference used to run Firestore reactive queries. */
   private injector = inject(Injector);
+  /** Original board position of the task being edited, preserved on save. */
+  private originalPosition = 0;
 
   /** Task title entered by the user. */
   title = '';
@@ -104,8 +106,6 @@ export class AddTaskTemplate implements OnInit {
   attachments: Attachment[] = [];
   /** Validation or processing error message for attachments. */
   fileError = '';
-  /** Original board position of the task being edited, preserved on save. */
-  private originalPosition = 0;
 
   /**
    * Initializes a new instance of the AddTaskTemplate component.

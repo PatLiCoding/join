@@ -36,8 +36,9 @@ export class ContactList implements OnInit, OnDestroy {
   @Output() switch = new EventEmitter<void>();
 
   private editSubscription?: Subscription;
+  /** Query list containing references to all contact row elements in the DOM. */
   @ViewChildren('contactRow') contactRows?: QueryList<ElementRef<HTMLElement>>;
-
+  /** Reference to the contact dialog component/template instance. */
   @ViewChild('contactDialog') contactDialog?: ContactDialogTemplate;
 
   constructor() {}

@@ -1,11 +1,3 @@
-/**
- * ContactInfo Component
- *
- * Displays detailed information about a selected contact.
- * Handles editing, deletion, menu toggling, and provides
- * helper methods for initials, color, and display names.
- * Emits events to switch back to the contact list view.
- */
 import {
   AfterViewInit,
   Component,

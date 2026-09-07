@@ -1,3 +1,7 @@
+import { Component, HostListener } from '@angular/core';
+import { ContactInfo } from './contact-info/contact-info';
+import { ContactList } from './contact-list/contact-list';
+
 /**
  * ContactSection Component
  *
@@ -6,10 +10,6 @@
  * and controls whether the contact list or contact details
  * are displayed.
  */
-import { Component, HostListener } from '@angular/core';
-import { ContactInfo } from './contact-info/contact-info';
-import { ContactList } from './contact-list/contact-list';
-
 @Component({
   selector: 'app-contact-section',
   imports: [ContactList, ContactInfo],
@@ -17,7 +17,9 @@ import { ContactList } from './contact-list/contact-list';
   styleUrl: './contact-section.scss',
 })
 export class ContactSection {
+  /** Indicates whether the current viewport width qualifies as a mobile device (<= 1000px). */
   isMobile = window.innerWidth <= 1000;
+  /** Controls the visibility of the contact list view. */
   showList = true;
 
   /**

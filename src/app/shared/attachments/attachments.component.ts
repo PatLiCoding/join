@@ -34,25 +34,22 @@ export class AttachmentsComponent implements OnDestroy, OnChanges {
   /** Controls whether file uploads and deletions are enabled (e.g. true in edit mode, false in view mode). */
   @Input() isEditable = true;
 
-  /** Validation or processing error message displayed to the user. */
-  fileError = '';
-
-  /** Index of the attachment currently hovered on its action icon, or null. */
-  hoveredIconIndex: number | null = null;
-
   /** Reference to the gallery container DOM element used by Viewer.js. */
   @ViewChild('gallery') galleryRef?: ElementRef<HTMLDivElement>;
 
   /** Active Viewer.js instance used for full-screen gallery lightbox. */
   private viewerInstance: Viewer | null = null;
-
   /** Index of the attachment currently shown in the viewer, kept in sync via the 'viewed' event. */
   private currentViewerIndex = 0;
-
+  /** ID reference for the active error timeout, used to clear or reset the auto-dismiss timer. */
   private errorTimeoutId?: ReturnType<typeof setTimeout>;
 
   /** True while a file is being dragged over the dropzone (controls hover styling). */
   isDragOver = false;
+  /** Validation or processing error message displayed to the user. */
+  fileError = '';
+  /** Index of the attachment currently hovered on its action icon, or null. */
+  hoveredIconIndex: number | null = null;
 
   /**
    * Initializes a new instance of the AttachmentsComponent.

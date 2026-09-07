@@ -77,11 +77,11 @@
         font-size: 21px;
         line-height: 120%;
         letter-spacing: 0;
-        cursor: pointer;
         padding: 0 24px;
         transition: background 0.2s ease, color 0.2s ease, box-shadow 0.2s ease;
         box-shadow: none;
         &:hover {
+          cursor: pointer;
           background: #29ABE2;
           color: #fff;
           box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);

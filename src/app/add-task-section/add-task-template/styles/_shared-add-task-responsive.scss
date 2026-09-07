@@ -1,5 +1,12 @@
 @use 'mixins' as *;
 
+@media (min-width: 1441px) {
+  .task-saved-message {
+    left: 720px;
+    transform: translate(0, 50%);
+  }
+}
+
 @media (min-width: 1250px) and (max-height: 855px) {
   .add-task-section {
     align-items: flex-start !important;
@@ -9,13 +16,6 @@
 
   .devide-section {
     align-self: flex-start !important;
-  }
-}
-
-@media (min-width: 1441px) {
-  .task-saved-message {
-    left: 720px;
-    transform: translate(0, 50%);
   }
 }
 

@@ -18,7 +18,9 @@ import { UploadErrorToastComponent } from '../upload-error-toast/upload-error-to
   styleUrl: './contact-avatar.scss',
 })
 export class ContactAvatar {
+  /** Instance of ContactService used for contact data operations and state management. */
   private contactsService = inject(ContactService);
+  /** Instance of ImageCompressionService used to compress images before uploading or saving. */
   private imageCompression = inject(ImageCompressionService);
 
   /** The contact to display an avatar for (view mode). */

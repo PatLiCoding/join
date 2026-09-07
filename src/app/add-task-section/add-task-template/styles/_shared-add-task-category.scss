@@ -9,7 +9,6 @@
   border: 1px solid #d1d1d1;
   border-radius: 8px;
   background: #fff;
-  cursor: pointer;
   @include padding(8px, 12px);
 
   .category-selected {
@@ -26,7 +25,6 @@
     width: 24px;
     height: 24px;
     margin-left: auto;
-    cursor: pointer;
   }
 
   .category-options {
@@ -47,9 +45,11 @@
       font-family: 'Inter', sans-serif;
 
       &:hover {
-        cursor: pointer;
         background: #f0f0f0;
       }
     }
+  }
+  &:hover {
+        cursor: pointer;
   }
 }
