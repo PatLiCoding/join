@@ -16,19 +16,15 @@ import { Subtask } from '../../interfaces/task';
 export class SubtaskComponent {
   /** Array of subtask objects associated with the task. */
   @Input() subtasks: Subtask[] = [];
-
   /** Indicates whether subtasks can be edited or modified. */
   @Input() isEditMode: boolean = true;
-
   /** Emits the updated subtasks array whenever a subtask is added, updated, or removed. */
   @Output() subtasksChange = new EventEmitter<Subtask[]>();
 
   /** Current input value for creating a new subtask. */
   newSubtaskTitle: string = '';
-
   /** Zero-based index of the subtask currently being edited, or null if none. */
   editingIndex: number | null = null;
-
   /** Temporary buffer title for the subtask currently being edited. */
   editedTitle: string = '';
 

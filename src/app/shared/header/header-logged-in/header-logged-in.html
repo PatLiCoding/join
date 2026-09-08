@@ -13,13 +13,20 @@
       </a>
     }
 
-    <span class="initials" (click)="toggleHeaderPopup()">
-      {{ userInitials }}
-    </span>
+    <span class="user-avatar" (click)="toggleHeaderPopup()">
+  @if (userPhotoUrl) {
+    <img [src]="userPhotoUrl" alt="Profile picture" class="initials" />
+  } @else {
+    <span class="initials">{{ userInitials }}</span>
+  }
+</span>
   </div>
 
   @if (showPopup && !isMobile) {
     <div #desktopPopup class="header-popup desktop-popup" (click)="$event.stopPropagation()">
+      @if (!auth.isGuestUser()) {
+      <a (click)="contactDialog?.openWithMode('account')">Account</a>
+    }
       <a [routerLink]="legalNoticeRoute">Legal Notice</a>
       <a [routerLink]="privacyPolicyRoute">Privacy Policy</a>
       <a (click)="logout()">Logout</a>
@@ -29,6 +36,9 @@
   @if (showPopup && isMobile) {
     <div #mobilePopup class="header-popup mobile-popup" (click)="$event.stopPropagation()">
       <a class="help-in-popup" [routerLink]="helpRoute">Help</a>
+      @if (!auth.isGuestUser()) {
+      <a (click)="contactDialog?.openWithMode('account')">Account</a>
+    }
       <a [routerLink]="legalNoticeRoute">Legal Notice</a>
       <a [routerLink]="privacyPolicyRoute">Privacy Policy</a>
       <a (click)="logout()">Logout</a>
@@ -36,4 +46,5 @@
   }
 
   <div id="popup-message-box"></div>
+  <app-contact-dialog-template #contactDialog />
 </header>

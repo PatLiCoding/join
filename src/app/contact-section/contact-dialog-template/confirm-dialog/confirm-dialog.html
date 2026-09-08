@@ -1,0 +1,19 @@
+<div class="confirm-overlay" role="presentation" (click)="onCancel()">
+  <div
+    class="confirm-card"
+    role="alertdialog"
+    aria-modal="true"
+    aria-live="assertive"
+    (click)="$event.stopPropagation()"
+  >
+    <button type="button" class="confirm-close" (click)="onCancel()" aria-label="Close">
+      <span aria-hidden="true">&times;</span>
+    </button>
+    <span class="confirm-icon" aria-hidden="true">!</span>
+    <p class="confirm-message">{{ message }}</p>
+    <div class="confirm-actions">
+      <button type="button" class="confirm-yes" (click)="onConfirm()">Yes</button>
+      <button type="button" class="confirm-no" (click)="onCancel()">No</button>
+    </div>
+  </div>
+</div>

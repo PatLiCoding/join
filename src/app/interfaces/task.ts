@@ -14,6 +14,7 @@ export interface Subtask {
 export interface Attachment {
   filename: string;
   fileType: string;
+  fileSize: number;
   base64: string;
 }
 

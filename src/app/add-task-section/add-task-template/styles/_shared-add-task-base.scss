@@ -1,0 +1,156 @@
+@use 'mixins' as *;
+
+.task-saved-message {
+  position: fixed;
+  left: 50%;
+  bottom: 50vh;
+  transform: translate(-50%, 50%);
+  background-color: #2a3647;
+  color: white;
+  @include padding(20px, 40px);
+  border-radius: 20px;
+  @include flex-center;
+  z-index: 9999;
+  animation: slideFromBottom 0.6s ease-out forwards;
+}
+
+@keyframes slideFromBottom {
+  0% {
+    transform: translate(-50%, 100vh);
+    opacity: 0;
+  }
+
+  100% {
+    transform: translate(-50%, 50%);
+    opacity: 1;
+  }
+}
+
+label {
+  font-family: 'Inter', sans-serif;
+  font-weight: 400;
+  margin-top: 10px;
+  margin-bottom: 6px;
+  font-size: 20px;
+}
+
+.add-task-section {
+  @include flex(row, stretch, flex-start, 32px);
+  width: 100%;
+  max-width: 945px;
+  flex: 1 1 auto;
+  margin-top: 10px;
+  margin-bottom: 10px;
+  padding-bottom: 0px;
+  overflow-y: auto;
+  max-height: 100%;
+  @include custom-scrollbar;
+}
+
+.add-task-heading {
+  font-family: 'Inter', sans-serif;
+  font-weight: 700 bold;
+  font-size: 61px;
+  line-height: 120%;
+  padding: 32px 0 8px 0;
+  margin-bottom: 24px;
+  width: 100%;
+  max-width: 945px;
+}
+
+.required {
+  color: red;
+  margin-left: 2px;
+}
+
+.error-message {
+  margin-top: 4px;
+  color: #e60026;
+  font-family: 'Inter', sans-serif;
+  font-weight: 400;
+  font-size: 16px;
+  line-height: 120%;
+  letter-spacing: 0;
+  min-height: 20px;
+}
+
+.inline-required-hint {
+  font-family: 'Inter', sans-serif;
+  font-weight: 400;
+  font-size: 16px;
+  line-height: 120%;
+  letter-spacing: 0;
+  color: #d1d1d1 !important;
+  margin-top: 16px;
+  margin-bottom: 0;
+  display: block;
+}
+
+.add-task-left,
+.add-task-right {
+  width: 100%;
+  max-width: 440px;
+  @include flex-col;
+}
+
+.text-button-div {
+  max-width: 945px;
+  margin-left: auto;
+  margin-right: auto;
+  z-index: 30;
+}
+
+.devide-section {
+  width: 1px;
+  height: 590px;
+  background-color: #d1d1d1;
+  align-self: stretch;
+}
+
+textarea,
+.priority-buttons,
+.category-select,
+app-attachments,
+app-subtask,
+app-assigned-to-select {
+  margin-bottom: 20px;
+}
+
+.category-select {
+  padding-left: 4px;
+  label{
+    padding-left: -4px;
+  }
+}
+
+.form-group {
+  @include flex-col;
+
+  input,
+  textarea {
+    font-family: 'Inter', sans-serif;
+    @include padding(10px, 12px);
+    border: 1px solid #d1d1d1;
+    border-radius: 10px;
+    font-size: 20px;
+
+    &:focus {
+      outline: none;
+      border-color: #007bff;
+      box-shadow: 0 0 0 2px rgba(0, 123, 255, 0.2);
+    }
+  }
+
+  textarea {
+    resize: vertical;
+    max-height: 200px;
+  }
+}
+
+input[type='date'] {
+  cursor: pointer;
+}
+
+input[type='date']::-webkit-calendar-picker-indicator {
+  cursor: pointer;
+}

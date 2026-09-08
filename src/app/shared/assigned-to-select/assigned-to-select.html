@@ -24,17 +24,18 @@
     </div>
 
     <div *ngIf="selectedContacts.length > 0" class="avatars-below">
-      <div
-        *ngFor="let c of selectedContacts | slice: 0 : 3"
-        class="avatar"
-        [style.backgroundColor]="getContactColor(c)"
-      >
-        {{ getInitials(c.name) }}
-      </div>
-      <div *ngIf="selectedContacts.length > 3" class="avatar more">
-        +{{ selectedContacts.length - 3 }}
-      </div>
-    </div>
+  <div class="avatar-wrapper" *ngFor="let contact of selectedContacts | slice: 0 : 3">
+    <app-contact-avatar
+      [contact]="contact"
+      [size]="42"
+      [mobileSize]="42"
+      [colorOverride]="isCurrentUser(contact) ? '#4caf50' : undefined"
+    />
+  </div>
+  <div *ngIf="selectedContacts.length > 3" class="avatar more">
+    +{{ selectedContacts.length - 3 }}
+  </div>
+</div>
 
     <div *ngIf="isDropdownOpen" class="assigned-to-list">
       <div
@@ -43,9 +44,12 @@
         [class.active]="isSelected(contact)"
         (click)="toggleContact(contact)"
       >
-        <div class="avatar-letter-box" [style.backgroundColor]="getContactColor(contact)">
-          {{ getInitials(contact.name) }}
-        </div>
+        <app-contact-avatar
+      [contact]="contact"
+      [size]="42"
+      [mobileSize]="42"
+      [colorOverride]="isCurrentUser(contact) ? '#4caf50' : undefined"
+    />
 
         <span class="contact-name-wrapper">
           <span class="contact-name-text">

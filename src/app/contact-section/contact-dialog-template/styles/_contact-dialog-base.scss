@@ -1,0 +1,264 @@
+@use 'mixins' as *;
+
+dialog {
+  display: none;
+}
+
+dialog[open] {
+  @include flex(row, stretch, flex-start);
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  padding: 0;
+  margin: 0;
+  max-height: calc(100vh - 40px);
+  height: min(467px, calc(100vh - 40px));
+  width: 100%;
+  max-width: min(1200px, calc(100vw - 100px));
+  border: none;
+  border-radius: 30px;
+  overflow: hidden;
+  will-change: transform, opacity;
+  animation: dialog-enter-right 0.4s ease-out both;
+  &[data-dialog-state='closing'] {
+    animation: dialog-exit-right 0.35s ease-in forwards;
+  }
+  &::backdrop {
+    background-color: rgba(0, 0, 0, 0.6);
+  }
+  .dialog-content {
+    display: flex;
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    position: relative;
+    @include custom-scrollbar;
+  }
+  .dialog-left {
+    @include flex(column, stretch, center);
+    @include padding(48px);
+    background-color: #2a3647;
+    color: white;
+    width: 100%;
+    max-width: 470px;
+    .join-logo {
+      height: 66px;
+      width: 55px;
+      margin-bottom: 16px;
+    }
+    h2 {
+      font-weight: 700 bold;
+      font-size: 61px;
+      line-height: 120%;
+      letter-spacing: 0%;
+    }
+    p {
+      font-weight: 400;
+      font-size: 27px;
+      line-height: 120%;
+      letter-spacing: 0%;
+      @include padding(16px, 0);
+    }
+    .stripe-div {
+      height: 3px;
+      width: 90px;
+      background-color: #29abe2;
+      margin: 0;
+    }
+  }
+  .dialog-right {
+    @include flex(row, center, flex-start, 80px);
+    @include padding(48px, 48px, 48px, 98px);
+    width: 100%;
+    background-color: #ffffff;
+
+    .profile-image-div {
+      @include flex-center;
+      border-radius: 50%;
+      height: 120px;
+      width: 120px;
+      font-weight: 500;
+        border-radius: 50%;
+        border: 3px solid white;
+    }
+  }
+  .dialog-right-content {
+    @include flex-col(16px);
+    flex: 1;
+    min-width: 0;
+  }
+  .dialog-close {
+    @include absolute($top: 24px, $right: 24px);
+    border: none;
+    background: transparent;
+    padding: 0;
+    width: 40px;
+    height: 40px;
+    aspect-ratio: 1 / 1;
+    border-radius: 50%;
+    @include flex-center;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+    z-index: 5;
+    img {
+      width: 32px;
+      height: 32px;
+      display: block;
+    }
+    &:hover {
+      background-color: #29abe2;
+    }
+  }
+}
+
+.contact-toast {
+  position: fixed;
+  left: 50%;
+  bottom: 20vh;
+  transform: translate3d(-50%, 0, 0) translateX(120vw);
+  @include padding(12px, 22px);
+  border-radius: 12px;
+  background-color: #2a3647;
+  color: #ffffff;
+  font-size: 16px;
+  font-weight: 500;
+  letter-spacing: 0.2px;
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.2);
+  z-index: 1200;
+  pointer-events: none;
+  white-space: nowrap;
+  will-change: transform;
+  backface-visibility: hidden;
+  animation: toast-slide-right 1.8s ease-in-out both;
+}
+form {
+  flex: 1;
+}
+.form-div {
+  @include flex-col(12px);
+  width: 100%;
+  > div {
+    position: relative;
+    padding-bottom: 20px;
+    input {
+      height: 50px;
+      border-radius: 10px;
+      border: 1px solid #d1d1d1;
+      @include padding(0, 40px, 0, 12px);
+      width: 100%;
+      box-sizing: border-box;
+      font-family:
+        'Inter',
+        system-ui,
+        -apple-system,
+        BlinkMacSystemFont,
+        'Segoe UI',
+        Roboto,
+        sans-serif;
+      font-weight: 400;
+      font-size: 20px;
+      line-height: 120%;
+    }
+    input.ng-invalid.ng-touched {
+      border-color: #e60026;
+    }
+    .error-message {
+      color: #e60026;
+      font-size: 14px;
+      position: absolute;
+      left: 0;
+      top: calc(100% - 16px);
+    }
+    img {
+      position: absolute;
+      right: 10px;
+      top: 25px;
+      transform: translateY(-50%);
+      width: 20px;
+      height: 20px;
+      pointer-events: none;
+    }
+  }
+}
+
+.dialog-buttons {
+  @include flex(row, stretch, flex-start, 16px);
+  position: sticky;
+  bottom: 0;
+  background-color: #ffffff;
+  @include padding(8px, 0);
+}
+
+.cancelDelete {
+  height: 56px;
+  border-radius: 10px;
+  border: 1px solid #2a3647;
+  background-color: white;
+  color: #2a3647;
+  font-family: 'Inter';
+  font-weight: 400;
+  font-size: 20px;
+  line-height: 120%;
+  letter-spacing: 0%;
+  @include padding(0, 24px);
+  @include flex(row, center, center, 8px);
+  position: relative;
+  cursor: pointer;
+  transition:
+    border-color 0.2s ease,
+    color 0.2s ease;
+  img {
+    display: none;
+  }
+  &::after {
+    content: 'x';
+    color: #2a3647;
+    font-size: 24px;
+    transition: color 0.2s ease;
+  }
+  &.edit-mode::after {
+    display: none;
+  }
+  &:hover {
+    border-color: #29abe2;
+    color: #29abe2;
+  }
+  &:hover::after {
+    color: #29abe2;
+  }
+}
+
+.createSave {
+  height: 56px;
+  border-radius: 10px;
+  background-color: #2a3647;
+  border: 1px solid #2a3647;
+  color: white;
+  font-family: 'Inter';
+  font-weight: 700;
+  font-size: 21px;
+  line-height: 120%;
+  letter-spacing: 0%;
+  @include padding(0, 24px);
+  @include flex(row, center, center, 8px);
+  white-space: nowrap;
+  position: relative;
+  cursor: pointer;
+  transition:
+    background-color 0.2s ease,
+    border-color 0.2s ease,
+    color 0.2s ease;
+  img {
+    display: none;
+  }
+  &::after {
+    color: white;
+    font-size: 24px;
+    transition: color 0.2s ease;
+  }
+  &:hover {
+    background-color: #29abe2;
+    border-color: #29abe2;
+  }
+}

@@ -1,5 +1,5 @@
-<div class="add-task-container" [ngClass]="{ 'dialog-mode': isDialogMode }">
-  <h2 class="add-task-heading">Add Task</h2>
+<div class="add-task-container" [ngClass]="{ 'dialog-mode': isDialogMode || isEditMode, 'edit-mode': isEditMode }">
+  <h2 class="add-task-heading" *ngIf="!isEditMode">Add Task</h2>
   <div class="add-task-section">
     <div class="add-task-left">
       <div class="form-group">
@@ -43,14 +43,6 @@
         </p>
       </div>
 
-      <div class="form-group">
-        <app-attachments [(attachments)]="attachments"></app-attachments>
-      </div>
-    </div>
-
-    <div class="devide-section" aria-hidden="true"></div>
-
-    <div class="add-task-right">
       <div class="form-group">
         <label>Priority</label>
         <div class="priority-buttons">
@@ -105,14 +97,6 @@
         </div>
       </div>
 
-      <div class="form-group">
-        <label>Assigned To</label>
-        <app-assigned-to-select
-          [contacts]="allContacts"
-          [(selectedContacts)]="assignedToContacts"
-        ></app-assigned-to-select>
-      </div>
-
       <div class="category-select form-group">
         <label>Category<span class="required">*</span></label>
         <div class="category-dropdown-custom" (click)="toggleCategoryDropdown()">
@@ -138,20 +122,44 @@
         </div>
         <p class="error-message" *ngIf="categoryInvalid">This field is required</p>
       </div>
+    </div>
+
+    <div class="devide-section" aria-hidden="true"></div>
+
+    <div class="add-task-right">
+      <div class="form-group">
+        <label>Attachments (images)</label>
+        <app-attachments [(attachments)]="attachments"></app-attachments>
+      </div>
 
       <div class="form-group">
         <label>Subtasks</label>
         <app-subtask [(subtasks)]="subtasks"></app-subtask>
       </div>
+
+      <div class="form-group">
+        <label>Assigned To</label>
+        <app-assigned-to-select
+          [contacts]="allContacts"
+          [(selectedContacts)]="assignedToContacts"
+        ></app-assigned-to-select>
+      </div>
     </div>
   </div>
 
   <div class="text-button-div">
-    <p class="inline-required-hint"><span class="required">*</span>This field is required</p>
-    <div class="action-buttons">
+    <p class="inline-required-hint">
+      <span class="required">*</span>This field is required
+    </p>
+    <div class="action-buttons" *ngIf="!isEditMode">
       <button type="button" class="clear-btn" (click)="clearForm()">Clear ✕</button>
       <button type="button" class="create-btn" [disabled]="!isFormValid" (click)="createTask()">
         Create Task ✓
+      </button>
+    </div>
+    <div class="action-buttons edit-actions" *ngIf="isEditMode">
+      <button type="button" class="create-btn" [disabled]="!isFormValid" (click)="saveEdit()">
+        Ok ✓
       </button>
     </div>
   </div>

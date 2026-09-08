@@ -32,6 +32,8 @@ export type GroupedTasks = {
 export class TaskService {
   /** Firestore collection reference for tasks, created once in the constructor. */
   private tasksCollection: CollectionReference<DocumentData>;
+  /** The currently active status filter for tasks. */
+  private currentStatusFilter: Task['status'] | 'all' = 'all';
 
   /**
    * Creates an instance of TaskService.
@@ -46,9 +48,6 @@ export class TaskService {
       collection(this.firestore, 'tasks'),
     );
   }
-
-  /** The currently active status filter for tasks. */
-  private currentStatusFilter: Task['status'] | 'all' = 'all';
 
   /**
    * Sets the current status filter for tasks.

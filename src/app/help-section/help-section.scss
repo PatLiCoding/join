@@ -23,10 +23,10 @@
   .help-close {
     width: 24px;
     height: 24px;
-    cursor: pointer;
     transition: transform 0.2s ease;
 
     &:hover {
+      cursor: pointer;
       transform: scale(1.2);
     }
   }

@@ -1,10 +1,3 @@
-/**
- * Taskcard Component
- *
- * Represents a single task card within the board.
- * Displays task details, progress, assigned contacts,
- * and allows status changes via a context menu.
- */
 import {
   Component,
   inject,
@@ -19,6 +12,7 @@ import { ContactService } from '../../firebase-service/contact-service';
 import { CommonModule, SlicePipe } from '@angular/common';
 import { TaskService } from '../../firebase-service/task.service';
 import { BurgermenuStateService } from '../../firebase-service/burgermenu-state.service';
+import { ContactAvatar } from '../../shared/contact-avatar/contact-avatar';
 
 /**
  * Taskcard Component
@@ -30,7 +24,7 @@ import { BurgermenuStateService } from '../../firebase-service/burgermenu-state.
 @Component({
   selector: 'app-taskcard',
   standalone: true,
-  imports: [SlicePipe, CommonModule],
+  imports: [SlicePipe, CommonModule, ContactAvatar],
   templateUrl: './taskcard.html',
   styleUrls: ['./taskcard.scss'],
 })
@@ -91,19 +85,6 @@ export class Taskcard {
     if (!task.subtasks?.length) return 0;
     const completed = task.subtasks.filter((st) => st.completed).length;
     return Math.round((completed / task.subtasks.length) * 100);
-  }
-
-  /**
-   * Generates initials from a full name.
-   *
-   * @param name Full name string
-   * @returns Uppercase initials
-   */
-  getInitials(name: string): string {
-    if (!name) return '';
-    const parts = name.split(' ');
-    const initials = parts.length > 1 ? parts[0][0] + parts[1][0] : parts[0][0];
-    return initials.toUpperCase();
   }
 
   /**

@@ -1,0 +1,155 @@
+@use 'mixins' as *;
+
+.assigned-to-container {
+  position: relative;
+  width: 100%;
+
+  .assigned-to-select {
+    position: relative;
+    display: flex;
+    align-items: center;
+    min-height: 36px;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    @include padding(6px, 10px);
+    background-color: #fff;
+    gap: 8px;
+    margin-bottom: 10px;
+
+    .contact-search-select {
+      flex: 1;
+      min-width: 0;
+      border: none;
+      outline: none;
+      font-family: 'Inter', sans-serif;
+      font-weight: 400;
+      font-size: 20px;
+      line-height: 120%;
+      letter-spacing: 0;
+      background: transparent;
+      color: #2a3647;
+      padding: 0;
+      margin-right: 8px;
+      border-radius: 0 !important;
+      caret-color: #2a3647;
+    }
+
+    .contact-search-select::placeholder {
+      font-family: 'Inter', sans-serif;
+      font-weight: 400;
+      font-size: 20px;
+      line-height: 120%;
+      letter-spacing: 0;
+      color: #2a3647 !important;
+      opacity: 1;
+    }
+
+    .contact-search-select:focus {
+      border: none !important;
+      outline: none !important;
+      box-shadow: none !important;
+    }
+
+    .dropdown-arrow {
+      width: 24px;
+      height: 24px;
+      cursor: pointer;
+      margin-left: auto;
+    }
+
+    .placeholder {
+      color: #2a3647;
+      font-size: 14px;
+    }
+  }
+
+  .avatars-below {
+    display: flex;
+    gap: 6px;
+    margin-top: 8px;
+    margin-bottom: 10px;
+
+    .avatar {
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #fff;
+      font-size: 12px;
+      font-weight: bold;
+    }
+
+    .avatar.more {
+      background-color: #888;
+    }
+  }
+
+  .assigned-to-list {
+    position: absolute;
+    top: 80px;
+    left: 0;
+    width: 100%;
+    max-height: 240px;
+    overflow-y: auto;
+    background: #fff;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+    z-index: 1000;
+    padding: 6px 0;
+    @include flex(column, stretch, flex-start, 4px);
+
+    .single-contact {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      @include padding(6px, 12px);
+      border-radius: 10px;
+
+      &:hover {
+        cursor: pointer;
+        background-color: #f0f0f0;
+      }
+
+      &.active {
+        background-color: #2a3647;
+        color: white;
+      }
+
+      .avatar-letter-box {
+        width: 42px;
+        height: 42px;
+        border-radius: 50%;
+        @include flex-center;
+        font-family: 'Inter', sans-serif;
+        font-weight: 400;
+        font-size: 16px;
+        color: #fff;
+        border: 2px solid #fff;
+        line-height: 120%;
+        letter-spacing: 0;
+      }
+
+      .contact-name {
+        flex: 1;
+        font-family: 'Inter', sans-serif;
+        font-weight: 400;
+        font-size: 20px;
+        line-height: 120%;
+        letter-spacing: 0;
+      }
+
+      .checkbox-img {
+        width: 20px;
+        height: 20px;
+        transition: filter 0.2s;
+
+        &:hover {
+        cursor: pointer;
+      }
+      }
+    }
+  }
+}

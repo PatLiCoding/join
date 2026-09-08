@@ -116,6 +116,7 @@
             (blur)="passwordFocused = false"
           />
           <img
+          class="password-visibility"
             [src]="
               !password
                 ? 'assets/icon/login/lock.png'
@@ -123,7 +124,6 @@
             "
             alt="Toggle Password Visibility"
             (click)="togglePasswordVisibility()"
-            style="cursor: pointer"
           />
         </div>
         <div
@@ -168,6 +168,7 @@
             (blur)="confirmFocused = false"
           />
           <img
+          class="password-visibility"
             [src]="
               !confirmPassword
                 ? 'assets/icon/login/lock.png'
@@ -176,7 +177,6 @@
             "
             alt="Toggle Confirm Password Visibility"
             (click)="toggleConfirmPasswordVisibility()"
-            style="cursor: pointer"
           />
         </div>
         <div

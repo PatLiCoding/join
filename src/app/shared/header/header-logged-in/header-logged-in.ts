@@ -10,6 +10,7 @@ import { Router, RouterModule, NavigationEnd } from '@angular/router';
 import { filter } from 'rxjs/operators';
 import { AuthService } from '../../../firebase-service/auth.servic';
 import { ContactService } from '../../../firebase-service/contact-service';
+import { ContactDialogTemplate } from '../../../contact-section/contact-dialog-template/contact-dialog-template';
 
 /** 
  * Header component displayed for authenticated users. 
@@ -18,23 +19,19 @@ import { ContactService } from '../../../firebase-service/contact-service';
  */
 @Component({
   selector: 'app-header-logged-in',
-  imports: [RouterModule],
+  imports: [RouterModule, ContactDialogTemplate],
   templateUrl: './header-logged-in.html',
   styleUrl: './header-logged-in.scss',
 })
 export class HeaderLoggedIn implements OnInit, AfterViewInit {
   /** Initials of the current user */
   userInitials: string = 'G';
-
   /** Flag indicating if the device is mobile */
   isMobile = false;
-
   /** Flag indicating if the help section is open */
   isHelpOpen = false;
-
   /** Flag for showing the header popup */
   showPopup: boolean = false;
-
   /** Application title */
   appTitle: string = 'Kanban Project Management Tool';
 
@@ -47,6 +44,11 @@ export class HeaderLoggedIn implements OnInit, AfterViewInit {
   logoPath: string = 'assets/icon/header/logo_grey.png';
   helpIconPath: string = 'assets/icon/header/help.png';
 
+  /** Photo URL of the current user, if available */
+  userPhotoUrl: string | null = null;
+
+  /** Reference to the contact/account dialog rendered in this template. */
+  @ViewChild(ContactDialogTemplate) contactDialog?: ContactDialogTemplate;
   @ViewChild('desktopPopup') desktopPopup?: ElementRef;
   @ViewChild('mobilePopup') mobilePopup?: ElementRef;
 
@@ -58,7 +60,7 @@ export class HeaderLoggedIn implements OnInit, AfterViewInit {
    */
   constructor(
     private router: Router,
-    private auth: AuthService,
+    public auth: AuthService,
     private contactService: ContactService,
   ) {
     this.checkScreenSize();
@@ -80,6 +82,7 @@ export class HeaderLoggedIn implements OnInit, AfterViewInit {
    */
   private setUserInitials() {
     const name = this.contactService.currentUserName;
+    this.userPhotoUrl = this.contactService.currentUserPhotoUrl;
     if (!name) {
       this.userInitials = 'G';
       return;
@@ -93,6 +96,7 @@ export class HeaderLoggedIn implements OnInit, AfterViewInit {
   logout() {
     this.contactService.clearCurrentUser();
     this.userInitials = 'G';
+    this.userPhotoUrl = null;
     this.showPopup = false;
     this.auth.logout();
     this.router.navigate(['/login']);
@@ -131,6 +135,17 @@ export class HeaderLoggedIn implements OnInit, AfterViewInit {
         });
       });
     }
+  }
+
+  /**
+   * Opens the account dialog, blocking access for the guest test account.
+   */
+  onViewAccount(): void {
+    if (this.auth.isGuestUser()) {
+      alert('The guest account cannot be edited or deleted.');
+      return;
+    }
+    this.contactDialog?.openWithMode('account');
   }
 
   /**

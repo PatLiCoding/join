@@ -33,11 +33,9 @@ app-nav-bar {
 app-header {
   height: var(--header-height);
   flex-shrink: 0;
-
   position: sticky;
   top: 0;
   z-index: 20;
-
   background-color: #ffffff;
 }
 
@@ -84,6 +82,5 @@ app-header {
     border: 0;
     background-color: white;
     box-shadow: 0 4px 4px 0 rgba(0, 0, 0, 0.1);
-
   }
 }

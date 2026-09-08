@@ -1,11 +1,3 @@
-/**
- * ContactInfo Component
- *
- * Displays detailed information about a selected contact.
- * Handles editing, deletion, menu toggling, and provides
- * helper methods for initials, color, and display names.
- * Emits events to switch back to the contact list view.
- */
 import {
   AfterViewInit,
   Component,
@@ -18,6 +10,7 @@ import {
 import { ContactService } from '../../firebase-service/contact-service';
 import { Contacts } from '../../interfaces/contacts';
 import { ContactDialogTemplate } from '../contact-dialog-template/contact-dialog-template';
+import { ContactAvatar } from '../../shared/contact-avatar/contact-avatar';
 
 /**
  * ContactInfo Component
@@ -29,7 +22,7 @@ import { ContactDialogTemplate } from '../contact-dialog-template/contact-dialog
  */
 @Component({
   selector: 'app-contact-info',
-  imports: [ContactDialogTemplate],
+  imports: [ContactDialogTemplate, ContactAvatar],
   templateUrl: './contact-info.html',
   styleUrl: './contact-info.scss',
 })
@@ -82,25 +75,6 @@ export class ContactInfo implements AfterViewInit {
   deleteContact(): void {
     this.contactService.deleteSelectedContact();
     this.switch.emit();
-  }
-
-  /**
-   * Returns the display color associated with the selected contact.
-   * @returns Hex color string or default color
-   */
-  getSelectedColor(): string {
-    return this.contactService.getContactColor(this.selectedContact);
-  }
-
-  /**
-   * Returns initials for a given name.
-   * Delegates to the contact service.
-   *
-   * @param name Optional full name
-   * @returns Uppercase initials
-   */
-  getInitials(name?: string): string {
-    return this.contactService.getInitials(name);
   }
 
   /**

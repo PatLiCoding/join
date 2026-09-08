@@ -1,11 +1,3 @@
-/**
- * BoardSection Component
- *
- * Manages the Kanban board including drag & drop,
- * task creation, editing, deletion and filtering.
- * Tasks are loaded from Firebase via TaskService
- * and grouped by status for display.
- */
 import { Component, OnInit, signal } from '@angular/core';
 import { TaskService } from '../firebase-service/task.service';
 import { CommonModule } from '@angular/common';
@@ -26,6 +18,14 @@ import { TaskOverlay } from './task-overlay/task-overlay';
 import { AddTaskDialog } from '../add-task-section/add-task-dialog/add-task-dialog';
 type ColumnKey = 'todo' | 'inProgress' | 'awaitFeedback' | 'done';
 
+/**
+ * BoardSection Component
+ *
+ * Manages the Kanban board including drag & drop,
+ * task creation, editing, deletion and filtering.
+ * Tasks are loaded from Firebase via TaskService
+ * and grouped by status for display.
+ */
 @Component({
   selector: 'app-board-section',
   imports: [

@@ -1,0 +1,73 @@
+@keyframes dialog-enter-right {
+  from {
+    transform: translate(-50%, -50%) translateX(120%);
+    opacity: 0;
+  }
+  to {
+    transform: translate(-50%, -50%) translateX(0);
+    opacity: 1;
+  }
+}
+
+@keyframes dialog-exit-right {
+  from {
+    transform: translate(-50%, -50%) translateX(0);
+    opacity: 1;
+  }
+  to {
+    transform: translate(-50%, -50%) translateX(120%);
+    opacity: 0;
+  }
+}
+
+@keyframes dialog-enter-up {
+  from {
+    transform: translate3d(0, calc(100vh + 40px), 0);
+    opacity: 0;
+  }
+  to {
+    transform: translate3d(0, 0, 0);
+    opacity: 1;
+  }
+}
+
+@keyframes dialog-exit-up {
+  from {
+    transform: translate3d(0, 0, 0);
+    opacity: 1;
+  }
+  to {
+    transform: translate3d(0, calc(100vh + 40px), 0);
+    opacity: 0;
+  }
+}
+
+@keyframes toast-slide-right {
+  0% {
+    transform: translate3d(-50%, 0, 0) translateX(120vw);
+  }
+  18% {
+    transform: translate3d(-50%, 0, 0) translateX(0);
+  }
+  70% {
+    transform: translate3d(-50%, 0, 0) translateX(0);
+  }
+  100% {
+    transform: translate3d(-50%, 0, 0) translateX(120vw);
+  }
+}
+
+@keyframes toast-slide-up {
+  0% {
+    transform: translate3d(-50%, 0, 0) translateY(120vh);
+  }
+  18% {
+    transform: translate3d(-50%, 0, 0) translateY(0);
+  }
+  70% {
+    transform: translate3d(-50%, 0, 0) translateY(0);
+  }
+  100% {
+    transform: translate3d(-50%, 0, 0) translateY(120vh);
+  }
+}

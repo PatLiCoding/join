@@ -1,4 +1,5 @@
 import { Injectable } from '@angular/core';
+import { Attachment } from '../interfaces/task';
 
 /**
  * Provides client-side validation and compression for image uploads.
@@ -10,9 +11,10 @@ import { Injectable } from '@angular/core';
 export class ImageCompressionService {
   /** MIME types accepted by the file picker / validation. */
   readonly allowedTypes = ['image/png', 'image/jpeg', 'image/webp'];
-
   /** Maximum accepted file size in bytes, checked before compression (5 MB). */
   readonly maxOriginalSizeBytes = 5 * 1024 * 1024;
+  /** Safety-margin limit for the combined size of all attachments in one Firestore document (~1 MiB max). */
+  readonly maxTotalAttachmentsSizeBytes = 900 * 1024;
 
   /**
    * Checks whether a file's MIME type is one of the allowed image types.
@@ -62,6 +64,17 @@ export class ImageCompressionService {
   }
 
   /**
+   * Formats a byte count as a human-readable string (B, KB, or MB).
+   * @param bytes The size in bytes.
+   * @returns A formatted string, e.g. "245 KB" or "1.2 MB".
+   */
+  formatFileSize(bytes: number): string {
+    if (bytes < 1024) return `${bytes} B`;
+    if (bytes < 1024 * 1024) return `${(bytes / 1024).toFixed(0)} KB`;
+    return `${(bytes / (1024 * 1024)).toFixed(1)} MB`;
+  }
+
+  /**
    * Loads an image element from a given source URL.
    * @param src The image source (e.g. a data URL).
    * @returns A promise resolving to the loaded HTMLImageElement.
@@ -92,7 +105,6 @@ export class ImageCompressionService {
     let width = img.width;
     let height = img.height;
     if (width <= maxWidth && height <= maxHeight) return { width, height };
-
     if (width > height) {
       height = (height * maxWidth) / width;
       width = maxWidth;
@@ -125,5 +137,28 @@ export class ImageCompressionService {
     if (!ctx) throw new Error('Canvas context unavailable');
     ctx.drawImage(img, 0, 0, width, height);
     return canvas.toDataURL('image/jpeg', quality);
+  }
+
+  /**
+   * Calculates the approximate byte size of a base64-encoded data URL,
+   * accounting for base64 padding characters.
+   * @param base64 The base64 data URL string (e.g. "data:image/jpeg;base64,...").
+   * @returns The approximate decoded size in bytes.
+   */
+  getBase64SizeInBytes(base64: string): number {
+    const data = base64.split(',')[1] ?? base64;
+    const padding = data.match(/=+$/)?.[0].length ?? 0;
+    return Math.floor((data.length * 3) / 4) - padding;
+  }
+
+  /**
+   * Checks whether the combined size of all given attachments stays within
+   * the Firestore document size limit.
+   * @param attachments The full list of attachments to be saved with a task.
+   * @returns True if the total size is within maxTotalAttachmentsSizeBytes.
+   */
+  isTotalSizeAllowed(attachments: Attachment[]): boolean {
+    const total = attachments.reduce((sum, att) => sum + this.getBase64SizeInBytes(att.base64), 0);
+    return total <= this.maxTotalAttachmentsSizeBytes;
   }
 }

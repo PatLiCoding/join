@@ -17,9 +17,7 @@
   @if (showContactContent && selectedContact; as contact) {
     <div class="contactContant">
       <div class="contactNameContainer">
-        <div class="avatarLetterBox" [style.backgroundColor]="getSelectedColor()">
-          <p>{{ getInitials(contact.name) }}</p>
-        </div>
+        <app-contact-avatar [contact]="selectedContact" [size]="120" [mobileSize]="80"/>
         <div class="nameEditContant">
           <h2>{{ getDisplayName(contact.name) }}</h2>
           <div class="editContainer">

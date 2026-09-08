@@ -17,9 +17,7 @@
           (click)="selectContact(contact)"
           [class.active]="contactService.selectedContact?.id === contact.id"
         >
-          <div class="avatarLetterBox" [style.backgroundColor]="getContactColor(contact)">
-            <p>{{ getInitials(contact.name) }}</p>
-          </div>
+          <app-contact-avatar [contact]="contact" [size]="42" [mobileSize]="42"/>
           <div class="contactSingleInfo">
             <p>{{ getDisplayName(contact.name) }}</p>
             <a>{{ contact.email }}</a>
