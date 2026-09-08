@@ -3,22 +3,21 @@
 .signup-wrapper {
   position: relative;
   width: 100%;
-  min-width: 0;
   min-height: 100vh;
-  padding: 150px 16px 100px 16px;
+  padding: 40px 16px 80px 16px; 
   @include flex(column, center, center);
 }
 
 .signup-wrapper,
 .signup-wrapper * {
-  box-sizing: content-box;
+  box-sizing: border-box; 
 }
 
- .signup-form {
+.signup-form {
   position: relative;
-  width: 100%;
-  max-width: 600px;
-  min-width: 422px;
+  width: 598px;
+  height: 630px;
+  max-height: 630px;
   margin: 0 auto;
   padding: 40px;
   background: white;
@@ -30,11 +29,11 @@
   .signup-scroll-area {
     flex: 1 1 auto;
     overflow-y: auto;
-    margin-bottom: 16px;
+    margin-top: 16px;
     @include flex-col(8px);
     @include custom-scrollbar;
-    
   }
+}
 
    .input-group-wrapper {
     cursor: default;
@@ -45,7 +44,6 @@
 
   .signup-header {
     @include flex(column, center, flex-start, 8px);
-    padding-bottom: 16px;
 
     h1 {
       margin: 0;
@@ -59,7 +57,7 @@
       background-color: #29ABE2;
       border-radius: 2px;
     }
-  }}
+  }
 
   @media (max-width: 600px) {
     .signup-header h1 {
@@ -68,7 +66,6 @@
   }
 
   .input-group-wrapper {
-    cursor: pointer;
     @include flex-col(2px);
     min-height: 55px;
     width: 100%;
@@ -261,10 +258,9 @@
     padding-top: 82px;
     padding-bottom: 40px;
   }
+  
   .signup-form {
     max-height: calc(100vh - 82px - 40px - 40px);
-  }
-  .signup-form {
     padding: 30px 16px;
     min-width: 0;
     width: 94vw;
@@ -288,7 +284,6 @@
 @media (min-width: 601px) {
   .signup-form {
     position: relative;
-    left: -58px;
   }
 }
 
@@ -299,22 +294,27 @@
 }
 
 @media (max-width: 346px) {
-  .signup-form .input-group-wrapper:nth-of-type(3) .error-message {
-    min-height: 42px;
+  .signup-wrapper {
+    height: auto;
+  }
+  .signup-scroll-area {
+    gap: 0;
+  }
+  .signup-form .input-group-wrapper .error-message {
+    min-height: 38px;
   }
 }
 
-@media (orientation: landscape) and (max-height: 60vh) {
-  ::ng-deep .signup-wrapper {
+@media (orientation: landscape) and (max-height: 450px) {
+  .signup-wrapper {
     height: auto !important;
-    min-height: auto !important;
     overflow-y: auto !important;
     justify-content: flex-start !important;
     align-items: stretch !important;
     padding: 20px 16px !important;
   }
 
-  ::ng-deep .signup-form {
+  .signup-form {
     max-height: none !important; 
     height: auto !important;
     width: 94vw !important;
@@ -326,27 +326,27 @@
     flex-direction: column;
   }
 
-  ::ng-deep .signup-scroll-area {
+  .signup-scroll-area {
     flex: 0 0 auto !important;
     overflow-y: visible !important; 
   }
 
-  ::ng-deep .back-btn {
-    position: relative !important;
-    top: auto !important;
-    left: auto !important;
-    margin-bottom: 12px !important;
-  }
+  // .back-btn {
+  //   position: relative !important;
+  //   top: auto !important;
+  //   left: auto !important;
+  //   margin-bottom: 12px !important;
+  // }
 
-  ::ng-deep .signup-header {
-    align-items: flex-start !important;
-    width: 100% !important;
-    margin-bottom: 12px !important;
-  }
+  // .signup-header {
+  //   align-items: center !important;
+  //   width: 100% !important;
+  //   margin-bottom: 12px !important;
+  // }
 
-  ::ng-deep .privacy,
-  ::ng-deep button:not(.back-btn) {
-    align-self: flex-start !important;
-    margin-top: 12px !important;
-  }
+  // .privacy,
+  // button:not(.back-btn) {
+  //   align-self: center !important;
+  //   margin-top: 12px !important;
+  // }
 }

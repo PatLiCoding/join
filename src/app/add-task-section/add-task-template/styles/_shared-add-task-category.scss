@@ -2,14 +2,31 @@
 
 .category-dropdown-custom {
   position: relative;
+  z-index: 10;
   margin-top: 6px;
   display: flex;
   align-items: center;
-  min-height: 40px;
-  border: 1px solid #d1d1d1;
-  border-radius: 8px;
-  background: #fff;
-  @include padding(8px, 12px);
+  min-height: 48px;
+  background: transparent;
+  @include padding(12px, 16px);
+  cursor: pointer;
+  padding-left: 20px;
+
+  &::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: #fff;
+    border: 1px solid #d1d1d1;
+    border-radius: 10px;
+    z-index: 2;
+  }
+
+  .category-selected,
+  .dropdown-arrow {
+    position: relative;
+    z-index: 3;
+  }
 
   .category-selected {
     flex: 1;
@@ -30,19 +47,21 @@
   .category-options {
     position: absolute;
     left: 0;
-    top: calc(100% + 4px);
-    width: 100%;
+    right: 0;
+    top: calc(100% - 12px);
     background: #fff;
     border: 1px solid #d1d1d1;
-    border-radius: 8px;
+    border-radius: 10px;
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
-    z-index: 10;
+    z-index: 1;
+    padding-top: 12px;
 
     .category-option {
       @include padding(10px, 12px);
-      font-size: 16px;
+      font-size: 20px;
       color: #2a3647;
       font-family: 'Inter', sans-serif;
+      border-radius: 10px;
 
       &:hover {
         background: #f0f0f0;

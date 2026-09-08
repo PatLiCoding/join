@@ -116,6 +116,13 @@ app-assigned-to-select {
   margin-bottom: 20px;
 }
 
+.category-select {
+  padding-left: 4px;
+  label{
+    padding-left: -4px;
+  }
+}
+
 .form-group {
   @include flex-col;
 

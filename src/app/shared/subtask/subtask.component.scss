@@ -142,12 +142,8 @@
         border-radius: 0;
         padding: 4px 80px 4px 12px;
         outline: none;
-        background-color: #f5f5f5;
+        background-color: #FFFFFF;
         box-sizing: border-box;
-
-        &:focus {
-          background-color: #ebebeb;
-        }
       }
 
       .subtask-actions {

@@ -55,7 +55,7 @@
 
   .assigned-to-list {
     position: absolute;
-    top: 100%;
+    top: 60%;
     left: 0;
     right: 0;
     max-height: 240px;
@@ -64,9 +64,9 @@
     border: 1px solid #d1d1d1;
     border-radius: 10px;
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
-    padding: 6px 0;
-    @include flex-col(4px);
-    z-index: 30;
+    padding: 18px 0 0 0;
+    @include flex-col(2px);
+    z-index: 10;
     @include custom-scrollbar;
 
     .single-contact {
