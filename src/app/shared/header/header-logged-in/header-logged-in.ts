@@ -1,11 +1,4 @@
-import {
-  Component,
-  HostListener,
-  AfterViewInit,
-  ElementRef,
-  ViewChild,
-  OnInit,
-} from '@angular/core';
+import { Component, HostListener, AfterViewInit, ElementRef, ViewChild } from '@angular/core';
 import { Router, RouterModule, NavigationEnd } from '@angular/router';
 import { filter } from 'rxjs/operators';
 import { AuthService } from '../../../firebase-service/auth.servic';
@@ -23,9 +16,7 @@ import { ContactDialogTemplate } from '../../../contact-section/contact-dialog-t
   templateUrl: './header-logged-in.html',
   styleUrl: './header-logged-in.scss',
 })
-export class HeaderLoggedIn implements OnInit, AfterViewInit {
-  /** Initials of the current user */
-  userInitials: string = 'G';
+export class HeaderLoggedIn implements AfterViewInit {
   /** Flag indicating if the device is mobile */
   isMobile = false;
   /** Flag indicating if the help section is open */
@@ -43,9 +34,6 @@ export class HeaderLoggedIn implements OnInit, AfterViewInit {
   /** Asset paths */
   logoPath: string = 'assets/icon/header/logo_grey.png';
   helpIconPath: string = 'assets/icon/header/help.png';
-
-  /** Photo URL of the current user, if available */
-  userPhotoUrl: string | null = null;
 
   /** Reference to the contact/account dialog rendered in this template. */
   @ViewChild(ContactDialogTemplate) contactDialog?: ContactDialogTemplate;
@@ -72,22 +60,21 @@ export class HeaderLoggedIn implements OnInit, AfterViewInit {
       });
   }
 
-  /** Lifecycle hook that runs on component initialization */
-  ngOnInit(): void {
-    this.setUserInitials();
+  /**
+   * Initials of the current user, read live from the ContactService so
+   * header and dialog stay in sync without a re-login.
+   */
+  get userInitials(): string {
+    const name = this.contactService.currentUserName;
+    if (!name) return 'G';
+    return this.contactService.getInitials(name) || 'G';
   }
 
   /**
-   * Sets the initials of the current user based on their name
+   * Photo URL of the current user, read live from the ContactService.
    */
-  private setUserInitials() {
-    const name = this.contactService.currentUserName;
-    this.userPhotoUrl = this.contactService.currentUserPhotoUrl;
-    if (!name) {
-      this.userInitials = 'G';
-      return;
-    }
-    this.userInitials = this.contactService.getInitials(name) || 'G';
+  get userPhotoUrl(): string | null {
+    return this.contactService.currentUserPhotoUrl;
   }
 
   /**
@@ -95,8 +82,6 @@ export class HeaderLoggedIn implements OnInit, AfterViewInit {
    */
   logout() {
     this.contactService.clearCurrentUser();
-    this.userInitials = 'G';
-    this.userPhotoUrl = null;
     this.showPopup = false;
     this.auth.logout();
     this.router.navigate(['/login']);
