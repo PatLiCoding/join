@@ -46,8 +46,10 @@ To run this project locally:
 ```bash
    git clone https://github.com/PatLiCoding/join.git
    cd join
-   npm install
+   npm install --legacy-peer-deps
 ```
+
+   > **Note:** `--legacy-peer-deps` is required because `@angular/fire` currently resolves a peer dependency (`@angular/platform-browser-dynamic`) that conflicts with the latest Angular patch version used in this project. A plain `npm install` will fail with an `ERESOLVE` error.
 
 3. **Set up Firebase before running the app**: The app will not start correctly without this (see [Firebase Configuration](#firebase-configuration) below).
 
