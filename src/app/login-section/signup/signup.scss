@@ -4,13 +4,13 @@
   position: relative;
   width: 100%;
   min-height: 100vh;
-  padding: 40px 16px 80px 16px; 
+  padding: 40px 16px 80px 16px;
   @include flex(column, center, center);
 }
 
 .signup-wrapper,
 .signup-wrapper * {
-  box-sizing: border-box; 
+  box-sizing: border-box;
 }
 
 .signup-form {
@@ -22,7 +22,7 @@
   padding: 40px;
   background: white;
   border-radius: 30px;
-  box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
   @include flex-col(15px);
   font-family: sans-serif;
 
@@ -35,170 +35,176 @@
   }
 }
 
-   .input-group-wrapper {
-    cursor: default;
-    .password-visibility {
+.input-group-wrapper {
+  cursor: default;
+  .password-visibility {
     cursor: pointer;
   }
+}
+
+.signup-header {
+  @include flex(column, center, flex-start, 8px);
+
+  h1 {
+    margin: 0;
+    font-size: 61px;
+    font-family: 'Inter', sans-serif;
   }
 
-  .signup-header {
-    @include flex(column, center, flex-start, 8px);
-
-    h1 {
-      margin: 0;
-      font-size: 61px;
-      font-family: 'Inter', sans-serif;
-    }
-
-    .underline {
-      width: 50px;
-      height: 3px;
-      background-color: #29ABE2;
-      border-radius: 2px;
-    }
+  .underline {
+    width: 50px;
+    height: 3px;
+    background-color: #29abe2;
+    border-radius: 2px;
   }
+}
 
-  @media (max-width: 600px) {
-    .signup-header h1 {
-      font-size: 47px !important;
-    }
+@media (max-width: 600px) {
+  .signup-header h1 {
+    font-size: 47px !important;
   }
+}
 
-  .input-group-wrapper {
-    @include flex-col(2px);
-    min-height: 55px;
-    width: 100%;
-    flex: 0 0 auto;
-  }
+.input-group-wrapper {
+  @include flex-col(2px);
+  min-height: 55px;
+  width: 100%;
+  flex: 0 0 auto;
+}
 
-  .input-group {
-    @include flex-row;
-    border: 1px solid #d1d1d1;
-    border-radius: 8px;
-    padding: 0 10px;
-    height: 45px;
-    gap: 0;
-    width: 100%;
-    max-width: 422px;
-    margin: 0 auto;
-    transition: border 0.2s ease, box-shadow 0.2s ease;
+.input-group {
+  @include flex-row;
+  border: 1px solid #d1d1d1;
+  border-radius: 8px;
+  padding: 0 10px;
+  height: 45px;
+  gap: 0;
+  width: 100%;
+  max-width: 422px;
+  margin: 0 auto;
+  transition:
+    border 0.2s ease,
+    box-shadow 0.2s ease;
 
-    input {
-      flex: 1;
-      min-width: 0;
-      border: none;
-      outline: none;
-      font-size: 20px;
-      background: transparent !important;
-      color: #000;
-      &:-webkit-autofill,
-      &:-webkit-autofill:hover,
-      &:-webkit-autofill:focus,
-      &:-webkit-autofill:active {
-        -webkit-box-shadow: 0 0 0px 1000px white inset;
-        -webkit-text-fill-color: #000;
-        transition: background-color 5000s ease-in-out 0s;
-      }
-    }
-
-    img {
-      width: 20px;
-      height: 20px;
-      flex-shrink: 0;
-    }
-
-    &:focus-within {
-      border: 1px solid #29ABE2;
-      box-shadow: 0 0 0 2px rgba(41,171,226,0.2);
-    }
-
-    &.error {
-      border: 1px solid red;
-      box-shadow: 0 0 0 2px rgba(255,0,0,0.2);
-    }
-  }
-
-  .error-message {
-    font-size: 16px;
-    color: red;
-    margin: 4px auto 0 auto;
-    visibility: hidden;
-    max-width: 422px;
-    width: 100%;
-    text-align: left;
-    line-height: 1.3;
-    min-height: 21px;
-  }
-
-  .error-message.show {
-    visibility: visible;
-  }
-
-  .privacy {
-    @include flex(row, center, center, 6px);
-    width: 100%;
-    font-size: 16px;
-
-    input[type='checkbox'] {
-        position: absolute;
-        opacity: 0;
-        width: 0;
-        height: 0;
-    }
-
-    .privacy-checkbox-icon {
-      width: 24px;
-      height: 24px;
-      flex-shrink: 0;
-      cursor: pointer;
-    }
-
-    span {
-      display: inline-flex;
-      align-items: center;
-      gap: 4px;
-    }
-
-    a {
-      color: #29ABE2;
-      text-decoration: none;
-
-      &:hover {
-        text-decoration: underline;
-      }
-    }
-  }
-
-  button:not(.back-btn) {
-    width: 126px;
-    height: 55px;
-    min-height: 55px;
-    flex-shrink: 0;
-    padding: 0;
-    border-radius: 8px;
+  input {
+    flex: 1;
+    min-width: 0;
     border: none;
-    background-color: #1E2A3C;
-    color: white;
-    cursor: pointer;
-    font-size: 21px;
-    line-height: 120%;
-    font-weight: 700;
-    letter-spacing: 0;
-    align-self: center;
-    @include flex-center;
-    transition: background-color 0.2s ease;
-
-    &:hover:not(:disabled) {
-      background-color: #29ABE2;
-    }
-
-    &:disabled {
-      background-color: #ccc;
-      cursor: not-allowed;
+    outline: none;
+    font-size: 20px;
+    background: transparent !important;
+    color: #000;
+    &:-webkit-autofill,
+    &:-webkit-autofill:hover,
+    &:-webkit-autofill:focus,
+    &:-webkit-autofill:active {
+      -webkit-box-shadow: 0 0 0px 1000px white inset;
+      -webkit-text-fill-color: #000;
+      transition: background-color 5000s ease-in-out 0s;
     }
   }
 
+  img {
+    width: 20px;
+    height: 20px;
+    flex-shrink: 0;
+  }
+
+  &:focus-within {
+    border: 1px solid #29abe2;
+    box-shadow: 0 0 0 2px rgba(41, 171, 226, 0.2);
+  }
+
+  &.error {
+    border: 1px solid red;
+    box-shadow: 0 0 0 2px rgba(255, 0, 0, 0.2);
+  }
+}
+
+.error-message {
+  font-size: 16px;
+  color: red;
+  margin: 4px auto 0 auto;
+  visibility: hidden;
+  max-width: 422px;
+  width: 100%;
+  text-align: left;
+  line-height: 1.3;
+  min-height: 21px;
+}
+
+.error-message.show {
+  visibility: visible;
+}
+
+.privacy {
+  @include flex(row, center, center, 6px);
+  width: 100%;
+  font-size: 16px;
+
+  input[type='checkbox'] {
+    position: absolute;
+    opacity: 0;
+    width: 0;
+    height: 0;
+
+    &:focus-visible + .privacy-checkbox-icon {
+      outline: 2px solid #29abe2;
+      border-radius: 4px;
+    }
+  }
+
+  .privacy-checkbox-icon {
+    width: 24px;
+    height: 24px;
+    flex-shrink: 0;
+    cursor: pointer;
+  }
+
+  span {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+  }
+
+  a {
+    color: #29abe2;
+    text-decoration: none;
+
+    &:hover {
+      text-decoration: underline;
+    }
+  }
+}
+
+button:not(.back-btn) {
+  width: 126px;
+  height: 55px;
+  min-height: 55px;
+  flex-shrink: 0;
+  padding: 0;
+  border-radius: 8px;
+  border: none;
+  background-color: #1e2a3c;
+  color: white;
+  cursor: pointer;
+  font-size: 21px;
+  line-height: 120%;
+  font-weight: 700;
+  letter-spacing: 0;
+  align-self: center;
+  @include flex-center;
+  transition: background-color 0.2s ease;
+
+  &:hover:not(:disabled) {
+    background-color: #29abe2;
+  }
+
+  &:disabled {
+    background-color: #ccc;
+    cursor: not-allowed;
+  }
+}
 
 .success-overlay {
   @include absolute($bottom: 0, $left: 50%);
@@ -206,14 +212,16 @@
   width: 90%;
   max-width: 360px;
   padding: 15px;
-  background-color: #1E2A3C;
+  background-color: #1e2a3c;
   color: white;
   border-radius: 10px;
   text-align: center;
   font-size: 14px;
-  box-shadow: 0 8px 20px rgba(0,0,0,0.2);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
   opacity: 0;
-  transition: transform 0.5s ease, opacity 0.5s ease;
+  transition:
+    transform 0.5s ease,
+    opacity 0.5s ease;
   z-index: 10;
 }
 
@@ -234,7 +242,9 @@
   border-radius: 50%;
   cursor: pointer;
   background: transparent;
-  transition: background-color 0.2s ease, transform 0.15s ease;
+  transition:
+    background-color 0.2s ease,
+    transform 0.15s ease;
   z-index: 10;
 
   img {
@@ -244,7 +254,7 @@
   }
 
   &:hover {
-    background-color: #E3F3FB;
+    background-color: #e3f3fb;
     transform: scale(1.05);
   }
 
@@ -258,7 +268,7 @@
     padding-top: 82px;
     padding-bottom: 40px;
   }
-  
+
   .signup-form {
     max-height: calc(100vh - 82px - 40px - 40px);
     padding: 30px 16px;
@@ -275,7 +285,7 @@
     margin: 0;
     font-size: 47px;
   }
-  .back-btn{
+  .back-btn {
     top: 40px;
     left: 8%;
   }
@@ -288,7 +298,7 @@
 }
 
 @media (max-width: 400px) {
-  .back-btn{
+  .back-btn {
     left: 5%;
   }
 }
@@ -315,7 +325,7 @@
   }
 
   .signup-form {
-    max-height: none !important; 
+    max-height: none !important;
     height: auto !important;
     width: 94vw !important;
     max-width: 94vw !important;
@@ -328,7 +338,7 @@
 
   .signup-scroll-area {
     flex: 0 0 auto !important;
-    overflow-y: visible !important; 
+    overflow-y: visible !important;
   }
 
   // .back-btn {

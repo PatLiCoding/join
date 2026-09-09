@@ -15,7 +15,7 @@ export class PrivacyPolicySection {
   constructor(private location: Location) {}
 
   /** Returns to the previously visited page. */
-  closeHelp() {
+  close() {
     this.location.back();
   }
 }

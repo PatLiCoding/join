@@ -39,7 +39,10 @@
             : 'assets/icon/login/' + (passwordVisible ? 'visibility.png' : 'visibility_off.png')
         "
         alt="Toggle Password Visibility"
-        (click)="togglePasswordVisibility()"
+        (click)="password && togglePasswordVisibility()"
+        [tabindex]="password ? 0 : -1"
+        (keydown.enter)="password && togglePasswordVisibility()"
+        (keydown.space)="$event.preventDefault(); password && togglePasswordVisibility()"
       />
     </div>
 

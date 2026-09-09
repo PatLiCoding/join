@@ -19,23 +19,26 @@
         class="dropdown-arrow"
         alt="Dropdown Arrow"
         (click)="toggleDropdown()"
+        tabindex="0"
+        (keydown.enter)="toggleDropdown()"
+        (keydown.space)="toggleDropdown()"
         [alt]="isDropdownOpen ? 'Dropdown close' : 'Dropdown open'"
       />
     </div>
 
     <div *ngIf="selectedContacts.length > 0" class="avatars-below">
-  <div class="avatar-wrapper" *ngFor="let contact of selectedContacts | slice: 0 : 3">
-    <app-contact-avatar
-      [contact]="contact"
-      [size]="42"
-      [mobileSize]="42"
-      [colorOverride]="isCurrentUser(contact) ? '#4caf50' : undefined"
-    />
-  </div>
-  <div *ngIf="selectedContacts.length > 3" class="avatar more">
-    +{{ selectedContacts.length - 3 }}
-  </div>
-</div>
+      <div class="avatar-wrapper" *ngFor="let contact of selectedContacts | slice: 0 : 3">
+        <app-contact-avatar
+          [contact]="contact"
+          [size]="42"
+          [mobileSize]="42"
+          [colorOverride]="isCurrentUser(contact) ? '#4caf50' : undefined"
+        />
+      </div>
+      <div *ngIf="selectedContacts.length > 3" class="avatar more">
+        +{{ selectedContacts.length - 3 }}
+      </div>
+    </div>
 
     <div *ngIf="isDropdownOpen" class="assigned-to-list">
       <div
@@ -43,13 +46,16 @@
         class="single-contact"
         [class.active]="isSelected(contact)"
         (click)="toggleContact(contact)"
+        tabindex="0"
+        (keydown.enter)="toggleContact(contact)"
+        (keydown.space)="toggleContact(contact)"
       >
         <app-contact-avatar
-      [contact]="contact"
-      [size]="42"
-      [mobileSize]="42"
-      [colorOverride]="isCurrentUser(contact) ? '#4caf50' : undefined"
-    />
+          [contact]="contact"
+          [size]="42"
+          [mobileSize]="42"
+          [colorOverride]="isCurrentUser(contact) ? '#4caf50' : undefined"
+        />
 
         <span class="contact-name-wrapper">
           <span class="contact-name-text">

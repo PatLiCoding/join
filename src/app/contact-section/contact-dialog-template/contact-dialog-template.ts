@@ -159,12 +159,14 @@ export class ContactDialogTemplate implements AfterViewInit, OnDestroy {
 
   /**
    * Opens the dialog element and locks body scroll.
+   * Deferred to the next tick so a pending keyup from the triggering
+   * Enter keypress doesn't land on the newly focused close button.
    * @param dialogEl The dialog HTML element.
    */
   private openDialogElement(dialogEl: HTMLDialogElement): void {
     dialogEl.removeAttribute('data-dialog-state');
     this.scrollLock.lock();
-    dialogEl.showModal();
+    setTimeout(() => dialogEl.showModal(), 0);
   }
 
   /**

@@ -10,6 +10,9 @@
         src="assets/icon/task/board/taskcard-Burgermenu.png"
         class="MoveToBurgermenu"
         (click)="toggleMenu(); $event.stopPropagation()"
+        tabindex="0"
+        (keydown.enter)="toggleMenu(); $event.stopPropagation()"
+        (keydown.space)="toggleMenu(); $event.stopPropagation()"
         alt="burgermenu"
       />
     }
@@ -21,6 +24,9 @@
             class="moveToBox"
             *ngFor="let move of movesForTemplate"
             (click)="moveToStatus(move.status)"
+            tabindex="0"
+            (keydown.enter)="moveToStatus(move.status); $event.stopPropagation()"
+            (keydown.space)="moveToStatus(move.status); $event.stopPropagation()"
           >
             <img
               [src]="
@@ -52,7 +58,7 @@
     @if (task.assignedTo; as assigned) {
       <div class="teamContainer">
         <div class="workingTeam" *ngFor="let member of assigned | slice: 0 : 3">
-          <app-contact-avatar [contact]="getContactByName(member)" [size]="32" [mobileSize]="32"/>
+          <app-contact-avatar [contact]="getContactByName(member)" [size]="32" [mobileSize]="32" />
         </div>
         @if (assigned.length > 3) {
           <p>

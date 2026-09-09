@@ -15,6 +15,9 @@
         class="subtask-icon delete"
         (mousedown)="$event.preventDefault()"
         (click)="clearInput()"
+        tabindex="0"
+        (keydown.enter)="clearInput()"
+        (keydown.space)="clearInput()"
       />
       <div class="subtask-divider"></div>
       <img
@@ -23,6 +26,9 @@
         class="subtask-icon check"
         (mousedown)="$event.preventDefault()"
         (click)="addSubtask($event)"
+        tabindex="0"
+        (keydown.enter)="addSubtask($event)"
+        (keydown.space)="addSubtask($event)"
       />
     </div>
   </div>
@@ -49,6 +55,9 @@
               class="subtask-icon check"
               (mousedown)="$event.preventDefault()"
               (click)="$event.stopPropagation(); saveEdit(i, $event)"
+              tabindex="0"
+              (keydown.enter)="$event.stopPropagation(); saveEdit(i, $event)"
+              (keydown.space)="$event.stopPropagation(); saveEdit(i, $event)"
             />
             <div class="subtask-divider"></div>
             <img
@@ -57,13 +66,22 @@
               class="subtask-icon delete"
               (mousedown)="$event.preventDefault()"
               (click)="$event.stopPropagation(); removeSubtask(i)"
+              tabindex="0"
+              (keydown.enter)="$event.stopPropagation(); removeSubtask(i)"
+              (keydown.space)="$event.stopPropagation(); removeSubtask(i)"
             />
           </div>
         </div>
       </ng-container>
 
       <ng-template #viewSubtask>
-        <div class="subtask-view-content" (dblclick)="startEdit(i)">
+        <div
+          class="subtask-view-content"
+          (dblclick)="startEdit(i)"
+          tabindex="0"
+          (keydown.enter)="startEdit(i)"
+          (keydown.space)="startEdit(i)"
+        >
           <span class="subtask-bullet">&bull;</span>
           <span class="subtask-title-text">{{ task.title }}</span>
         </div>
@@ -73,6 +91,9 @@
             alt="Edit"
             class="subtask-icon edit"
             (click)="startEdit(i); $event.stopPropagation()"
+            tabindex="0"
+            (keydown.enter)="startEdit(i); $event.stopPropagation()"
+            (keydown.space)="startEdit(i); $event.stopPropagation()"
           />
           <div class="subtask-divider"></div>
           <img
@@ -80,6 +101,9 @@
             alt="Delete"
             class="subtask-icon delete"
             (click)="removeSubtask(i); $event.stopPropagation()"
+            tabindex="0"
+            (keydown.enter)="removeSubtask(i); $event.stopPropagation()"
+            (keydown.space)="removeSubtask(i); $event.stopPropagation()"
           />
         </div>
       </ng-template>

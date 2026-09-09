@@ -75,7 +75,9 @@ section {
   img {
     height: 18px;
   }
-  &:hover {
+  &:hover,
+  &:focus-visible {
+    outline: none;
     cursor: pointer;
     background-color: #007cee;
     box-shadow: 0 8px 8px -4px rgba(0, 0, 0, 0.4);
@@ -177,7 +179,9 @@ section {
           width: 40px;
           background-color: #2a3647;
           border-radius: 10px;
-          &:hover {
+          &:hover,
+          &:focus-visible {
+            outline: none;
             cursor: pointer;
             background-color: #007cee;
             box-shadow: 0 8px 8px -4px rgba(0, 0, 0, 0.4);

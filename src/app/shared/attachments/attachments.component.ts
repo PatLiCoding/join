@@ -33,6 +33,9 @@ export class AttachmentsComponent implements OnDestroy, OnChanges {
   @Output() attachmentsChange = new EventEmitter<Attachment[]>();
   /** Controls whether file uploads and deletions are enabled (e.g. true in edit mode, false in view mode). */
   @Input() isEditable = true;
+  /** Emitted once the Viewer.js lightbox has fully closed, so a parent
+   *  focus trap can restore focus if the closing overlay stole it. */
+  @Output() viewerClosed = new EventEmitter<void>();
 
   /** Reference to the gallery container DOM element used by Viewer.js. */
   @ViewChild('gallery') galleryRef?: ElementRef<HTMLDivElement>;
@@ -163,6 +166,7 @@ export class AttachmentsComponent implements OnDestroy, OnChanges {
           title: () => this.buildImageTitle(this.currentViewerIndex),
           view: (event) => this.onImageView(event),
           filter: (image) => image.classList.contains('attachment-img'),
+          hidden: () => this.viewerClosed.emit(),
         });
       }
     });

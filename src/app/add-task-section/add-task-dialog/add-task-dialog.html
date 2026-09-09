@@ -1,25 +1,16 @@
 <div class="add-task-dialog-overlay">
+  <div class="add-task-dialog-backdrop" (click)="onClose()"></div>
 
-  <div 
-    class="add-task-dialog-backdrop"
-    (click)="onClose()">
-  </div>
-
-  <div class="add-task-dialog-container">
-    <button
-      type="button"
-      class="dialog-close-btn"
-      (click)="onClose()"
-    >
-      ✕
-    </button>
-<div class="scroll-wrapper">
-    <app-add-task-template
-      class="dialog-mode"
-      [column]="column"
-      [isDialogMode]="true"
-      (closeDialog)="onClose()">
-    </app-add-task-template>
-</div>
+  <div class="add-task-dialog-container" appFocusTrap tabindex="-1" (keydown.escape)="onClose()">
+    <button type="button" class="dialog-close-btn" (click)="onClose()">✕</button>
+    <div class="scroll-wrapper">
+      <app-add-task-template
+        class="dialog-mode"
+        [column]="column"
+        [isDialogMode]="true"
+        (closeDialog)="onClose()"
+      >
+      </app-add-task-template>
+    </div>
   </div>
 </div>

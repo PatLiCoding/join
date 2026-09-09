@@ -1,4 +1,9 @@
-<div class="add-task-container" [ngClass]="{ 'dialog-mode': isDialogMode || isEditMode, 'edit-mode': isEditMode }">
+<div
+  class="add-task-container"
+  [ngClass]="{ 'dialog-mode': isDialogMode || isEditMode, 'edit-mode': isEditMode }"
+  appFocusTrap
+  #trap="appFocusTrap"
+>
   <h2 class="add-task-heading" *ngIf="!isEditMode">Add Task</h2>
   <div class="add-task-section">
     <div class="add-task-left">
@@ -109,13 +114,28 @@
             "
             class="dropdown-arrow"
             (click)="toggleCategoryDropdown($event)"
+            tabindex="0"
+            (keydown.enter)="toggleCategoryDropdown($event)"
+            (keydown.space)="toggleCategoryDropdown($event)"
             alt="Dropdown Arrow"
           />
           <div class="category-options" *ngIf="isCategoryDropdownOpen">
-            <div class="category-option" (click)="selectCategory('User Story', $event)">
+            <div
+              class="category-option"
+              (click)="selectCategory('User Story', $event)"
+              tabindex="0"
+              (keydown.enter)="selectCategory('User Story', $event)"
+              (keydown.space)="selectCategory('User Story', $event)"
+            >
               User Story
             </div>
-            <div class="category-option" (click)="selectCategory('Technical Task', $event)">
+            <div
+              class="category-option"
+              (click)="selectCategory('Technical Task', $event)"
+              tabindex="0"
+              (keydown.enter)="selectCategory('Technical Task', $event)"
+              (keydown.space)="selectCategory('Technical Task', $event)"
+            >
               Technical Task
             </div>
           </div>
@@ -129,7 +149,10 @@
     <div class="add-task-right">
       <div class="form-group">
         <label>Attachments (images)</label>
-        <app-attachments [(attachments)]="attachments"></app-attachments>
+        <app-attachments
+          [(attachments)]="attachments"
+          (viewerClosed)="trap.restoreLastFocus()"
+        ></app-attachments>
       </div>
 
       <div class="form-group">
@@ -148,17 +171,27 @@
   </div>
 
   <div class="text-button-div">
-    <p class="inline-required-hint">
-      <span class="required">*</span>This field is required
-    </p>
+    <p class="inline-required-hint"><span class="required">*</span>This field is required</p>
     <div class="action-buttons" *ngIf="!isEditMode">
       <button type="button" class="clear-btn" (click)="clearForm()">Clear ✕</button>
-      <button type="button" class="create-btn" [disabled]="!isFormValid" (click)="createTask()">
+      <button
+        type="button"
+        class="create-btn"
+        [disabled]="!isFormValid"
+        (click)="createTask()"
+        tabindex="0"
+      >
         Create Task ✓
       </button>
     </div>
     <div class="action-buttons edit-actions" *ngIf="isEditMode">
-      <button type="button" class="create-btn" [disabled]="!isFormValid" (click)="saveEdit()">
+      <button
+        type="button"
+        class="create-btn"
+        [disabled]="!isFormValid"
+        (click)="saveEdit()"
+        tabindex="0"
+      >
         Ok ✓
       </button>
     </div>

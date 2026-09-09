@@ -6,6 +6,9 @@
       alt="Close"
       class="help-close"
       (click)="close()"
+      tabindex="0"
+      (keydown.enter)="close()"
+      (keydown.space)="close()"
     />
   </div>
 
@@ -14,7 +17,7 @@
     <h3>Contact</h3>
     <p>
       {{ imprint.name }}<br />
-      {{ imprint.street }}<br /> 
+      {{ imprint.street }}<br />
       {{ imprint.zip }} {{ imprint.city }}<br />
       {{ imprint.email }}<br />
     </p>
@@ -44,10 +47,9 @@
 
     <h2>Proprietary Rights</h2>
     <p>
-      Aside from the design owned by <span class="highlight-blue">Developer Akademie GmbH</span>,
-      I, the developer, retain all proprietary rights in
-      <span class="highlight-blue">Join</span>, including any associated copyrighted material,
-      trademarks, and other proprietary information.
+      Aside from the design owned by <span class="highlight-blue">Developer Akademie GmbH</span>, I,
+      the developer, retain all proprietary rights in <span class="highlight-blue">Join</span>,
+      including any associated copyrighted material, trademarks, and other proprietary information.
     </p>
 
     <h2>Use of the Product</h2>
@@ -64,12 +66,11 @@
       <span class="highlight-blue">Join</span> is provided "as is" without warranty of any kind,
       whether express or implied, including but not limited to the implied warranties of
       merchantability, fitness for a particular purpose, and non-infringement. In no event will I,
-      the developer, or the <span class="highlight-blue">Developer Akademie GmbH</span>, be
-      liable for any direct, indirect, incidental, special, consequential or exemplary damages,
-      including but not limited to, damages for loss of profits, goodwill, use, data, or other
-      intangible losses, even if advised of the possibility of such damages, arising
-      out of or in connection with the use or performance of
-      <span class="highlight-blue">Join</span>.
+      the developer, or the <span class="highlight-blue">Developer Akademie GmbH</span>, be liable
+      for any direct, indirect, incidental, special, consequential or exemplary damages, including
+      but not limited to, damages for loss of profits, goodwill, use, data, or other intangible
+      losses, even if advised of the possibility of such damages, arising out of or in connection
+      with the use or performance of <span class="highlight-blue">Join</span>.
     </p>
 
     <h2>Indemnity</h2>
@@ -83,7 +84,8 @@
 
     <p>
       For any questions or notices, please contact us at:
-      <a href="mailto:{{ imprint.email }}" class="highlight-blue">{{ imprint.email }}</a>.
+      <a href="mailto:{{ imprint.email }}" class="highlight-blue">{{ imprint.email }}</a
+      >.
     </p>
 
     <p>Last updated: September 2026</p>

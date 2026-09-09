@@ -203,7 +203,7 @@ export class ContactService implements OnDestroy {
     return {
       name: contact.name,
       email: contact.email,
-      phone: contact.phone,
+      phone: contact.phone ?? null,
       photoUrl: contact.photoUrl ?? null,
     };
   }

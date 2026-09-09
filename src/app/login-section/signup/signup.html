@@ -116,7 +116,7 @@
             (blur)="passwordFocused = false"
           />
           <img
-          class="password-visibility"
+            class="password-visibility"
             [src]="
               !password
                 ? 'assets/icon/login/lock.png'
@@ -124,6 +124,9 @@
             "
             alt="Toggle Password Visibility"
             (click)="togglePasswordVisibility()"
+            [tabindex]="password ? 0 : -1"
+            (keydown.enter)="password && togglePasswordVisibility()"
+            (keydown.space)="$event.preventDefault(); password && togglePasswordVisibility()"
           />
         </div>
         <div
@@ -168,7 +171,7 @@
             (blur)="confirmFocused = false"
           />
           <img
-          class="password-visibility"
+            class="password-visibility"
             [src]="
               !confirmPassword
                 ? 'assets/icon/login/lock.png'
@@ -177,6 +180,9 @@
             "
             alt="Toggle Confirm Password Visibility"
             (click)="toggleConfirmPasswordVisibility()"
+            [tabindex]="password ? 0 : -1"
+            (keydown.enter)="password && toggleConfirmPasswordVisibility()"
+            (keydown.space)="$event.preventDefault(); password && toggleConfirmPasswordVisibility()"
           />
         </div>
         <div
@@ -201,7 +207,14 @@
     </div>
 
     <label class="privacy">
-      <input type="checkbox" [(ngModel)]="acceptedPrivacy" name="privacy" />
+      <input
+        type="checkbox"
+        [(ngModel)]="acceptedPrivacy"
+        name="privacy"
+        tabindex="0"
+        (keydown.space)="$event.preventDefault(); acceptedPrivacy = !acceptedPrivacy"
+        (keydown.enter)="$event.preventDefault(); acceptedPrivacy = !acceptedPrivacy"
+      />
       <img
         class="privacy-checkbox-icon"
         [src]="
@@ -211,7 +224,7 @@
         "
         alt="Accept privacy policy"
       />
-      <span> I accept the <a routerLink="/privacy">Privacy Policy</a> </span>
+      <span> I accept the <a routerLink="/privacy" tabindex="0">Privacy Policy</a> </span>
     </label>
 
     <button type="submit" [disabled]="!isFormValid() || isLoading">

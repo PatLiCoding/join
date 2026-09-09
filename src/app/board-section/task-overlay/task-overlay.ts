@@ -16,6 +16,7 @@ import { TaskService } from '../../firebase-service/task.service';
 import { AttachmentsComponent } from '../../shared/attachments/attachments.component';
 import { ContactAvatar } from '../../shared/contact-avatar/contact-avatar';
 import { AddTaskTemplate } from '../../add-task-section/add-task-template/add-task-template';
+import { FocusTrapDirective } from '../../shared/utils/focus-trap.directive';
 
 /**
  * Overlay component for viewing and editing task details. Editing is delegated to
@@ -24,7 +25,7 @@ import { AddTaskTemplate } from '../../add-task-section/add-task-template/add-ta
 @Component({
   selector: 'app-task-overlay',
   standalone: true,
-  imports: [CommonModule, AttachmentsComponent, ContactAvatar, AddTaskTemplate],
+  imports: [CommonModule, AttachmentsComponent, ContactAvatar, AddTaskTemplate, FocusTrapDirective],
   templateUrl: './task-overlay.html',
   styleUrls: ['./task-overlay.scss'],
 })
