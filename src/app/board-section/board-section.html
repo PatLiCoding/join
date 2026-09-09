@@ -2,8 +2,14 @@
   <div class="headlineContainer">
     <div class="headline">
       <h1>Board</h1>
-      <div class="addBtnMobil" (click)="openAddTaskDialog('todo')">
-        <img src="assets/icon/task/board/add.png" alt="Add"/>
+      <div
+        class="addBtnMobil"
+        (click)="openAddTaskDialog('todo')"
+        tabindex="0"
+        (keydown.enter)="openAddTaskDialog('todo')"
+        (keydown.space)="openAddTaskDialog('todo')"
+      >
+        <img src="assets/icon/task/board/add.png" alt="Add" />
       </div>
     </div>
     <div class="addBtnSearchContainer">
@@ -18,7 +24,7 @@
           (mouseleave)="hoveredIcon = null"
         ></textarea>
         <div class="lensArea">
-          <img src="assets/icon/task/board/search-borderline.png" alt="Borderline"/>
+          <img src="assets/icon/task/board/search-borderline.png" alt="Borderline" />
           <img
             class="lensImg"
             [src]="
@@ -30,9 +36,15 @@
           />
         </div>
       </div>
-      <div class="addBtn" (click)="openAddTaskDialog('todo')">
+      <div
+        class="addBtn"
+        (click)="openAddTaskDialog('todo')"
+        tabindex="0"
+        (keydown.enter)="openAddTaskDialog('todo')"
+        (keydown.space)="openAddTaskDialog('todo')"
+      >
         <p>Add Task</p>
-        <img src="assets/icon/task/board/add.png" alt="Add"/>
+        <img src="assets/icon/task/board/add.png" alt="Add" />
       </div>
     </div>
   </div>
@@ -50,6 +62,9 @@
               : 'assets/icon/task/board/add-task-default.png'
           "
           (click)="openAddTaskDialog('todo')"
+          tabindex="0"
+          (keydown.enter)="openAddTaskDialog('todo')"
+          (keydown.space)="openAddTaskDialog('todo')"
           alt="Add ToDo"
         />
       </div>
@@ -70,7 +85,13 @@
                 </div>
               </ng-template>
 
-              <app-taskcard [task]="task" (openTask)="openTaskOverlay(task)" />
+              <app-taskcard
+                [task]="task"
+                (openTask)="openTaskOverlay(task)"
+                tabindex="0"
+                (keydown.enter)="openTaskOverlay(task)"
+                (keydown.space)="openTaskOverlay(task)"
+              />
             </div>
           }
         } @else {
@@ -91,6 +112,9 @@
               : 'assets/icon/task/board/add-task-default.png'
           "
           (click)="openAddTaskDialog('inProgress')"
+          tabindex="0"
+          (keydown.enter)="openAddTaskDialog('inProgress')"
+          (keydown.space)="openAddTaskDialog('inProgress')"
           alt="Add Progress"
         />
       </div>

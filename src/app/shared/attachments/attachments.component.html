@@ -46,19 +46,25 @@
   </ng-container>
 
   <ul class="attachment-preview-list" #gallery *ngIf="attachments.length">
-    <li
-      class="attachment-thumb"
-      *ngFor="let att of attachments; let i = index"
-      (click)="onThumbClick(i)"
-    >
+    <li class="attachment-thumb" *ngFor="let att of attachments; let i = index">
       <div class="attachment-image">
-        <img class="attachment-img" [src]="att.base64" [alt]="att.filename" />
+        <button
+          type="button"
+          class="thumb-preview-btn"
+          (click)="onThumbClick(i)"
+          [attr.aria-label]="'View ' + att.filename"
+        >
+          <img class="attachment-img" [src]="att.base64" [alt]="att.filename" draggable="false"/>
+        </button>
 
         <button
           *ngIf="isEditable"
           type="button"
           class="remove-attachment"
           [attr.aria-label]="'Remove ' + att.filename"
+          (click)="removeAttachment(i); $event.stopPropagation()"
+          (focus)="onIconEnter(i)"
+          (blur)="onIconLeave()"
         >
           <span
             class="icon-trigger"
@@ -73,7 +79,6 @@
                   : 'assets/imgs/add-task/trash_attachment.png'
               "
               alt="Delete"
-              (click)="removeAttachment(i); $event.stopPropagation()"
             />
           </span>
         </button>
@@ -83,6 +88,9 @@
           type="button"
           class="download-attachment"
           [attr.aria-label]="'Download ' + att.filename"
+          (click)="downloadAttachment(i); $event.stopPropagation()"
+          (focus)="onIconEnter(i)"
+          (blur)="onIconLeave()"
         >
           <span
             class="icon-trigger"
@@ -97,7 +105,6 @@
                   : 'assets/imgs/add-task/cloud_download.png'
               "
               alt="Download"
-              (click)="downloadAttachment(i); $event.stopPropagation()"
             />
           </span>
         </button>

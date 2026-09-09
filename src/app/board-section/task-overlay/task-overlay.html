@@ -1,6 +1,7 @@
-<div class="overlay-backdrop">
-  <div class="task-overlay">
-    <div *ngIf="!isEditMode && task" class="task-container--view">
+<div class="overlay-backdrop" tabindex="-1" (keydown.escape)="onClose()">
+  >
+  <div class="task-overlay" appFocusTrap #trap="appFocusTrap">
+    <div *ngIf="!isEditMode && task" class="task-container--view" appFocusTrap>
       <div class="overlay-header">
         <button class="close-btn" (click)="onClose()">✕</button>
       </div>
@@ -51,7 +52,7 @@
                   *ngFor="let contact of assignedContacts; trackBy: trackByContactId"
                   class="assigned-item"
                 >
-                  <app-contact-avatar [contact]="contact" [size]="42" [mobileSize]="42"/>
+                  <app-contact-avatar [contact]="contact" [size]="42" [mobileSize]="42" />
                 </div>
               </div>
 
@@ -69,6 +70,9 @@
                 *ngFor="let subtask of task.subtasks; let i = index"
                 class="subtask-item clickable"
                 (click)="toggleSubtask(subtask)"
+                tabindex="0"
+                (keydown.enter)="toggleSubtask(subtask)"
+                (keydown.space)="toggleSubtask(subtask)"
               >
                 <img
                   class="subtask-checkbox-img"
@@ -92,6 +96,7 @@
               [attachments]="safeTask.attachments"
               [isEditable]="false"
               label="Attachments"
+              (viewerClosed)="trap.restoreLastFocus()"
             ></app-attachments>
           </div>
         </div>
@@ -136,16 +141,16 @@
       </div>
     </div>
 
-    <div *ngIf="isEditMode && task" class="task-container--edit">
+    <div *ngIf="isEditMode && task" class="task-container--edit" appFocusTrap>
       <div class="overlay-header">
         <button class="close-btn" (click)="onClose()">✕</button>
       </div>
-      
-        <app-add-task-template
-          [mode]="'edit'"
-          [taskToEdit]="task"
-          (taskUpdated)="onSave($event)"
-        ></app-add-task-template>
+
+      <app-add-task-template
+        [mode]="'edit'"
+        [taskToEdit]="task"
+        (taskUpdated)="onSave($event)"
+      ></app-add-task-template>
     </div>
   </div>
 </div>

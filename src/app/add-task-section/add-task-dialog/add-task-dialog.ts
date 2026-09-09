@@ -1,6 +1,15 @@
-import { Component, EventEmitter, Input, Output } from '@angular/core';
+import {
+  Component,
+  EventEmitter,
+  Input,
+  Output,
+  AfterViewInit,
+  ViewChild,
+  ElementRef,
+} from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { AddTaskTemplate } from '../add-task-template/add-task-template';
+import { FocusTrapDirective } from '../../shared/utils/focus-trap.directive';
 
 /**
  * Dialog wrapper component for task creation.
@@ -10,7 +19,7 @@ import { AddTaskTemplate } from '../add-task-template/add-task-template';
 @Component({
   selector: 'app-add-task-dialog',
   standalone: true,
-  imports: [CommonModule, AddTaskTemplate],
+  imports: [CommonModule, AddTaskTemplate, FocusTrapDirective],
   templateUrl: './add-task-dialog.html',
   styleUrls: ['./add-task-dialog.scss'],
 })

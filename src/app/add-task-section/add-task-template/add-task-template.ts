@@ -27,6 +27,7 @@ import {
   formatDateForInput,
 } from './add-task-form.helpers';
 import { SubtaskComponent } from '../../shared/subtask/subtask.component';
+import { FocusTrapDirective } from '../../shared/utils/focus-trap.directive';
 
 /**
  * Component for creating or editing a task, including title, description, due date,
@@ -43,6 +44,7 @@ import { SubtaskComponent } from '../../shared/subtask/subtask.component';
     AssignedToSelectComponent,
     AttachmentsComponent,
     SubtaskComponent,
+    FocusTrapDirective,
   ],
   templateUrl: './add-task-template.html',
   styleUrls: ['./add-task-template.scss'],

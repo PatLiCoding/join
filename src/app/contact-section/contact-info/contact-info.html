@@ -11,13 +11,20 @@
   </div>
 
   <div class="backArrowBtn" [class.active]="isActive">
-    <img src="assets/icon/contact-info/back-arrow.png" (click)="backToList()" alt="Back Arrow" />
+    <img
+      src="assets/icon/contact-info/back-arrow.png"
+      (click)="backToList()"
+      tabindex="0"
+      (keydown.enter)="backToList()"
+      (keydown.space)="backToList()"
+      alt="Back Arrow"
+    />
   </div>
 
   @if (showContactContent && selectedContact; as contact) {
     <div class="contactContant">
       <div class="contactNameContainer">
-        <app-contact-avatar [contact]="selectedContact" [size]="120" [mobileSize]="80"/>
+        <app-contact-avatar [contact]="selectedContact" [size]="120" [mobileSize]="80" />
         <div class="nameEditContant">
           <h2>{{ getDisplayName(contact.name) }}</h2>
           <div class="editContainer">
@@ -26,6 +33,9 @@
               (mouseenter)="hoveredIcon = 'edit'"
               (mouseleave)="hoveredIcon = null"
               (click)="editContact()"
+              tabindex="0"
+              (keydown.enter)="editContact()"
+              (keydown.space)="editContact()"
             >
               <img
                 [src]="
@@ -42,6 +52,9 @@
               (mouseenter)="hoveredIcon = 'delete'"
               (mouseleave)="hoveredIcon = null"
               (click)="deleteContact()"
+              tabindex="0"
+              (keydown.enter)="deleteContact()"
+              (keydown.space)="deleteContact()"
             >
               <img
                 [src]="
@@ -80,6 +93,9 @@
     class="editBurgermenu"
     [class.menu-open]="menuOpen"
     (click)="toggleMenu(); $event.stopPropagation()"
+    tabindex="0"
+    (keydown.enter)="toggleMenu()"
+    (keydown.space)="toggleMenu()"
   >
     <div class="preview" aria-hidden="menuOpen">
       <img src="assets/icon/contact-info/burgermenu.png" alt="burgermenu" />
@@ -90,6 +106,9 @@
         (mouseenter)="hoveredIcon = 'edit'"
         (mouseleave)="hoveredIcon = null"
         (click)="onEditFromMenu($event)"
+        tabindex="0"
+        (keydown.enter)="onEditFromMenu($event)"
+        (keydown.space)="onEditFromMenu($event)"
       >
         <img
           [src]="
@@ -106,6 +125,9 @@
         (mouseenter)="hoveredIcon = 'delete'"
         (mouseleave)="hoveredIcon = null"
         (click)="onDeleteFromMenu($event)"
+        tabindex="0"
+        (keydown.enter)="onDeleteFromMenu($event)"
+        (keydown.space)="onDeleteFromMenu($event)"
       >
         <img
           [src]="

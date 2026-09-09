@@ -114,11 +114,28 @@
       position: relative;
       width: 100%;
       height: 100%;
-      img {
+      .thumb-preview-btn {
+        background: none;
+        border: none;
+        padding: 0;
+        margin: 0;
+        width: 100%;
+        height: 100%;
+        display: block;
+
+        &:focus-visible {
+          outline: 2px solid #29abe2;
+          outline-offset: -2px;
+          border-radius: 12px;
+          background: #4f4e4e60;
+        }
+      }
+      img.attachment-img {
         width: 100%;
         height: 100%;
         object-fit: cover;
         display: block;
+        cursor: pointer;
       }
       .remove-attachment,
       .download-attachment {
@@ -133,17 +150,25 @@
         justify-content: center;
         align-items: center;
         opacity: 0;
-        visibility: hidden;
-        transition:
-          opacity 0.2s ease,
-          visibility 0.2s ease;
+        pointer-events: none;
+        transition: opacity 0.2s ease;
         z-index: 2;
+
+        &:focus,
+        &:focus-visible {
+          opacity: 1;
+          pointer-events: auto;
+          outline: 2px solid #29abe2;
+          outline-offset: -2px;
+          border-radius: 12px 12px 0 0;
+        }
       }
 
       .icon-trigger {
         display: inline-flex;
         justify-content: center;
         align-items: center;
+        pointer-events: auto;
         img {
           object-fit: contain;
           display: block;
@@ -172,11 +197,9 @@
           height: 32px;
         }
       }
-
       &:hover .remove-attachment,
       &:hover .download-attachment {
         opacity: 1;
-        visibility: visible;
         cursor: pointer;
       }
       .attachment-filename {
@@ -206,7 +229,8 @@
 @media (max-width: 1100px) {
   .attachments-component {
     max-width: 100%;
-  }}
+  }
+}
 
 @media (max-width: 768px) {
   .attachments-component {

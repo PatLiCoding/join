@@ -13,20 +13,31 @@
       </a>
     }
 
-    <span class="user-avatar" (click)="toggleHeaderPopup()">
-  @if (userPhotoUrl) {
-    <img [src]="userPhotoUrl" alt="Profile picture" class="initials" />
-  } @else {
-    <span class="initials">{{ userInitials }}</span>
-  }
-</span>
+    <span
+      class="user-avatar"
+      (click)="toggleHeaderPopup()"
+      tabindex="0"
+      (keydown.enter)="toggleHeaderPopup()"
+      (keydown.space)="toggleHeaderPopup()"
+    >
+      @if (userPhotoUrl) {
+        <img [src]="userPhotoUrl" alt="Profile picture" class="initials" />
+      } @else {
+        <span class="initials">{{ userInitials }}</span>
+      }
+    </span>
   </div>
 
   @if (showPopup && !isMobile) {
     <div #desktopPopup class="header-popup desktop-popup" (click)="$event.stopPropagation()">
       @if (!auth.isGuestUser()) {
-      <a (click)="contactDialog?.openWithMode('account')">Account</a>
-    }
+        <a
+          (click)="contactDialog?.openWithMode('account')"
+          tabindex="0"
+          (keydown.enter)="contactDialog?.openWithMode('account'); $event.stopPropagation()"
+          >Account</a
+        >
+      }
       <a [routerLink]="legalNoticeRoute">Legal Notice</a>
       <a [routerLink]="privacyPolicyRoute">Privacy Policy</a>
       <a (click)="logout()">Logout</a>
@@ -37,8 +48,13 @@
     <div #mobilePopup class="header-popup mobile-popup" (click)="$event.stopPropagation()">
       <a class="help-in-popup" [routerLink]="helpRoute">Help</a>
       @if (!auth.isGuestUser()) {
-      <a (click)="contactDialog?.openWithMode('account')">Account</a>
-    }
+        <a
+          (click)="contactDialog?.openWithMode('account')"
+          tabindex="0"
+          (keydown.enter)="contactDialog?.openWithMode('account'); $event.stopPropagation()"
+          >Account</a
+        >
+      }
       <a [routerLink]="legalNoticeRoute">Legal Notice</a>
       <a [routerLink]="privacyPolicyRoute">Privacy Policy</a>
       <a (click)="logout()">Logout</a>

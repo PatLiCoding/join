@@ -1,79 +1,119 @@
 <section class="privacy-policy">
-
   <div class="privacy-header">
     <h1>Privacy Policy</h1>
-    <img src="assets/icon/nav-bar/Vector.png" alt="Close" class="help-close" (click)="closeHelp()" />
+    <img
+      src="assets/icon/nav-bar/Vector.png"
+      alt="Close"
+      class="help-close"
+      (click)="close()"
+      tabindex="0"
+      (keydown.enter)="close()"
+      (keydown.space)="close()"
+    />
   </div>
 
   <div class="privacy-body">
-
     <h2>Data Protection at a Glance</h2>
     <p>
-      The following information provides a simple overview of what happens to your personal data when you use our application. Personal data includes all data that can personally identify you. Detailed information on data protection can be found in our privacy policy below.
+      The following information provides a simple overview of what happens to your personal data
+      when you use our application. Personal data includes all data that can personally identify
+      you. Detailed information on data protection can be found in our privacy policy below.
     </p>
 
     <h2>Data Collection in Our Application</h2>
     <p>
-      <span class="highlight-blue">Who is responsible for data collection?</span><br>
-      Data processing is carried out by the operator of this application. Contact details can be found in the imprint of this application.
+      <span class="highlight-blue">Who is responsible for data collection?</span><br />
+      Data processing is carried out by the operator of this application. Contact details can be
+      found in the imprint of this application.
     </p>
     <p>
-      <span class="highlight-blue">How do we collect your data?</span><br>
-      Your data is collected when you provide it to us. This includes account data entered during registration, contact information you add within the application, task content you create, and files you upload as attachments. Other data is automatically collected by our IT systems when you visit the application. These are primarily technical data (e.g., browser, operating system, or time of page access).
+      <span class="highlight-blue">How do we collect your data?</span><br />
+      Your data is collected when you provide it to us. This includes account data entered during
+      registration, contact information you add within the application, task content you create, and
+      files you upload as attachments. Other data is automatically collected by our IT systems when
+      you visit the application. These are primarily technical data (e.g., browser, operating
+      system, or time of page access).
     </p>
     <p>
-      <span class="highlight-blue">What do we use your data for?</span><br>
-      Data is used to provide the core functionality of the application, such as displaying your tasks, contacts, and attachments, and to ensure error-free operation of the application.
+      <span class="highlight-blue">What do we use your data for?</span><br />
+      Data is used to provide the core functionality of the application, such as displaying your
+      tasks, contacts, and attachments, and to ensure error-free operation of the application.
     </p>
 
     <h2>Your Rights</h2>
     <p>
-      You have the right to receive information free of charge about the origin, recipient, and purpose of your stored personal data at any time. You also have the right to request the correction, blocking, or deletion of this data. You can delete your own account, including all associated personal data, at any time via the "My Account" section of the application. For further questions on data protection, you can contact us at any time at the address given in the imprint. Furthermore, you have the right to lodge a complaint with the competent supervisory authority.
+      You have the right to receive information free of charge about the origin, recipient, and
+      purpose of your stored personal data at any time. You also have the right to request the
+      correction, blocking, or deletion of this data. You can delete your own account, including all
+      associated personal data, at any time via the "My Account" section of the application. For
+      further questions on data protection, you can contact us at any time at the address given in
+      the imprint. Furthermore, you have the right to lodge a complaint with the competent
+      supervisory authority.
     </p>
 
     <h2>General Information and Mandatory Details</h2>
     <p>
-      <span class="highlight-blue">Data protection</span><br>
-      The operators of these pages take the protection of your personal data very seriously. We treat your personal data confidentially and in accordance with the statutory data protection regulations and this privacy policy.
+      <span class="highlight-blue">Data protection</span><br />
+      The operators of these pages take the protection of your personal data very seriously. We
+      treat your personal data confidentially and in accordance with the statutory data protection
+      regulations and this privacy policy.
     </p>
     <p>
-      When you use this application, various personal data are collected. Personal data is data that can personally identify you. This privacy policy explains what data we collect and what we use it for. It also explains how and for what purpose this happens.
+      When you use this application, various personal data are collected. Personal data is data that
+      can personally identify you. This privacy policy explains what data we collect and what we use
+      it for. It also explains how and for what purpose this happens.
     </p>
     <p>
-      We point out that data transmission over the Internet (e.g., when communicating by e-mail) may have security vulnerabilities. Complete protection of data against access by third parties is not possible.
+      We point out that data transmission over the Internet (e.g., when communicating by e-mail) may
+      have security vulnerabilities. Complete protection of data against access by third parties is
+      not possible.
     </p>
 
     <h2>Hosting and Data Processing (Firebase)</h2>
     <p>
-      This application uses Firebase, a service provided by Google, for user authentication and as a database (Cloud Firestore) to store your account, contact, task, and attachment data. Google acts as a data processor on our behalf. Data may be processed on servers outside the European Union; in such cases, Google provides appropriate safeguards under applicable data protection law. For more information, please refer to Google's own privacy policy.
+      This application uses Firebase, a service provided by Google, for user authentication and as a
+      database (Cloud Firestore) to store your account, contact, task, and attachment data. Google
+      acts as a data processor on our behalf. Data may be processed on servers outside the European
+      Union; in such cases, Google provides appropriate safeguards under applicable data protection
+      law. For more information, please refer to Google's own privacy policy.
     </p>
 
     <h2>Contacts Feature</h2>
     <p>
-      Within the application, you can create contacts by entering information such as a name, e-mail address, phone number, and optionally a profile photo. This data is stored in our Firebase database and is used exclusively to assign and display tasks within the application. Contacts are only visible to users who have access to the application. You can edit or delete a contact, including its profile photo, at any time.
+      Within the application, you can create contacts by entering information such as a name, e-mail
+      address, phone number, and optionally a profile photo. This data is stored in our Firebase
+      database and is used exclusively to assign and display tasks within the application. Contacts
+      are only visible to users who have access to the application. You can edit or delete a
+      contact, including its profile photo, at any time.
     </p>
 
     <h2>File and Image Uploads</h2>
     <p>
-      When creating or editing a task, you can attach image files (e.g., photos or screenshots) using the file picker. Selected images are compressed and converted to Base64 format directly in your browser before being uploaded. Each attachment is stored, together with metadata such as file name, file type, and file size, as part of the corresponding task in our Firebase Firestore database.
+      When creating or editing a task, you can attach image files (e.g., photos or screenshots)
+      using the file picker. Selected images are compressed and converted to Base64 format directly
+      in your browser before being uploaded. Each attachment is stored, together with metadata such
+      as file name, file type, and file size, as part of the corresponding task in our Firebase
+      Firestore database.
     </p>
     <p>
-      Attachments are only visible to users who have access to the board within the application. You can remove individual attachments, or all attachments of a task, at any time while editing that task. Deleted files are permanently removed from the database and cannot be restored.
+      Attachments are only visible to users who have access to the board within the application. You
+      can remove individual attachments, or all attachments of a task, at any time while editing
+      that task. Deleted files are permanently removed from the database and cannot be restored.
     </p>
 
     <h2>Changes to This Privacy Policy</h2>
     <p>
-      We reserve the right to adapt this privacy policy so that it always complies with current legal requirements or to implement changes to our services in the privacy policy, e.g., when introducing new services. Your renewed visit will then be subject to the new privacy policy.
+      We reserve the right to adapt this privacy policy so that it always complies with current
+      legal requirements or to implement changes to our services in the privacy policy, e.g., when
+      introducing new services. Your renewed visit will then be subject to the new privacy policy.
     </p>
 
     <h2>Questions to the Data Protection Officer</h2>
     <p>
-      If you have questions about data protection, please write us an e-mail. Contact details can be found in the imprint of this application.
+      If you have questions about data protection, please write us an e-mail. Contact details can be
+      found in the imprint of this application.
     </p>
 
-    <p style="font-style: italic; color: #666; margin-top: 32px;">
-      Last updated: September 2026
-    </p>
-
+    <p style="font-style: italic; color: #666; margin-top: 32px">Last updated: September 2026</p>
   </div>
 </section>
